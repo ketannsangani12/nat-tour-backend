@@ -111,7 +111,7 @@ MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 
 STRIPE_WEBHOOK_SECRET= # Add stripe webhook secret key
 STRIPE_API_PUBLIC_KEY= # Add stripe API public secret key
-STRIPE_API_SECRET_KEY= # Add stripe API secret key
+STRIPE_API_SECRET_KEY=replace-me
 ```
 Generate a new application key
 

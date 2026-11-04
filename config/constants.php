@@ -108,7 +108,7 @@ return [
         'production' => [
             [
                 'public_key' => env('STRIPE_API_PUBLIC_KEY', null),
-                'secret_key' => env('STRIPE_API_SECRET_KEY')
+                'secret_key' => env('STRIPE_API_SECRET_KEY', null)
             ]
         ]
     ],
