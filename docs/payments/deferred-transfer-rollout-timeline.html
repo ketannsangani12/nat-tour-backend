@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Deferred Transfer Rollout — Timeline</title>
+<style>
+  @page { size: Letter; margin: 20mm 18mm 18mm 18mm; }
+  * { box-sizing: border-box; }
+
+  :root {
+    --paper: #ffffff;
+    --panel: #ffffff;
+    --panel-2: #f7f7f4;
+    --ink: #1c1f1a;
+    --ink-soft: #565f57;
+    --ink-faint: #8b9289;
+    --line: #dde0d8;
+    --accent: #b5461f;
+    --accent-ink: #7a2f14;
+    --accent-soft: #f5e2d8;
+    --ink-deep: #14161a;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 10.3pt;
+    line-height: 1.55;
+    margin: 0;
+  }
+  .mono { font-family: 'IBM Plex Mono', "SF Mono", Menlo, monospace; font-variant-numeric: tabular-nums; }
+
+  /* ---------- COVER ---------- */
+  .cover {
+    min-height: 235mm; padding: 30mm 20mm 20mm 20mm; border-radius: 14px;
+    background: linear-gradient(160deg, var(--ink-deep) 0%, #1f232a 100%);
+    color: #f2f1ec; display: flex; flex-direction: column; page-break-after: always;
+    position: relative; overflow: hidden;
+  }
+  .cover .kicker { text-transform: uppercase; letter-spacing: 2.6px; font-size: 9.5pt; font-weight: 600; color: #e2794a; margin-bottom: 20px; }
+  .cover .rule { width: 46px; height: 2px; background: #e2794a; margin-bottom: 20px; }
+  .cover h1 { font-size: 30pt; line-height: 1.18; margin: 0 0 14px 0; color: #fff; font-weight: 600; max-width: 460px; }
+  .cover .subtitle { font-size: 12.5pt; color: #c7ccc2; max-width: 420px; margin-bottom: auto; line-height: 1.55; }
+  .cover-meta { font-size: 9.3pt; color: #a7ada1; border-top: 1px solid rgba(255,255,255,0.14); padding-top: 16px; max-width: 460px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 36px; }
+  .cover-meta b { color: #f2f1ec; display: block; font-weight: 600; }
+  .cover-tag { display: inline-block; margin-top: 20px; padding: 6px 14px; border-radius: 20px;
+    background: rgba(226,121,74,0.14); border: 1px solid rgba(226,121,74,0.45); color: #f0a97e;
+    font-size: 8.4pt; font-weight: 600; letter-spacing: 0.4px; width: fit-content; }
+  .cover .scope { margin-top: 18px; font-size: 9.3pt; color: #f0a97e; }
+
+  /* ---------- SECTION SCAFFOLDING ---------- */
+  .page { page-break-before: always; padding-top: 2mm; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 2px; font-size: 8.4pt; font-weight: 600; color: var(--accent-ink); margin-bottom: 8px; }
+  h1.title { font-size: 19pt; font-weight: 600; color: var(--ink); margin: 0 0 6px 0; }
+  h1.title + .dek { color: var(--ink-soft); font-size: 10.4pt; max-width: 94%; margin-bottom: 16px; }
+  p { margin: 6px 0; }
+
+  /* ---------- SUMMARY STATS ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 16px 0 22px 0; }
+  .stat { background: var(--panel); padding: 13px 14px; }
+  .stat .num { font-size: 18pt; font-weight: 600; color: var(--accent-ink); }
+  .stat .lbl { font-size: 8.4pt; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* ---------- GANTT ---------- */
+  .gantt-label { font-size: 8.6pt; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink-faint); font-weight: 600; margin-bottom: 8px; }
+  .gantt-track { position: relative; height: 34px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 14px; }
+  .gantt-seg { position: absolute; top: 0; bottom: 0; border-right: 1.5px solid #fff; background: var(--accent-soft); border-radius: 0;
+    display: flex; align-items: center; justify-content: center; }
+  .gantt-seg:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+  .gantt-seg:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-right: none; }
+  .gantt-seg .ord { font-family: 'IBM Plex Mono'; font-weight: 600; font-size: 10pt; color: var(--accent-ink); }
+
+  .gantt-legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 16px; margin-bottom: 4px; }
+  .gantt-legend .litem { display: flex; gap: 8px; align-items: baseline; }
+  .gantt-legend .ldot { font-family: 'IBM Plex Mono'; font-weight: 600; font-size: 9pt; color: #fff; background: var(--accent);
+    border-radius: 4px; padding: 1px 6px; flex: none; }
+  .gantt-legend .lname { font-size: 9pt; font-weight: 600; }
+  .gantt-legend .lweek { display: block; font-family: 'IBM Plex Mono'; font-size: 8pt; color: var(--ink-faint); margin-top: 1px; }
+  .assumption { font-size: 8.6pt; color: var(--ink-faint); margin-top: 10px; }
+
+  /* ---------- MILESTONE PAGE ---------- */
+  .m-head { display: flex; align-items: baseline; gap: 12px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 4px; }
+  .m-ord { font-family: 'IBM Plex Mono'; font-size: 11pt; font-weight: 600; color: #fff; background: var(--accent);
+    border-radius: 6px; padding: 3px 9px; flex: none; }
+  .m-head h1 { font-size: 17pt; margin: 0; }
+  .m-meta-row { margin-bottom: 6px; }
+  .m-obj { color: var(--ink-soft); font-size: 10.4pt; max-width: 90%; }
+  .m-nums { font-family: 'IBM Plex Mono'; font-size: 9pt; color: var(--accent-ink); font-weight: 600; margin-top: 6px; }
+
+  table.tasks { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 9.3pt; }
+  table.tasks th { text-align: left; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink-faint);
+    border-bottom: 1.5px solid var(--line); padding: 0 8px 6px 0; font-weight: 600; }
+  table.tasks td { padding: 9px 8px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.tasks tr:last-child td { border-bottom: none; }
+  table.tasks td.tname { font-weight: 600; width: 46%; }
+  table.tasks td.tnote { color: var(--ink-soft); font-size: 8.9pt; }
+  table.tasks td.tdays { font-family: 'IBM Plex Mono'; text-align: right; white-space: nowrap; color: var(--accent-ink); font-weight: 600; }
+
+  /* ---------- CLOSING / ASSUMPTIONS ---------- */
+  .note-panel { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 14px 0; }
+  .note-panel h3 { margin: 0 0 8px 0; font-size: 10.6pt; }
+  .note-panel ul { margin: 0; padding-left: 18px; }
+  .note-panel li { margin-bottom: 6px; font-size: 9.4pt; }
+
+  .foot { margin-top: 20px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 7.8pt; color: var(--ink-faint); display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="kicker">Engineering Timeline &middot; Deferred Transfer</div>
+  <div class="rule"></div>
+  <h1>Deferred Transfer<br>Rollout</h1>
+  <div class="subtitle">A milestone-by-milestone timeline and task plan for shipping deferred operator transfers on 2027+ bookings.</div>
+  <div class="scope">Scope: deferred transfer engine only &mdash; not the multi-operator NAT Network extension.</div>
+  <div class="cover-tag">ENGINEERING TIMELINE &middot; INTERNAL</div>
+  <div class="cover-meta">
+    <div><b>Prepared for</b>NAT Leadership</div>
+    <div><b>Prepared by</b>Product &amp; Engineering</div>
+    <div><b>Date</b>September 2026</div>
+    <div><b>Basis</b>2027 Deferred Transfer plan doc</div>
+  </div>
+</div>
+
+<!-- ============ OVERVIEW ============ -->
+<div class="page">
+  <div class="eyebrow">The Plan At A Glance</div>
+  <h1 class="title">A 12-week rollout, six milestones</h1>
+  <div class="dek">Every task below is sized from the actual engineering surface area &mdash; the checkout flows, refund paths, and services this change touches &mdash; not a rough guess.</div>
+
+  <div class="stats">
+    <div class="stat"><div class="num mono">38</div><div class="lbl">Tasks</div></div>
+    <div class="stat"><div class="num mono">&asymp;65</div><div class="lbl">Person-days effort</div></div>
+    <div class="stat"><div class="num mono">12</div><div class="lbl">Weeks, elapsed</div></div>
+    <div class="stat"><div class="num mono">2&ndash;3</div><div class="lbl">Engineers assumed</div></div>
+  </div>
+
+  <div class="gantt-label">Roadmap (sequential milestones)</div>
+  <div class="gantt-track">
+    <div class="gantt-seg" style="left:0%;width:8.33%;"><span class="ord">1</span></div>
+    <div class="gantt-seg" style="left:8.33%;width:16.67%;"><span class="ord">2</span></div>
+    <div class="gantt-seg" style="left:25%;width:25%;"><span class="ord">3</span></div>
+    <div class="gantt-seg" style="left:50%;width:25%;"><span class="ord">4</span></div>
+    <div class="gantt-seg" style="left:75%;width:8.33%;"><span class="ord">5</span></div>
+    <div class="gantt-seg" style="left:83.33%;width:16.67%;"><span class="ord">6</span></div>
+  </div>
+  <div class="gantt-legend">
+    <div class="litem"><span class="ldot">1</span><span class="lname">Foundation<span class="lweek">Week 1</span></span></div>
+    <div class="litem"><span class="ldot">2</span><span class="lname">Transfer Engine<span class="lweek">Weeks 2&ndash;3</span></span></div>
+    <div class="litem"><span class="ldot">3</span><span class="lname">Platform-Wide Rollout<span class="lweek">Weeks 4&ndash;6</span></span></div>
+    <div class="litem"><span class="ldot">4</span><span class="lname">Refunds &amp; Cancellations<span class="lweek">Weeks 7&ndash;9</span></span></div>
+    <div class="litem"><span class="ldot">5</span><span class="lname">Reporting<span class="lweek">Week 10</span></span></div>
+    <div class="litem"><span class="ldot">6</span><span class="lname">Kill Switch &amp; Launch<span class="lweek">Weeks 11&ndash;12</span></span></div>
+  </div>
+  <div class="assumption">Milestones are sequential (each depends on the last); tasks within a milestone are parallelizable across the team &mdash; see Milestone 3 and 4 in particular, both sized for 2&ndash;3 people working different flows at once.</div>
+
+  <div class="note-panel">
+    <h3>What this covers</h3>
+    <p style="margin:0;font-size:9.4pt;">Moving how card and card-reader payments settle for any tour departing 2027 or later &mdash; from an automatic Stripe destination-charge split to an explicit, code-driven Transfer to the operator&rsquo;s connected account. Same guest experience, same operator payout timing, same pricing; only the underlying settlement mechanism and its visibility change.</p>
+  </div>
+</div>
+
+<!-- ============ MILESTONE 1 ============ -->
+<div class="page">
+  <div class="m-head"><div class="m-ord">M1</div><h1>Foundation</h1></div>
+  <div class="m-meta-row">
+    <div class="m-obj">Recognize a 2027+ booking at the moment it&rsquo;s paid for, and lock in which payment mode it uses, permanently.</div>
+    <div class="m-nums">Week 1 &middot; 4d effort</div>
+  </div>
+  <table class="tasks">
+    <tr><th>Task</th><th>Note</th><th>Est.</th></tr>
+    <tr><td class="tname">payment_mode column + migration</td><td class="tnote">Immutable per booking; never recomputed from the current tour date.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">Build PaymentModeResolver</td><td class="tnote">Date gate at 2027-01-01, tenant-local; single-date and plural (combo) forms.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Combo-cart rule</td><td class="tnote">Any row &ge; 2027 forces the whole cart to deferred mode.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">Resolver unit tests</td><td class="tnote">Boundary date, mixed input types, combo arrays, null handling.</td><td class="tdays">0.5d</td></tr>
+  </table>
+</div>
+
+<!-- ============ MILESTONE 2 ============ -->
+<div class="page">
+  <div class="m-head"><div class="m-ord">M2</div><h1>Transfer Engine</h1></div>
+  <div class="m-meta-row">
+    <div class="m-obj">Build the engine that sends an operator their share as its own explicit Transfer call, modeled on the existing partner-split engine.</div>
+    <div class="m-nums">Weeks 2&ndash;3 &middot; 7.5d effort</div>
+  </div>
+  <table class="tasks">
+    <tr><th>Task</th><th>Note</th><th>Est.</th></tr>
+    <tr><td class="tname">transfers ledger table + transfer_type</td><td class="tnote">New primary_operator discriminator alongside the existing partner_split rows.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">transferToOperator() + reverseOperatorTransfer()</td><td class="tnote">Non-partner path: send + reverse the operator&rsquo;s share.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">transferSellingCommission() + reversal</td><td class="tnote">Partner-package selling-tenant path &mdash; Partner Fee only, not the ticket-cost remainder.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Harden existing lookups with transfer_type filter</td><td class="tnote">Stops partner-split and primary-operator rows cross-contaminating each other&rsquo;s queries.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">Currency fix</td><td class="tnote">Transfer amount uses the tenant&rsquo;s real currency, not a hardcoded USD.</td><td class="tdays">0.5d</td></tr>
+    <tr><td class="tname">Engine unit tests</td><td class="tnote">Card success, cash no-op, Stripe failure handling, over-reversal guard, zero-fee case.</td><td class="tdays">1.5d</td></tr>
+  </table>
+</div>
+
+<!-- ============ MILESTONE 3 ============ -->
+<div class="page">
+  <div class="m-head"><div class="m-ord">M3</div><h1>Platform-Wide Rollout</h1></div>
+  <div class="m-meta-row">
+    <div class="m-obj">Wire every checkout flow &mdash; web, mobile, admin, card reader, POS &mdash; to resolve mode and fire the transfer correctly.</div>
+    <div class="m-nums">Weeks 4&ndash;6 &middot; 22.5d effort</div>
+  </div>
+  <table class="tasks">
+    <tr><th>Task</th><th>Note</th><th>Est.</th></tr>
+    <tr><td class="tname">Branch the shared PaymentIntent param builder on mode</td><td class="tnote">buildConnectedPaymentData() &mdash; the one place every creation site already funnels through.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">New Booking + Make Payment (web)</td><td class="tnote">The two highest-traffic creation/confirmation flows.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">Combo cart checkout</td><td class="tnote">Multi-package cart sharing one PaymentIntent.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Change People / Change Payment / Switch Package</td><td class="tnote">Shared edit-booking helper plus Switch Package&rsquo;s own flow.</td><td class="tdays">2.5d</td></tr>
+    <tr><td class="tname">Card Reader (Terminal)</td><td class="tnote">Shared creation endpoint + tour-date plumbing for New Booking/POS reader tabs.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">Point of Sale (POS) checkout</td><td class="tnote">In-person combo-cart-capable creation + confirmation.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Tip, Edit Discount, Custom Charge, Add-Ons, Addon Edit Charge</td><td class="tnote">Five features sharing one creation helper &mdash; wire once, confirm each.</td><td class="tdays">3d</td></tr>
+    <tr><td class="tname">Payment Links checkout</td><td class="tnote">Checkout-session based, mode carried in session metadata.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Mobile API v2 (new booking + 3D Secure)</td><td class="tnote">App checkout and its 3DS completion callback.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">Legacy (API v1) creation-method audit</td><td class="tnote">Sweep every other legacy PaymentIntent-creation method for the same gap.</td><td class="tdays">2.5d</td></tr>
+    <tr><td class="tname">End-to-end tests, one per flow</td><td class="tnote">Real booking, real call, asserting on real DB state &mdash; not just a code read.</td><td class="tdays">3d</td></tr>
+  </table>
+</div>
+
+<!-- ============ MILESTONE 4 ============ -->
+<div class="page">
+  <div class="m-head"><div class="m-ord">M4</div><h1>Refunds &amp; Cancellations</h1></div>
+  <div class="m-meta-row">
+    <div class="m-obj">Make every refund, cancellation, and dispute flow correctly reverse a deferred-mode transfer, matching today&rsquo;s behavior.</div>
+    <div class="m-nums">Weeks 7&ndash;9 &middot; 19d effort</div>
+  </div>
+  <table class="tasks">
+    <tr><th>Task</th><th>Note</th><th>Est.</th></tr>
+    <tr><td class="tname">buildRefundParams() mode-aware helper</td><td class="tnote">Strips reverse_transfer / refund_application_fee for deferred mode.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">DisputeService dispute-loss branch</td><td class="tnote">Reverses the separate primary_operator transfer when a dispute is lost.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">&ldquo;Refund Order&rdquo; flow (Ticket + Weather refund)</td><td class="tnote">PosRepository&rsquo;s refund dispatch, both no-partner-handling services.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">Cancel Booking flow (3 services)</td><td class="tnote">Ticket / Weather / Partial refund-on-cancel &mdash; including the partial-refund spillover split.</td><td class="tdays">3d</td></tr>
+    <tr><td class="tname">Add-ons refund sites</td><td class="tnote">All 4 refund call sites in the shared add-ons repository.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">Edit Booking + Custom Charge refund sites</td><td class="tnote">&nbsp;</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Legacy + V3 TourBookingRepository sweep</td><td class="tnote">The largest single file &mdash; refund(), editDiscountRefund(), refundCustomCharge(), editBooking(), deletePeopleChangePeople().</td><td class="tdays">4d</td></tr>
+    <tr><td class="tname">Regression pass across existing refund/add-on suites</td><td class="tnote">Catch any mocking-hazard regressions from the new interface method.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">End-to-end tests, one per refund flow</td><td class="tnote">&nbsp;</td><td class="tdays">3d</td></tr>
+  </table>
+</div>
+
+<!-- ============ MILESTONE 5 ============ -->
+<div class="page">
+  <div class="m-head"><div class="m-ord">M5</div><h1>Reporting</h1></div>
+  <div class="m-meta-row">
+    <div class="m-obj">Give the team visibility into any transfer that failed, so it gets manual follow-up instead of going unnoticed.</div>
+    <div class="m-nums">Week 10 &middot; 3.5d effort</div>
+  </div>
+  <table class="tasks">
+    <tr><th>Task</th><th>Note</th><th>Est.</th></tr>
+    <tr><td class="tname">Failed-transfer admin view</td><td class="tnote">Surfaces any Failed ledger row for manual follow-up.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">Alerting for a failed transfer</td><td class="tnote">Email or dashboard flag &mdash; no silent failures.</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">Tests</td><td class="tnote">&nbsp;</td><td class="tdays">0.5d</td></tr>
+  </table>
+</div>
+
+<!-- ============ MILESTONE 6 ============ -->
+<div class="page">
+  <div class="m-head"><div class="m-ord">M6</div><h1>Kill Switch &amp; Launch</h1></div>
+  <div class="m-meta-row">
+    <div class="m-obj">Ship a per-tenant on/off switch, rehearse end-to-end in Stripe test mode, and roll out gradually with a rollback plan.</div>
+    <div class="m-nums">Weeks 11&ndash;12 &middot; 8d effort</div>
+  </div>
+  <table class="tasks">
+    <tr><th>Task</th><th>Note</th><th>Est.</th></tr>
+    <tr><td class="tname">Per-tenant DEFERRED_TRANSFER_ENABLED switch</td><td class="tnote">Same mechanism as the existing AUTO_PAYOUT toggle, plus its admin UI.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Full regression suite run + fixes</td><td class="tnote">Every milestone&rsquo;s tests, together, one final time.</td><td class="tdays">1.5d</td></tr>
+    <tr><td class="tname">Stripe test-mode end-to-end rehearsal</td><td class="tnote">Simulated real bookings, refunds, and disputes before go-live.</td><td class="tdays">2d</td></tr>
+    <tr><td class="tname">Rollout runbook + rollback plan</td><td class="tnote">&nbsp;</td><td class="tdays">1d</td></tr>
+    <tr><td class="tname">Staged go-live</td><td class="tnote">Enable for one pilot operator, monitor, then expand.</td><td class="tdays">2d</td></tr>
+  </table>
+</div>
+
+<!-- ============ ASSUMPTIONS ============ -->
+<div class="page">
+  <div class="eyebrow">Reading This Timeline</div>
+  <h1 class="title">Assumptions &amp; notes</h1>
+  <div class="dek">What this schedule does and doesn&rsquo;t assume, stated plainly.</div>
+
+  <div class="note-panel">
+    <h3>Assumptions behind the 12-week estimate</h3>
+    <ul>
+      <li>Team size: roughly 2&ndash;3 engineers, with tasks inside a milestone split across people where the work is genuinely parallel (e.g. Milestone 3&rsquo;s eleven checkout flows, Milestone 4&rsquo;s nine refund paths).</li>
+      <li>Task estimates are engineering effort in person-days, not elapsed calendar time &mdash; milestone durations account for parallelization, review, and integration overhead on top of the raw effort sum.</li>
+      <li>Milestones are sequential: each depends on the work before it (the transfer engine needs the payment-mode gate; every checkout flow needs the transfer engine; refunds need the checkout flows wired first).</li>
+      <li>No 2027-dated tour has been sold yet, so this entire timeline can run in the background with zero risk to a real guest or booking already in progress.</li>
+    </ul>
+  </div>
+
+  <div class="note-panel">
+    <h3>What could move the date</h3>
+    <ul>
+      <li>Fewer than 2&ndash;3 engineers available, or engineers splitting time with other work, extends Milestones 3 and 4 the most &mdash; they carry the bulk of the effort.</li>
+      <li>Milestone 5 (Reporting) can start in parallel with the tail end of Milestone 4 if resourcing allows, tightening the schedule by up to a week.</li>
+      <li>A real Stripe-account or connected-account issue surfaced during Milestone 6&rsquo;s rehearsal would extend that milestone specifically, not the ones before it.</li>
+    </ul>
+  </div>
+
+  <div class="foot"><span>Deferred Transfer Rollout &middot; Engineering Timeline</span><span>Prepared September 2026</span></div>
+</div>
+
+</body>
+</html>

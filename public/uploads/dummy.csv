@@ -1,0 +1,6 @@
+tour_operator_id,name,email,phone_number,tour_package_id,tour_slot_id,tour_promotion_id,tourists,note,rate,via
+1,Abigail Yoosd,test1@co.uk,(248) 946-1354,1,513,0,2,,2 Adults (Ages 13 & Up),Cash
+1,Andres Camilodfd,test2@co.uk,(805) 712-3516,1,514,0,6,,"4 Adults (Ages 13 & Up), 1 Child (Ages 4 -7), 1 Infant (Ages 3 & Under)",Cash
+1,Antoinette Gibsondffdf,test3@co.uk,(505) 818-2965,1,515,0,7,Guest is aware of bag and mask policy JN,"5 Adults (Ages 13 & Up), 1 Child (Ages 8 -12), 1 Infant (Ages 3 & Under)",Cash
+1,Arno van den Bergdfd,test4@co.uk,31 6 22032443,1,518,0,2,,2 Adults (Ages 13 & Up),Cash
+1,Biplab Pokhrelfdf,test5@co.uk,(617) 319-5726,1,520,0,4,,4 Adults (Ages 13 & Up),Cash

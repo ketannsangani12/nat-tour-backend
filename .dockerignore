@@ -1,0 +1,52 @@
+# Local Docker files (not needed in build context)
+/.docker-local
+.env.local.example
+docker-compose.local.yml
+docker-local
+Dockerfile.local
+Makefile.local
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies (installed in container)
+/node_modules
+/vendor
+
+# Environment files (use container env vars)
+.env
+.env.*
+!.env.example
+!.env.cicd
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+
+# Logs and cache
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+!/storage/logs/.gitignore
+!/storage/framework/cache/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/views/.gitignore
+
+# Testing
+/coverage
+.phpunit.result.cache
+
+# Documentation
+*.md
+!README.md
+
+# Other
+.editorconfig
+.styleci.yml
+phpunit.xml

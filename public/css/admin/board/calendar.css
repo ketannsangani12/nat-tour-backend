@@ -1,0 +1,125 @@
+ /* --- Compact Modern Calendar --- */
+    #calendarContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* --- Weekday Header Row --- */
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: 600;
+      color: #666;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    /* --- Day Grid --- */
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    /* --- Each Day Box --- */
+    .day-box {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      height: 55px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      box-sizing: border-box;
+    }
+    .day-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    /* --- Date Label (top-right corner) --- */
+    .day-box .date-label {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 1rem;
+      color: #ed3333;
+      font-weight: 600;
+    }
+
+    /* --- Tourist Count (center) --- */
+    .day-box .count-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -10%);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #151617;
+    }
+
+    /* --- Today Highlight --- */
+    .day-box.today {
+      border: 2px solid #007bff;
+      box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+      z-index: 2;
+    }
+
+    /* --- Active (Selected) Day --- */
+    .day-box.active {
+      background: #007bff;
+      color: white;
+      z-index: 3;
+    }
+    .day-box.active .count-label {
+      color: white;
+    }
+    .day-box.active .date-label {
+      color: #f5f5f5;
+    }
+
+    /* --- Active + Today (if same day) --- */
+    .day-box.active.today {
+      background: #007bff;
+      color: white;
+      border: 2px solid #004b9b;
+    }
+
+    /* --- Header & Navigation --- */
+    .calendar-header {
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 520px;
+      margin: 8px auto;
+    }
+
+    .calendar-nav button {
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 6px;
+      padding: 4px 9px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .calendar-nav button:hover {
+      background: #005fc9;
+    }

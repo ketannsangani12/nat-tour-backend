@@ -1,0 +1,12 @@
+.multi-selection-container.form-select { position: relative; padding: 2px 38px 2px 3px; }
+.multi-selection-container .multi-sel-placeholder { height: 100%; }
+.multi-selection-container .multi-sel-placeholder .default-placeholder { display: inline-block; padding: 0.25rem .6rem; }
+.multi-selection-container .multi-sel-item-container { display: inline-block; border-radius: 4px; border: 1px solid #ccc; padding: 1px; }
+.multi-selection-container .multi-sel-item, .multi-selection-container .multi-sel-remove { display: inline-block; padding: 2px 8px; }
+.multi-selection-container .multi-sel-remove { background-color: #ccc; cursor: pointer; font-weight: bold; border-radius: 0 4px 4px 0; }
+.multi-selection-container .multi-sel-remove:hover { background-color: #f66; color: white; }
+.multi-selection-container .multi-sel-checkboxes { display: none; position: absolute; top: 100%; left: 0; width: 100%; z-index: 9; background-color: inherit; border: inherit; border-radius: inherit; padding: 0.5rem 1rem; padding-right: 1rem; }
+.multi-selection-container label { display: block; margin-top: 0.5rem; margin-bottom: 0.5rem;  }
+.multi-selection-container .multi-sel-checkboxes input[type=checkbox] { top: 0; position: relative; }
+.multi-selection-container .multi-sel-opener { position: absolute; width: 32px; top: 0; right: 2px; bottom: 0; }
+.multi-selection-container .multi-sel-opener:before { top: 33%; position: relative; }

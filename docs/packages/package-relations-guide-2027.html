@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Package Relations Guide</title>
+<style>
+  @page { size: letter; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:#0b0b0b;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :root{
+    --ink:#0b0b0b;
+    --ink-2:#52514e;
+    --muted:#898781;
+    --grid:#e1e0d9;
+    --surface:#fcfcfb;
+    --plane:#f9f9f7;
+    --accent:#4a3aa7;
+    --accent-2:#5a8cff;
+    --good:#0ca30c;
+    --critical:#d03b3b;
+    --warning:#c9860b;
+
+    --c-general:#2a78d6;
+    --c-deluxe:#eb6834;
+    --c-lower:#1baf7a;
+    --c-premier:#c98500;
+    --c-affiliates:#d55181;
+  }
+
+  .page{
+    width:8.5in; height:11in;
+    position:relative;
+    page-break-after:always;
+    overflow:hidden;
+  }
+  .page:last-of-type{ page-break-after:avoid; }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    background:
+      radial-gradient(circle at 82% 8%, rgba(90,140,255,0.55) 0%, rgba(90,140,255,0) 45%),
+      radial-gradient(circle at 10% 92%, rgba(138,92,255,0.35) 0%, rgba(138,92,255,0) 40%),
+      linear-gradient(135deg, #0a0d18 0%, #121a34 45%, #1c1444 100%);
+    color:#fff;
+  }
+  .cover-inner{ position:relative; height:100%; padding:0.9in 0.85in; }
+  .cover-grid{
+    position:absolute; top:0; left:0; right:0; height:55%;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .stat-strip{ display:flex; gap:0; margin-top:34pt; }
+  .stat{ padding-right:26pt; margin-right:26pt; border-right:1px solid rgba(255,255,255,0.16); }
+  .stat:last-child{ border-right:none; }
+  .stat .num{ font-size:22pt; font-weight:800; color:#c3ceff; line-height:1; }
+  .stat .lbl{ font-size:8pt; letter-spacing:1.6pt; text-transform:uppercase; color:#8d97c2; margin-top:6pt; }
+  .tag{
+    display:inline-block; padding:5pt 13pt; border-radius:20pt;
+    background:rgba(90,140,255,0.14); border:1px solid rgba(148,175,255,0.45);
+    color:#aebeff; font-size:9.5pt; letter-spacing:2.4pt; text-transform:uppercase;
+    font-weight:600;
+  }
+  .cover h1{
+    font-size:47pt; line-height:1.04; font-weight:800; margin:20pt 0 0 0;
+    letter-spacing:-0.5pt;
+  }
+  .cover h1 span{ color:#9fb4ff; }
+  .cover .sub{
+    font-size:13.5pt; color:#c7cdea; font-weight:400; margin-top:14pt; max-width:4.6in; line-height:1.5;
+  }
+  .cover .family-row{ position:absolute; left:0.85in; right:0.85in; bottom:2.55in; }
+  .cover .footer-block{
+    position:absolute; left:0.85in; right:0.85in; bottom:0.75in;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    border-top:1px solid rgba(255,255,255,0.16); padding-top:14pt;
+  }
+  .cover .footer-block .brand{ font-size:10pt; letter-spacing:1.5pt; color:#8d97c2; text-transform:uppercase; }
+  .cover .footer-block .season{ font-size:10pt; color:#8d97c2; }
+
+  /* ---------- CONTENT PAGE CHROME ---------- */
+  .content{ background:var(--surface); padding:0.72in 0.8in 0.62in; }
+  .kicker{
+    font-size:9.5pt; font-weight:700; letter-spacing:2.2pt; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:7pt;
+  }
+  .kicker .dot{ width:6pt; height:6pt; border-radius:50%; background:var(--accent-2); display:inline-block; }
+  .page-title{ font-size:25pt; font-weight:800; margin:7pt 0 0 0; letter-spacing:-0.2pt; color:var(--ink); }
+  .page-lede{ font-size:11.5pt; color:var(--ink-2); margin-top:8pt; max-width:5.6in; line-height:1.5; }
+  .rule{ height:3pt; width:46pt; border-radius:2pt; margin:14pt 0 20pt;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+
+  .footer{
+    position:absolute; left:0.8in; right:0.8in; bottom:0.42in;
+    display:flex; justify-content:space-between; font-size:8pt; color:var(--muted);
+    border-top:1px solid var(--grid); padding-top:7pt;
+  }
+
+  p{ margin:0 0 9pt; line-height:1.55; font-size:10.8pt; color:var(--ink-2); }
+  strong{ color:var(--ink); }
+
+  /* ---------- DIAGRAM CARD ---------- */
+  .card{
+    background:#ffffff; border:1px solid var(--grid); border-radius:12pt;
+    box-shadow: 0 1px 0 rgba(11,11,11,0.02);
+  }
+  .caption{ font-size:9pt; color:var(--muted); text-align:center; margin-top:8pt; }
+
+  /* ---------- LEGEND ---------- */
+  .legend{ display:flex; flex-wrap:wrap; gap:8pt 20pt; margin-top:14pt; }
+  .legend-item{ display:flex; align-items:center; gap:7pt; font-size:9.6pt; color:var(--ink-2); }
+  .swatch{ width:9pt; height:9pt; border-radius:2.5pt; flex:none; }
+
+  /* ---------- CHECKLIST ---------- */
+  .check-card{
+    display:flex; gap:13pt; padding:14pt 16pt; border:1px solid var(--grid);
+    border-radius:11pt; margin-bottom:11pt; background:#fff;
+  }
+  .check-num{
+    flex:none; width:26pt; height:26pt; border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11pt;
+  }
+  .check-title{ font-weight:700; color:var(--ink); font-size:11pt; margin-bottom:2pt; }
+  .check-body{ font-size:10pt; color:var(--ink-2); line-height:1.45; }
+
+  /* ---------- STEP TIMELINE ---------- */
+  .steps{ position:relative; margin-top:6pt; padding-left:6pt; }
+  .step{ position:relative; display:flex; gap:16pt; padding-bottom:22pt; }
+  .step:last-child{ padding-bottom:0; }
+  .step-line{
+    position:absolute; left:17pt; top:34pt; bottom:-2pt; width:2px;
+    background:var(--grid);
+  }
+  .step:last-child .step-line{ display:none; }
+  .step-badge{
+    flex:none; width:34pt; height:34pt; border-radius:50%; z-index:1;
+    background:#fff; border:2px solid var(--accent);
+    color:var(--accent); font-weight:800; font-size:13pt;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .step-title{ font-weight:700; font-size:11.5pt; color:var(--ink); margin-bottom:3pt; }
+  .step-body{ font-size:10.3pt; color:var(--ink-2); line-height:1.5; max-width:4.9in; }
+
+  /* ---------- CALLOUTS ---------- */
+  .callout{
+    display:flex; gap:12pt; padding:13pt 15pt; border-radius:10pt; margin-bottom:11pt;
+    border:1px solid var(--grid);
+  }
+  .callout.info{ background:#f2f5fc; border-color:#dbe4f5; }
+  .callout.warn{ background:#fdf6ea; border-color:#f3e2bb; }
+  .callout.crit{ background:#fcedec; border-color:#f2cdcb; }
+  .callout-icon{ flex:none; width:20pt; height:20pt; margin-top:1pt; }
+  .callout-title{ font-weight:700; font-size:10.6pt; color:var(--ink); margin-bottom:2pt; }
+  .callout-body{ font-size:9.8pt; color:var(--ink-2); line-height:1.5; }
+
+  svg text{ font-family:"Avenir Next","Helvetica Neue",sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="page cover">
+  <div class="cover-grid"></div>
+  <div class="cover-inner">
+    <span class="tag">Operations Guide &nbsp;·&nbsp; 2027 Season</span>
+    <h1>Package<br><span>Relations.</span></h1>
+    <div class="sub">How <strong style="color:#fff;">General Tour</strong> and its linked packages share one seat pool — without ever double-booking a departure.</div>
+
+    <div class="stat-strip">
+      <div class="stat"><div class="num">5</div><div class="lbl">Linked Packages</div></div>
+      <div class="stat"><div class="num">1</div><div class="lbl">Shared Seat Pool</div></div>
+      <div class="stat"><div class="num">2027</div><div class="lbl">Season</div></div>
+    </div>
+
+    <div class="family-row">
+      <svg width="100%" height="150" viewBox="0 0 620 150" style="width:100%;height:auto;">
+        <defs>
+          <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3987e5"/>
+            <stop offset="100%" stop-color="#2a5cb8"/>
+          </linearGradient>
+          <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#5a8cff" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#5a8cff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <line x1="310" y1="75" x2="60" y2="75" stroke="rgba(158,180,255,0.55)" stroke-width="1.5"/>
+        <line x1="310" y1="75" x2="185" y2="20" stroke="rgba(158,180,255,0.55)" stroke-width="1.5"/>
+        <line x1="310" y1="75" x2="435" y2="20" stroke="rgba(158,180,255,0.55)" stroke-width="1.5"/>
+        <line x1="310" y1="75" x2="560" y2="75" stroke="rgba(158,180,255,0.55)" stroke-width="1.5"/>
+
+        <circle cx="310" cy="75" r="58" fill="url(#hubGlow)"/>
+        <circle cx="310" cy="75" r="30" fill="url(#hubGrad)"/>
+        <text x="310" y="79" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">General</text>
+
+        <circle cx="60" cy="75" r="17" fill="#eb6834"/>
+        <circle cx="185" cy="20" r="17" fill="#1baf7a"/>
+        <circle cx="435" cy="20" r="17" fill="#c98500"/>
+        <circle cx="560" cy="75" r="17" fill="#d55181"/>
+
+        <text x="60" y="108" text-anchor="middle" fill="#c7cdea" font-size="8.5">Deluxe</text>
+        <text x="185" y="128" text-anchor="middle" fill="#c7cdea" font-size="8.5">Lower Antelope</text>
+        <text x="435" y="128" text-anchor="middle" fill="#c7cdea" font-size="8.5">Premier / Bend</text>
+        <text x="560" y="108" text-anchor="middle" fill="#c7cdea" font-size="8.5">Affiliates</text>
+      </svg>
+    </div>
+
+    <div class="footer-block">
+      <div class="brand">Package &amp; Scheduling Operations</div>
+      <div class="season">General Tour Family &nbsp;·&nbsp; Prepared 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 01 THE CONCEPT ============ -->
+<div class="page content">
+  <div class="kicker"><span class="dot"></span>01 &nbsp;·&nbsp; The Concept</div>
+  <div class="page-title">What Is a Package Relation?</div>
+  <div class="rule"></div>
+
+  <p><strong>General Tour</strong> is the main version of the trip. <strong>Deluxe Tour</strong>, <strong>Lower Antelope Canyon</strong>, <strong>Premier Antelope Canyon &amp; Bend Adventure</strong>, and <strong>Affiliates</strong> are different ways of selling that same trip — a different price point, a different sales channel, a different set of extras. Even though guests book through five separate listings, they board the same vehicle, at the same time, with the same limited number of seats.</p>
+  <p>A <strong>package relation</strong> links these five listings into one family, with General Tour as the <strong>parent</strong> and the other four as its <strong>children</strong>. From that point on, every seat booked through any of the five is drawn from one shared total — not five independent ones.</p>
+
+  <div class="card" style="margin-top:22pt; padding:26pt 20pt 18pt;">
+    <svg width="100%" height="260" viewBox="0 0 720 260" style="width:100%; height:auto; display:block;">
+      <defs>
+        <radialGradient id="pGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2a78d6" stop-opacity="0.20"/>
+          <stop offset="100%" stop-color="#2a78d6" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <line x1="360" y1="150" x2="120" y2="45" stroke="#dfe3ee" stroke-width="2"/>
+      <line x1="360" y1="150" x2="260" y2="230" stroke="#dfe3ee" stroke-width="2"/>
+      <line x1="360" y1="150" x2="460" y2="230" stroke="#dfe3ee" stroke-width="2"/>
+      <line x1="360" y1="150" x2="600" y2="45" stroke="#dfe3ee" stroke-width="2"/>
+
+      <circle cx="360" cy="150" r="72" fill="url(#pGlow)"/>
+      <circle cx="360" cy="150" r="46" fill="#2a78d6"/>
+      <text x="360" y="145" text-anchor="middle" fill="#fff" font-size="11.5" font-weight="700">General</text>
+      <text x="360" y="160" text-anchor="middle" fill="#fff" font-size="11.5" font-weight="700">Tour</text>
+      <text x="360" y="207" text-anchor="middle" fill="#2a78d6" font-size="8" font-weight="700" letter-spacing="1">PARENT</text>
+
+      <circle cx="120" cy="45" r="34" fill="#eb6834"/>
+      <text x="120" y="42" text-anchor="middle" fill="#fff" font-size="9.2" font-weight="700">Deluxe</text>
+      <text x="120" y="53" text-anchor="middle" fill="#fff" font-size="9.2" font-weight="700">Tour</text>
+
+      <circle cx="260" cy="230" r="34" fill="#1baf7a"/>
+      <text x="260" y="226" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">Lower</text>
+      <text x="260" y="236" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">Antelope</text>
+
+      <circle cx="460" cy="230" r="34" fill="#c98500"/>
+      <text x="460" y="226" text-anchor="middle" fill="#fff" font-size="7.6" font-weight="700">Premier /</text>
+      <text x="460" y="236" text-anchor="middle" fill="#fff" font-size="7.6" font-weight="700">Bend</text>
+
+      <circle cx="600" cy="45" r="34" fill="#d55181"/>
+      <text x="600" y="49" text-anchor="middle" fill="#fff" font-size="9.2" font-weight="700">Affiliates</text>
+    </svg>
+    <div class="caption">One physical departure. Five ways to book it. One seat count.</div>
+  </div>
+
+  <div class="footer">
+    <div>Package Relations Guide &nbsp;·&nbsp; General Tour Family</div>
+    <div>Page 2</div>
+  </div>
+</div>
+
+<!-- ============ 02 WHY IT MATTERS ============ -->
+<div class="page content">
+  <div class="kicker"><span class="dot"></span>02 &nbsp;·&nbsp; Why It Matters</div>
+  <div class="page-title">Shared Capacity, Not Five Separate Counts</div>
+  <div class="rule"></div>
+
+  <p>Without a relation, each of the five packages tracks its own bookings independently. If the vehicle for a departure holds 30 guests, and each listing is able to sell up to 30 seats on its own, that single departure could be sold several times over before anyone notices — guests would arrive to find there's no room left.</p>
+  <p>Linking the packages closes that gap. Every booking, through any of the five listings, draws down the <strong>same shared total</strong> for that departure time.</p>
+
+  <div class="card" style="margin-top:20pt; padding:22pt 24pt 20pt;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16pt;">
+      <div style="font-weight:700; font-size:11.5pt; color:var(--ink);">Example — 8:00 AM Departure</div>
+      <div style="font-size:9.5pt; color:var(--muted);">30 seats total</div>
+    </div>
+
+    <svg width="100%" height="60" viewBox="0 0 780 60" style="width:100%; height:auto; display:block;">
+      <defs>
+        <clipPath id="barClip"><rect x="0" y="10" width="780" height="34" rx="17"/></clipPath>
+      </defs>
+      <rect x="0" y="10" width="780" height="34" rx="17" fill="#e1e0d9"/>
+      <g clip-path="url(#barClip)">
+        <rect x="0"   y="10" width="234" height="34" fill="#2a78d6"/>
+        <rect x="234" y="10" width="156" height="34" fill="#eb6834"/>
+        <rect x="390" y="10" width="104" height="34" fill="#1baf7a"/>
+        <rect x="494" y="10" width="130" height="34" fill="#c98500"/>
+        <rect x="624" y="10" width="78"  height="34" fill="#d55181"/>
+
+        <rect x="232.5" y="10" width="3" height="34" fill="#fcfcfb"/>
+        <rect x="388.5" y="10" width="3" height="34" fill="#fcfcfb"/>
+        <rect x="492.5" y="10" width="3" height="34" fill="#fcfcfb"/>
+        <rect x="622.5" y="10" width="3" height="34" fill="#fcfcfb"/>
+        <rect x="700.5" y="10" width="3" height="34" fill="#fcfcfb"/>
+      </g>
+      <text x="117" y="31" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">9</text>
+      <text x="312" y="31" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">6</text>
+      <text x="442" y="31" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">4</text>
+      <text x="559" y="31" text-anchor="middle" fill="#0b0b0b" font-size="13" font-weight="700">5</text>
+      <text x="663" y="31" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">3</text>
+      <text x="741" y="31" text-anchor="middle" fill="#898781" font-size="11" font-weight="700">3</text>
+    </svg>
+
+    <div class="legend">
+      <div class="legend-item"><span class="swatch" style="background:#2a78d6;"></span>General Tour — 9 booked</div>
+      <div class="legend-item"><span class="swatch" style="background:#eb6834;"></span>Deluxe Tour — 6 booked</div>
+      <div class="legend-item"><span class="swatch" style="background:#1baf7a;"></span>Lower Antelope Canyon — 4 booked</div>
+      <div class="legend-item"><span class="swatch" style="background:#c98500;"></span>Premier / Bend Adventure — 5 booked</div>
+      <div class="legend-item"><span class="swatch" style="background:#d55181;"></span>Affiliates — 3 booked</div>
+      <div class="legend-item"><span class="swatch" style="background:#e1e0d9; border:1px solid #c3c2b7;"></span>Remaining — 3 open seats</div>
+    </div>
+  </div>
+
+  <p style="margin-top:18pt;">27 seats booked across five different listings, 3 seats still open — and every one of the five packages sees the same, correct, up-to-the-minute number.</p>
+
+  <div class="footer">
+    <div>Package Relations Guide &nbsp;·&nbsp; General Tour Family</div>
+    <div>Page 3</div>
+  </div>
+</div>
+
+<!-- ============ 03 BEFORE YOU LINK THEM ============ -->
+<div class="page content">
+  <div class="kicker"><span class="dot"></span>03 &nbsp;·&nbsp; Preparation</div>
+  <div class="page-title">Get Each Package Ready First</div>
+  <div class="rule"></div>
+  <p>Every one of the five packages needs to exist on its own, fully set up, before any of them are linked together. Linking does not create or copy anything — it only tells the system to share seat counts between packages that already exist.</p>
+
+  <div style="margin-top:18pt;">
+    <div class="check-card">
+      <div class="check-num">1</div>
+      <div>
+        <div class="check-title">Its own listing details</div>
+        <div class="check-body">Name, description, and photos — exactly as it should appear to guests booking that specific version of the trip.</div>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-num">2</div>
+      <div>
+        <div class="check-title">Its own price</div>
+        <div class="check-body">The rate for that version of the trip. Prices are never shared between linked packages — only the seat count is.</div>
+      </div>
+    </div>
+    <div class="check-card">
+      <div class="check-num">3</div>
+      <div>
+        <div class="check-title">Its own dates and time slots</div>
+        <div class="check-body">Every package must already have its own slots created for the 2027 season before you attempt to link it to another package.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-top:22pt;">
+    <svg class="callout-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#2a5cb8" stroke-width="1.6"/><path d="M12 11v6" stroke="#2a5cb8" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.1" fill="#2a5cb8"/></svg>
+    <div>
+      <div class="callout-title">Nothing is shared automatically</div>
+      <div class="callout-body">Descriptions, photos, and pricing stay independent for every package in the family. The relation only shares the seat count for a matching departure.</div>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:16pt; margin-top:22pt;">
+    <div class="card" style="flex:1; padding:16pt 18pt;">
+      <div style="font-size:9pt; font-weight:700; letter-spacing:1.4pt; text-transform:uppercase; color:var(--muted); margin-bottom:10pt;">Stays independent per package</div>
+      <div style="display:flex; flex-direction:column; gap:8pt;">
+        <div style="display:flex; align-items:center; gap:8pt; font-size:10pt; color:var(--ink);"><svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="#898781" stroke-width="1.8"/><path d="M7 9h10M7 13h6" stroke="#898781" stroke-width="1.6" stroke-linecap="round"/></svg>Listing details &amp; photos</div>
+        <div style="display:flex; align-items:center; gap:8pt; font-size:10pt; color:var(--ink);"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2v20M17 6.5c0-2-2.2-3-5-3s-5 1.2-5 3 2.2 2.8 5 3 5 1 5 3-2.2 3-5 3-5-1-5-3" stroke="#898781" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>Price / rate</div>
+        <div style="display:flex; align-items:center; gap:8pt; font-size:10pt; color:var(--ink);"><svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="#898781" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="#898781" stroke-width="1.8" stroke-linecap="round"/></svg>Dates &amp; time slots</div>
+      </div>
+    </div>
+    <div class="card" style="flex:1; padding:16pt 18pt; background:#f4f6fd; border-color:#dde3f7;">
+      <div style="font-size:9pt; font-weight:700; letter-spacing:1.4pt; text-transform:uppercase; color:var(--accent); margin-bottom:10pt;">Shared across the family</div>
+      <div style="display:flex; align-items:center; gap:8pt; font-size:10pt; color:var(--ink); font-weight:700;">
+        <svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2" fill="none" stroke="#4a3aa7" stroke-width="1.9"/><circle cx="8" cy="13" r="1.3" fill="#4a3aa7"/><circle cx="12" cy="13" r="1.3" fill="#4a3aa7"/><circle cx="16" cy="13" r="1.3" fill="#4a3aa7"/></svg>
+        Seat count for the matching departure
+      </div>
+      <div style="font-size:9.3pt; color:var(--ink-2); margin-top:8pt; line-height:1.5;">That's it — one number, kept in sync across all five listings.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Package Relations Guide &nbsp;·&nbsp; General Tour Family</div>
+    <div>Page 4</div>
+  </div>
+</div>
+
+<!-- ============ 04 THE ONE RULE ============ -->
+<div class="page content">
+  <div class="kicker"><span class="dot"></span>04 &nbsp;·&nbsp; The One Rule</div>
+  <div class="page-title">Departure Times Must Match — Exactly</div>
+  <div class="rule"></div>
+  <p>For the shared seat count to work, every package in the group must use the <strong>identical departure time</strong> for that slot. A difference of even a few minutes is enough to break the link — the packages will simply stop sharing seats, silently, with no error shown.</p>
+
+  <div class="card" style="margin-top:20pt; padding:22pt 24pt;">
+    <div style="display:flex; align-items:center; gap:10pt; margin-bottom:10pt;">
+      <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#e7f7e9"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#0ca30c" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div style="font-weight:700; color:var(--ink); font-size:11pt;">Correct — all five set to 8:00 AM</div>
+    </div>
+    <svg width="100%" height="46" viewBox="0 0 780 46" style="width:100%; height:auto; display:block;">
+      <line x1="20" y1="23" x2="760" y2="23" stroke="#e1e0d9" stroke-width="2"/>
+      <circle cx="240" cy="23" r="8" fill="#2a78d6"/>
+      <circle cx="255" cy="23" r="8" fill="#eb6834"/>
+      <circle cx="270" cy="23" r="8" fill="#1baf7a"/>
+      <circle cx="285" cy="23" r="8" fill="#c98500"/>
+      <circle cx="300" cy="23" r="8" fill="#d55181"/>
+      <text x="270" y="12" text-anchor="middle" fill="#52514e" font-size="10" font-weight="700">8:00 AM</text>
+    </svg>
+
+    <div style="height:16pt;"></div>
+
+    <div style="display:flex; align-items:center; gap:10pt; margin-bottom:10pt;">
+      <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fcebea"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#d03b3b" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <div style="font-weight:700; color:var(--ink); font-size:11pt;">Incorrect — one package set to 8:05 AM</div>
+    </div>
+    <svg width="100%" height="46" viewBox="0 0 780 46" style="width:100%; height:auto; display:block;">
+      <line x1="20" y1="23" x2="760" y2="23" stroke="#e1e0d9" stroke-width="2"/>
+      <circle cx="240" cy="23" r="8" fill="#2a78d6"/>
+      <circle cx="255" cy="23" r="8" fill="#eb6834"/>
+      <circle cx="270" cy="23" r="8" fill="#1baf7a"/>
+      <circle cx="340" cy="23" r="8" fill="#c98500" stroke="#d03b3b" stroke-width="1.6"/>
+      <circle cx="300" cy="23" r="8" fill="#d55181"/>
+      <text x="270" y="12" text-anchor="middle" fill="#52514e" font-size="10" font-weight="700">8:00 AM</text>
+      <text x="340" y="41" text-anchor="middle" fill="#d03b3b" font-size="9.5" font-weight="700">8:05 AM</text>
+    </svg>
+  </div>
+
+  <p style="margin-top:18pt;">If General Tour runs more than once a day — say 8:00 AM and 1:00 PM — each departure time needs its <strong>own separate group</strong> of linked packages.</p>
+
+  <div style="display:flex; gap:16pt; margin-top:16pt;">
+    <div class="card" style="flex:1; padding:16pt 18pt; text-align:center;">
+      <div style="font-size:9pt; font-weight:700; color:var(--muted); letter-spacing:1pt; text-transform:uppercase; margin-bottom:10pt;">Group A</div>
+      <svg width="100%" height="34" viewBox="0 0 300 34" style="width:100%; height:auto;">
+        <circle cx="90" cy="17" r="7" fill="#2a78d6"/><circle cx="105" cy="17" r="7" fill="#eb6834"/><circle cx="120" cy="17" r="7" fill="#1baf7a"/><circle cx="135" cy="17" r="7" fill="#c98500"/><circle cx="150" cy="17" r="7" fill="#d55181"/>
+      </svg>
+      <div style="font-size:10.5pt; font-weight:700; color:var(--ink); margin-top:8pt;">8:00 AM departure</div>
+      <div style="font-size:9pt; color:var(--muted); margin-top:2pt;">All five packages linked together</div>
+    </div>
+    <div class="card" style="flex:1; padding:16pt 18pt; text-align:center;">
+      <div style="font-size:9pt; font-weight:700; color:var(--muted); letter-spacing:1pt; text-transform:uppercase; margin-bottom:10pt;">Group B</div>
+      <svg width="100%" height="34" viewBox="0 0 300 34" style="width:100%; height:auto;">
+        <circle cx="90" cy="17" r="7" fill="#2a78d6"/><circle cx="105" cy="17" r="7" fill="#eb6834"/><circle cx="120" cy="17" r="7" fill="#1baf7a"/><circle cx="135" cy="17" r="7" fill="#c98500"/><circle cx="150" cy="17" r="7" fill="#d55181"/>
+      </svg>
+      <div style="font-size:10.5pt; font-weight:700; color:var(--ink); margin-top:8pt;">1:00 PM departure</div>
+      <div style="font-size:9pt; color:var(--muted); margin-top:2pt;">Its own, separate linked group</div>
+    </div>
+  </div>
+  <p class="caption" style="margin-top:10pt;">Two departure times, two independent families — sharing a package name doesn't share a seat count.</p>
+
+  <div class="footer">
+    <div>Package Relations Guide &nbsp;·&nbsp; General Tour Family</div>
+    <div>Page 5</div>
+  </div>
+</div>
+
+<!-- ============ 05 SETTING UP THE LINK ============ -->
+<div class="page content">
+  <div class="kicker"><span class="dot"></span>05 &nbsp;·&nbsp; Setup</div>
+  <div class="page-title">Setting Up the Link — Four Steps</div>
+  <div class="rule"></div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-line"></div>
+      <div class="step-badge">1</div>
+      <div>
+        <div class="step-title">Create all five packages</div>
+        <div class="step-body">General Tour, Deluxe Tour, Lower Antelope Canyon, Premier Antelope Canyon &amp; Bend Adventure, and Affiliates — each fully set up with its own details, pricing, and 2027 time slots.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-line"></div>
+      <div class="step-badge">2</div>
+      <div>
+        <div class="step-title">Confirm the departure times match</div>
+        <div class="step-body">Check every package in the group against the same shared departure — exactly, down to the minute.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-line"></div>
+      <div class="step-badge">3</div>
+      <div>
+        <div class="step-title">Open General Tour and add the other four</div>
+        <div class="step-body">Use the package relation option to add Deluxe Tour, Lower Antelope Canyon, Premier Antelope Canyon &amp; Bend Adventure, and Affiliates as linked packages, for the 2027 season.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-badge">4</div>
+      <div>
+        <div class="step-title">Mark the parent and children</div>
+        <div class="step-body">General Tour is marked as the parent; the other four are marked as children in that same group.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24pt; padding:18pt 20pt;">
+    <div style="font-size:9pt; font-weight:700; letter-spacing:1.4pt; text-transform:uppercase; color:var(--muted); margin-bottom:12pt;">Once linked, this is the family</div>
+    <div style="display:flex; flex-wrap:wrap; gap:9pt;">
+      <div style="display:flex; align-items:center; gap:7pt; padding:7pt 13pt 7pt 9pt; border-radius:20pt; background:#eaf1fc; border:1px solid #cfe0f6;"><span class="swatch" style="background:#2a78d6;"></span><span style="font-size:9.6pt; font-weight:700; color:#0b0b0b;">General Tour</span><span style="font-size:8pt; color:#5b7fb0;">PARENT</span></div>
+      <div style="display:flex; align-items:center; gap:7pt; padding:7pt 13pt; border-radius:20pt; background:#fdeee7; border:1px solid #f6d5c4;"><span class="swatch" style="background:#eb6834;"></span><span style="font-size:9.6pt; color:#0b0b0b;">Deluxe Tour</span></div>
+      <div style="display:flex; align-items:center; gap:7pt; padding:7pt 13pt; border-radius:20pt; background:#e8f6ef; border:1px solid #c9e9d9;"><span class="swatch" style="background:#1baf7a;"></span><span style="font-size:9.6pt; color:#0b0b0b;">Lower Antelope Canyon</span></div>
+      <div style="display:flex; align-items:center; gap:7pt; padding:7pt 13pt; border-radius:20pt; background:#fbf1de; border:1px solid #f0ddb0;"><span class="swatch" style="background:#c98500;"></span><span style="font-size:9.6pt; color:#0b0b0b;">Premier Antelope Canyon &amp; Bend Adventure</span></div>
+      <div style="display:flex; align-items:center; gap:7pt; padding:7pt 13pt; border-radius:20pt; background:#fbe9ef; border:1px solid #f2cddc;"><span class="swatch" style="background:#d55181;"></span><span style="font-size:9.6pt; color:#0b0b0b;">Affiliates</span></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Package Relations Guide &nbsp;·&nbsp; General Tour Family</div>
+    <div>Page 6</div>
+  </div>
+</div>
+
+<!-- ============ 06 IMPORTANT NOTES ============ -->
+<div class="page content">
+  <div class="kicker"><span class="dot"></span>06 &nbsp;·&nbsp; Before You Go Live</div>
+  <div class="page-title">Important Notes</div>
+  <div class="rule"></div>
+
+  <div class="callout info">
+    <svg class="callout-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#2a5cb8" stroke-width="1.6"/><path d="M12 11v6" stroke="#2a5cb8" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.1" fill="#2a5cb8"/></svg>
+    <div>
+      <div class="callout-title">This is set up per season</div>
+      <div class="callout-body">Linking these packages for 2027 does not carry over to 2028 or any other year. The same setup will need to be repeated for each future season.</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <svg class="callout-icon" viewBox="0 0 24 24" fill="none"><path d="M12 3.5L21.5 20h-19L12 3.5z" stroke="#a9720a" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9.5v5" stroke="#a9720a" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17" r="1.05" fill="#a9720a"/></svg>
+    <div>
+      <div class="callout-title">The option may need to be switched on</div>
+      <div class="callout-body">If a package doesn't show any option to link relations at all, this feature may not be turned on for your account yet. Let your development team know and they'll check it.</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <svg class="callout-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#a9720a" stroke-width="1.6"/><path d="M12 7v5.5l4 2.3" stroke="#a9720a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <div>
+      <div class="callout-title">Allow time for changes to take effect</div>
+      <div class="callout-body">After adding or changing a link, shared seat counts can take up to an hour to fully update everywhere. If it doesn't look right immediately, check back a bit later before assuming something's wrong.</div>
+    </div>
+  </div>
+
+  <div class="callout crit">
+    <svg class="callout-icon" viewBox="0 0 24 24" fill="none"><path d="M12 3.5L21.5 20h-19L12 3.5z" stroke="#b23431" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9.5v5" stroke="#b23431" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17" r="1.05" fill="#b23431"/></svg>
+    <div>
+      <div class="callout-title">Always use the official package relation option</div>
+      <div class="callout-body">Don't try to recreate this by any other means. The package relation option is the only place that checks for mistakes — like accidentally linking one package under two different parents.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:24pt; padding-top:18pt; border-top:1px solid var(--grid);">
+    <p style="font-size:10.8pt;">Questions? Send a screenshot of what you're seeing to your development team, and we'll walk through it together.</p>
+  </div>
+
+  <svg width="330" height="330" viewBox="0 0 330 330" style="position:absolute; right:-40pt; bottom:0.7in; opacity:0.5;">
+    <line x1="165" y1="165" x2="60" y2="90" stroke="#e6e9f5" stroke-width="2"/>
+    <line x1="165" y1="165" x2="120" y2="255" stroke="#e6e9f5" stroke-width="2"/>
+    <line x1="165" y1="165" x2="240" y2="255" stroke="#e6e9f5" stroke-width="2"/>
+    <line x1="165" y1="165" x2="290" y2="90" stroke="#e6e9f5" stroke-width="2"/>
+    <circle cx="165" cy="165" r="26" fill="#eef1fb" stroke="#dde3f7" stroke-width="1.5"/>
+    <circle cx="60" cy="90" r="13" fill="#eef1fb" stroke="#dde3f7" stroke-width="1.5"/>
+    <circle cx="120" cy="255" r="13" fill="#eef1fb" stroke="#dde3f7" stroke-width="1.5"/>
+    <circle cx="240" cy="255" r="13" fill="#eef1fb" stroke="#dde3f7" stroke-width="1.5"/>
+    <circle cx="290" cy="90" r="13" fill="#eef1fb" stroke="#dde3f7" stroke-width="1.5"/>
+  </svg>
+
+  <div class="footer">
+    <div>Package Relations Guide &nbsp;·&nbsp; General Tour Family</div>
+    <div>Page 7</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The 2027 Payout Simplification</title>
+<style>
+  @page { size: Letter; margin: 20mm 18mm 18mm 18mm; }
+  * { box-sizing: border-box; }
+
+  :root {
+    --ink: #1c2333;
+    --ink-soft: #565c6e;
+    --ink-faint: #8991a3;
+    --paper: #ffffff;
+    --panel: #ffffff;
+    --brass: #a9762f;
+    --brass-deep: #7c5620;
+    --brass-pale: #f4e9d6;
+    --teal: #2c6b5e;
+    --teal-pale: #e7f2ee;
+    --line: #e6ddc9;
+    --navy-deep: #0f1a2e;
+    --navy-mid: #1b2c48;
+  }
+
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt;
+    line-height: 1.58;
+    color: var(--ink);
+    margin: 0;
+    background: var(--paper);
+  }
+  .serif { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif; }
+
+  /* ---------- SPRITE (hidden) ---------- */
+  .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  .icon { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .icon.lg { width: 34px; height: 34px; }
+
+  /* ---------- COVER ---------- */
+  .cover {
+    min-height: 235mm;
+    padding: 32mm 20mm 20mm 20mm;
+    border-radius: 16px;
+    background: radial-gradient(1100px 700px at 82% -10%, #24365a 0%, transparent 60%), linear-gradient(165deg, var(--navy-deep) 0%, var(--navy-mid) 55%, #223454 100%);
+    color: #eef1f8;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover .ring { position: absolute; right: -140px; top: -140px; width: 460px; height: 460px; border-radius: 50%; border: 1px solid rgba(214,178,120,0.28); }
+  .cover .ring.b { right: -60px; top: -60px; width: 300px; height: 300px; border-color: rgba(214,178,120,0.18); }
+  .cover .kicker {
+    text-transform: uppercase; letter-spacing: 3px; font-size: 9pt; font-weight: 600;
+    color: #d7b06a; margin-bottom: 22px;
+  }
+  .cover .rule { width: 46px; height: 2px; background: #d7b06a; margin-bottom: 22px; }
+  .cover h1 {
+    font-size: 32pt; line-height: 1.2; margin: 0 0 16px 0; color: #ffffff; font-weight: 400; max-width: 460px;
+  }
+  .cover .subtitle { font-size: 13pt; color: #b9c2d6; max-width: 430px; margin-bottom: auto; line-height: 1.6; }
+  .cover-meta {
+    font-size: 9.3pt; color: #aab3c6; border-top: 1px solid rgba(255,255,255,0.16); padding-top: 16px; max-width: 440px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-top: 40px;
+  }
+  .cover-meta b { color: #f2f4f9; display: block; font-weight: 600; }
+  .cover-tag {
+    display: inline-block; margin-top: 22px; padding: 6px 14px; border-radius: 20px;
+    background: rgba(215,176,106,0.14); border: 1px solid rgba(215,176,106,0.45); color: #e7c98a;
+    font-size: 8.4pt; font-weight: 600; letter-spacing: 0.4px; width: fit-content;
+  }
+
+  /* ---------- SECTION SCAFFOLDING ---------- */
+  .page { page-break-before: always; padding-top: 2mm; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 2.2px; font-size: 8.4pt; font-weight: 700; color: var(--brass); margin-bottom: 8px; }
+  h1.title { font-size: 20pt; font-weight: 400; color: var(--ink); margin: 0 0 6px 0; }
+  h1.title + .dek { color: var(--ink-soft); font-size: 10.6pt; max-width: 92%; margin-bottom: 18px; }
+  .hr { height: 1px; background: var(--line); border: 0; margin: 18px 0; }
+  h2.sub { font-size: 13pt; font-weight: 600; color: var(--ink); margin: 22px 0 8px 0; }
+  p { margin: 6px 0; }
+
+  /* ---------- BENEFIT TILES ---------- */
+  .tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0 6px 0; }
+  .tile {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 15px;
+  }
+  .tile .icon { color: var(--brass); margin-bottom: 8px; }
+  .tile h3 { font-size: 10.4pt; margin: 0 0 4px 0; color: var(--ink); font-weight: 700; }
+  .tile p { font-size: 9.1pt; color: var(--ink-soft); margin: 0; }
+
+  /* ---------- DIAGRAM ---------- */
+  .flow-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 14px 0; }
+  .flow-card .flabel { font-size: 8.4pt; text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700; margin-bottom: 14px; }
+  .flow-card.today .flabel { color: var(--ink-faint); }
+  .flow-card.future .flabel { color: var(--brass); }
+  .flow-row { display: flex; align-items: center; gap: 10px; }
+  .fbox { flex: 1; border: 1.5px solid var(--line); border-radius: 9px; padding: 12px 10px; text-align: center; font-size: 9pt; background: #fdfcf9; }
+  .fbox b { display: block; font-size: 9.6pt; margin-bottom: 2px; }
+  .fbox.guest { border-color: #9db3d6; background: #eef2fa; color: #24406e; }
+  .fbox.platform { border-color: var(--brass); background: var(--brass-pale); color: var(--brass-deep); }
+  .fbox.operator { border-color: var(--teal); background: var(--teal-pale); color: var(--teal); }
+  .farrow { font-size: 16pt; color: var(--ink-faint); }
+  .flow-card .fnote { font-size: 8.6pt; color: var(--ink-soft); margin-top: 10px; text-align: center; }
+  .flow-card .fan-label {
+    text-align: center; font-size: 8pt; color: var(--ink-faint); text-transform: uppercase;
+    letter-spacing: 0.8px; margin: 4px 0 10px 0;
+  }
+  .flow-card .fan-label::before { content: ''; display: block; width: 1px; height: 14px; background: var(--line); margin: 0 auto 8px auto; }
+  .fan-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .fbox.operator.small { flex: 0 1 150px; font-size: 8.3pt; padding: 10px 8px; }
+  .fbox.platform.held { border-style: dashed; }
+  .fbox .subnote { display: block; font-size: 7.7pt; color: var(--ink-faint); margin-top: 3px; font-style: italic; }
+
+  /* ---------- REASSURANCE / WHY NOW PANELS ---------- */
+  .panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .panel { border-radius: 10px; padding: 16px 17px; }
+  .panel.check { background: var(--teal-pale); border: 1px solid #c7e0d8; }
+  .panel.brass { background: var(--brass-pale); border: 1px solid #e5cf9f; }
+  .panel h3 { margin: 0 0 8px 0; font-size: 10.6pt; }
+  .panel.check h3 { color: var(--teal); }
+  .panel.brass h3 { color: var(--brass-deep); }
+  .panel ul { margin: 0; padding-left: 0; list-style: none; }
+  .panel li { display: flex; gap: 8px; margin-bottom: 7px; font-size: 9.1pt; color: var(--ink); }
+  .panel li .icon { flex: none; width: 15px; height: 15px; margin-top: 1px; }
+  .panel.check li .icon { color: var(--teal); }
+  .panel.brass p { font-size: 9.1pt; color: var(--ink); margin: 0; }
+
+  /* ---------- ONE THING THAT CHANGES ---------- */
+  .change-note { display: flex; gap: 14px; background: var(--navy-deep); color: #eef1f8; border-radius: 10px; padding: 16px 18px; margin: 16px 0; align-items: flex-start; }
+  .change-note .icon { color: #e7c98a; flex: none; width: 26px; height: 26px; margin-top: 2px; }
+  .change-note h3 { margin: 0 0 4px 0; font-size: 10.6pt; color: #fff; }
+  .change-note p { margin: 0; font-size: 9.3pt; color: #c3cade; }
+
+  /* ---------- ROADMAP ---------- */
+  .roadmap { position: relative; margin: 30px 4px 10px 4px; }
+  .roadmap .track { position: absolute; top: 21px; left: 21px; right: 21px; height: 2px; background: var(--line); }
+  .roadmap .nodes { display: flex; justify-content: space-between; position: relative; }
+  .rnode { width: 62px; text-align: center; }
+  .rnode .dot {
+    width: 42px; height: 42px; border-radius: 50%; background: var(--panel); border: 2px solid var(--brass);
+    color: var(--brass-deep); display: flex; align-items: center; justify-content: center; font-weight: 700;
+    font-size: 12pt; margin: 0 auto 8px auto; position: relative; z-index: 1; font-family: Georgia, serif;
+  }
+  .rnode .rname { font-size: 7.8pt; color: var(--ink-soft); font-weight: 600; line-height: 1.3; }
+
+  .roadmap-list { margin-top: 26px; }
+  .rrow { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px dotted var(--line); }
+  .rrow .rnum { font-family: Georgia, serif; font-size: 13pt; color: var(--brass); width: 26px; flex: none; }
+  .rrow .rname { font-weight: 700; font-size: 9.8pt; color: var(--ink); }
+  .rrow .rdesc { font-size: 9.1pt; color: var(--ink-soft); }
+  .rrow .rtag {
+    display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 9px; font-size: 7.4pt; font-weight: 700;
+    letter-spacing: 0.3px; text-transform: uppercase; vertical-align: middle; position: relative; top: -1px;
+  }
+  .rtag.lighter { background: var(--teal-pale); color: var(--teal); }
+  .rtag.same { background: #eef0f4; color: var(--ink-faint); }
+
+  /* ---------- MILESTONE PAGE ---------- */
+  .m-page { position: relative; }
+  .m-bignum {
+    position: absolute; top: -6mm; right: 0; font-family: Georgia, serif; font-size: 88pt; color: var(--brass-pale);
+    line-height: 1; z-index: 0; font-weight: 700;
+  }
+  .m-head { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .m-head .m-icon {
+    width: 46px; height: 46px; border-radius: 10px; background: var(--navy-deep); color: #e7c98a;
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .m-head .m-icon .icon { width: 24px; height: 24px; }
+  .m-eyebrow { text-transform: uppercase; letter-spacing: 2px; font-size: 8.2pt; font-weight: 700; color: var(--brass); }
+  .m-title { font-size: 18pt; font-weight: 400; margin: 2px 0 0 0; font-family: Georgia, serif; color: var(--ink); }
+  .m-objective { font-size: 10.4pt; color: var(--ink-soft); margin: 14px 0 4px 0; position: relative; z-index: 1; max-width: 96%; }
+
+  .m-involves { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 14px 0; position: relative; z-index: 1; }
+  .m-involves h4 { margin: 0 0 8px 0; font-size: 9.2pt; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-faint); }
+  .m-involves ul { list-style: none; margin: 0; padding: 0; }
+  .m-involves li { display: flex; gap: 9px; margin-bottom: 8px; font-size: 9.4pt; }
+  .m-involves li .icon { flex: none; color: var(--brass); margin-top: 1px; width: 15px; height: 15px; }
+
+  .m-success { background: var(--teal-pale); border-left: 4px solid var(--teal); border-radius: 6px; padding: 12px 15px; margin-top: 14px; position: relative; z-index: 1; }
+  .m-success b { color: var(--teal); display: block; font-size: 8.4pt; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px; }
+  .m-success p { margin: 0; font-size: 9.4pt; color: var(--ink); }
+
+  .m-example { margin-top: 20px; padding-top: 16px; border-top: 1px dotted var(--line); position: relative; z-index: 1; max-width: 96%; }
+  .m-example b { display: block; font-size: 8.2pt; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-faint); margin-bottom: 5px; }
+  .m-example p { margin: 0; font-size: 9.8pt; color: var(--navy-mid); font-family: Georgia, serif; font-style: italic; line-height: 1.6; }
+
+  .commit-list { margin: 16px 0; }
+  .commit-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px dotted var(--line); }
+  .commit-row:last-child { border-bottom: 0; }
+  .commit-row .icon { color: var(--teal); flex: none; margin-top: 2px; }
+  .commit-row span { font-size: 9.4pt; color: var(--ink); }
+
+  .signoff { margin-top: 26px; text-align: center; }
+  .signoff .rule2 { width: 60px; height: 1px; background: var(--line); margin: 0 auto 14px auto; }
+  .signoff p { font-family: Georgia, serif; font-style: italic; font-size: 11pt; color: var(--navy-mid); margin: 0; }
+  .signoff .signature { margin-top: 16px; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; }
+  .signoff .signature b { display: block; font-size: 9.6pt; color: var(--ink); font-weight: 700; }
+  .signoff .signature span { font-size: 8.6pt; color: var(--ink-soft); letter-spacing: 0.3px; }
+
+  .page.closing-page { display: flex; flex-direction: column; min-height: 235mm; }
+  .page.closing-page .foot { margin-top: auto; }
+
+  /* ---------- QUOTE / PULLQUOTE ---------- */
+  .pullquote {
+    font-family: Georgia, serif; font-style: italic; font-size: 13pt; color: var(--navy-mid);
+    border-left: 3px solid var(--brass); padding: 4px 0 4px 18px; margin: 20px 0; line-height: 1.55;
+  }
+
+  /* ---------- QUESTIONS LIST ---------- */
+  .qlist { margin: 16px 0; }
+  .qrow { display: flex; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 13px 15px; margin-bottom: 10px; }
+  .qrow .icon { color: var(--brass); flex: none; margin-top: 2px; }
+  .qrow .qtext b { display: block; font-size: 9.8pt; color: var(--ink); margin-bottom: 2px; }
+  .qrow .qtext span { font-size: 8.9pt; color: var(--ink-soft); }
+
+  /* ---------- COMPARISON TABLE ---------- */
+  table.compare { width: 100%; border-collapse: collapse; margin: 14px 0 18px 0; font-size: 8.7pt; }
+  table.compare th, table.compare td { text-align: left; padding: 8px 9px; border: 1px solid var(--line); vertical-align: top; }
+  table.compare th { background: var(--teal-pale); color: var(--teal); font-weight: 700; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.3px; }
+  table.compare td.dim { font-weight: 700; color: var(--ink); background: #fbfbfd; width: 19%; }
+  table.compare td.hi { background: var(--brass-pale); color: var(--brass-deep); font-weight: 600; }
+
+  /* ---------- CLOSING ---------- */
+  .closing { background: var(--navy-deep); color: #eef1f8; border-radius: 14px; padding: 28px 30px; margin-top: 18px; }
+  .closing h2 { font-family: Georgia, serif; font-weight: 400; font-size: 17pt; margin: 0 0 10px 0; color: #fff; }
+  .closing p { color: #b9c2d6; font-size: 9.6pt; }
+  .closing .steps { margin: 16px 0 0 0; padding: 0; list-style: none; counter-reset: step; }
+  .closing .steps li { counter-increment: step; padding-left: 30px; position: relative; margin-bottom: 10px; font-size: 9.6pt; color: #e5e9f2; }
+  .closing .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: -1px; width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(215,176,106,0.18); border: 1px solid #d7b06a; color: #e7c98a; font-size: 8pt; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .foot { margin-top: 20px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 7.8pt; color: var(--ink-faint); display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M15.2 8.8l-2 4.4-4.4 2 2-4.4z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.1 5.9l-1.7 1.7M7.6 16.4l-1.7 1.7M18.1 18.1l-1.7-1.7M7.6 7.6L5.9 5.9"/></symbol>
+  <symbol id="i-network" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M6.9 7.2L11 16M17.1 7.2L13 16M7.2 6h9.6"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 10h9a5.5 5.5 0 1 1 0 11h-2"/><path d="M8 5L4 10l4 5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-toggle" viewBox="0 0 24 24"><rect x="2.5" y="7.5" width="19" height="9" rx="4.5"/><circle cx="16" cy="12" r="3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 5-3.2 8-7 9.5-3.8-1.5-7-4.5-7-9.5V6z"/><path d="M8.7 12.2l2.2 2.2 4.4-4.6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-4 4V16H4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M8 12.3l2.6 2.6L16.3 9"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h14l-3 4 3 4H5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5.3l3.6 2.1"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4zM9 4v13M15 6.5v13"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M4.5 10v9M9.5 10v9M14.5 10v9M19.5 10v9M2.5 19h19"/></symbol>
+</svg>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="ring"></div>
+  <div class="ring b"></div>
+  <div class="kicker">Alternative Approach &middot; Payments Modernization</div>
+  <div class="rule"></div>
+  <h1 class="serif">The 2027 Payout<br>Simplification</h1>
+  <div class="subtitle">A simpler road to the same destination: hold guest payments on NAT's own platform, then pay every tour operator their share on a schedule you control &mdash; using the payout system we already run today.</div>
+  <div class="cover-tag">PROJECT PROPOSAL &middot; ALTERNATIVE PATH</div>
+  <div class="cover-meta">
+    <div><b>Prepared for</b>NAT Leadership</div>
+    <div><b>Prepared by</b>Product &amp; Engineering</div>
+    <div><b>Date</b>September 2026</div>
+    <div><b>Applies to</b>Tours departing 2027 onward</div>
+    <div><b>Companion to</b>The 2027 Operator Transfer Upgrade</div>
+    <div><b>Status</b>For review &mdash; nothing built yet</div>
+  </div>
+</div>
+
+<!-- ============ EXECUTIVE OVERVIEW ============ -->
+<div class="page">
+  <div class="eyebrow">Executive Overview</div>
+  <h1 class="title serif">The same goal, a simpler road there</h1>
+  <div class="dek">Everything we set out to achieve with the original Transfer Upgrade still holds. What's changed is how we actually get there &mdash; and it's meaningfully lighter to build.</div>
+
+  <p>The original plan was straightforward: for any tour <b>departing 2027 or later</b>, the guest's payment lands with NAT first, and NAT explicitly sends each operator their share as its own step &mdash; unlocking a single checkout across multiple operators, with full visibility into every payment along the way.</p>
+  <p>One of our own leads raised a good question since then: does that operator payment need to move the <i>instant</i> a guest pays, or could it move on a predictable schedule instead &mdash; the same way NAT already pays operators today? Once we looked closely, the answer is yes. NAT already runs a working payout system that sends operators their money on a schedule &mdash; daily, weekly, or monthly. This alternative simply lets that same, already-trusted system carry the 2027 booking funds too, instead of building an entirely new instant-transfer engine to sit alongside it.</p>
+  <p>The result is the same destination &mdash; one guest payment, split cleanly across every operator involved, fully visible to our team &mdash; reached with a noticeably smaller amount of new, untested code.</p>
+
+  <div class="tiles">
+    <div class="tile">
+      <svg class="icon"><use href="#i-network"/></svg>
+      <h3>One Checkout, Many Operators &mdash; Still True</h3>
+      <p>A single guest payment still splits across every operator in a combo cart. That capability doesn't change; only its timing does.</p>
+    </div>
+    <div class="tile">
+      <svg class="icon"><use href="#i-bank"/></svg>
+      <h3>Reuses What Already Works</h3>
+      <p>The same payout system already sending operators their money today simply carries one more kind of funds through it.</p>
+    </div>
+    <div class="tile">
+      <svg class="icon"><use href="#i-gear"/></svg>
+      <h3>Far Less New Machinery</h3>
+      <p>No new instant, per-booking transfer step to build &mdash; and no matching per-booking reversal step needed for every refund.</p>
+    </div>
+    <div class="tile">
+      <svg class="icon"><use href="#i-toggle"/></svg>
+      <h3>Same Safe, Reversible Rollout</h3>
+      <p>The same on/off control, and the same guarantee that every 2026-and-earlier booking is untouched, forever.</p>
+    </div>
+  </div>
+
+  <div class="pullquote">"The vision hasn't changed &mdash; one guest payment, many operators, full visibility. What's simpler is how NAT actually gets each operator their money."</div>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<div class="page">
+  <div class="eyebrow">How It Works</div>
+  <h1 class="title serif">Two ways to reach the same place</h1>
+  <div class="dek">Both paths start identically. They differ only in when each operator actually receives their share.</div>
+
+  <p>As a reminder, right now every payment is split automatically the instant a guest pays &mdash; but only ever to <b>one</b> operator's account (see <i>The 2027 Operator Transfer Upgrade</i> for the full detail on today's limit). Both paths below solve that same limit. The difference between them is entirely about timing.</p>
+
+  <div class="flow-card today">
+    <div class="flabel">Original Plan &middot; instant, the moment a guest pays</div>
+    <div class="flow-row">
+      <div class="fbox guest"><b>Guest's Card</b>Pays once, for the whole cart</div>
+      <div class="farrow">&rarr;</div>
+      <div class="fbox platform"><b>NAT Platform</b>Receives the full payment</div>
+    </div>
+    <div class="fan-label">splits instantly into a transfer per operator in the cart</div>
+    <div class="fan-row">
+      <div class="fbox operator small"><b>Operator A</b>Paid immediately</div>
+      <div class="fbox operator small"><b>Operator B</b>Paid immediately</div>
+      <div class="fbox operator small"><b>Operator C</b>Paid immediately</div>
+    </div>
+    <div class="fnote">Requires a brand-new instant transfer step &mdash; and a matching reversal step for every refund and cancellation, since money has already moved by the time a guest asks for money back.</div>
+  </div>
+
+  <div class="flow-card future">
+    <div class="flabel">This Alternative &middot; held, then paid on a schedule</div>
+    <div class="flow-row">
+      <div class="fbox guest"><b>Guest's Card</b>Pays once, for the whole cart</div>
+      <div class="farrow">&rarr;</div>
+      <div class="fbox platform held"><b>NAT Platform</b>Receives the full payment &mdash; and holds it<span class="subnote">until the next scheduled payout</span></div>
+    </div>
+    <div class="fan-label">on each operator's own schedule &mdash; daily, weekly, or monthly &mdash; via Auto Payout</div>
+    <div class="fan-row">
+      <div class="fbox operator small"><b>Operator A</b>Paid on schedule</div>
+      <div class="fbox operator small"><b>Operator B</b>Paid on schedule</div>
+      <div class="fbox operator small"><b>Operator C</b>Paid on schedule</div>
+    </div>
+    <div class="fnote">Uses NAT's existing Auto Payout system &mdash; the same one already moving money to operators today &mdash; extended to also carry 2027+ booking funds. A refund issued before that operator's payout runs is simply a plain refund; nothing has moved yet, so there's nothing to reverse.</div>
+  </div>
+
+  <div style="page-break-inside: avoid;">
+    <h2 class="sub">Why now?</h2>
+    <p>As of today, <b>no tour dated 2027 or later has been booked or sold anywhere on the platform yet.</b> That gives us the same risk-free window the original plan identified: we can build and thoroughly test this quietly, with zero chance of disrupting a real guest or booking. The deadline that matters is having this in place before the first 2027 tour date is opened for sale &mdash; which most operators do around <b>October 2026</b>, not January&nbsp;1, 2027 itself.</p>
+  </div>
+</div>
+
+<!-- ============ WHAT STAYS THE SAME / WHAT CHANGES ============ -->
+<div class="page">
+  <div class="eyebrow">Set Expectations</div>
+  <h1 class="title serif">What stays the same, and the one thing that doesn't</h1>
+  <div class="dek">This alternative is just as narrow in scope as the original plan &mdash; with one honest, clearly-flagged difference for operators.</div>
+
+  <div class="panel-row">
+    <div class="panel check">
+      <h3>Unchanged, guaranteed</h3>
+      <ul>
+        <li><svg class="icon"><use href="#i-check"/></svg>Guests check out exactly the same way, on web, mobile, and in person.</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>Every booking for a tour dated 2026 or earlier is completely unaffected, forever.</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>Pricing, fees, and commission splits are calculated exactly as they are today.</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>A single guest payment still splits cleanly across every operator in a combo cart.</li>
+      </ul>
+    </div>
+    <div class="panel brass">
+      <h3>Built on proven technology &mdash; twice over</h3>
+      <p>Like the original plan, this reuses the payment-splitting pattern NAT already relies on for partner-commission bookings. It goes one step further: it also reuses <b>Auto Payout</b>, the system already sending operators their money on a real schedule today. Two systems already proven in production, combined, rather than one brand-new engine built from scratch.</p>
+    </div>
+  </div>
+
+  <h2 class="sub">Scope, in one sentence</h2>
+  <p>This alternative covers <b>card and card-reader payments only</b>, for tours departing in <b>2027 or later</b>. It does not touch cash, check, or other offline payment records, and it does not touch the separate system that already pays tour guides their own gratuities.</p>
+
+  <div class="change-note">
+    <svg class="icon"><use href="#i-clock"/></svg>
+    <div>
+      <h3>The one thing that does change for operators</h3>
+      <p>Today &mdash; and under the original plan &mdash; an operator's share lands in their account the instant a guest pays. Under this alternative, for 2027+ bookings, it lands on whatever schedule they're set up for: daily, weekly, or monthly. That's the one real difference operators will notice, and it should be presented to them plainly, as a clear choice, alongside the schedule options &mdash; not as a silent change to how quickly they're paid.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ROADMAP OVERVIEW ============ -->
+<div class="page">
+  <div class="eyebrow">The Plan</div>
+  <h1 class="title serif">The same six milestones &mdash; two of them lighter</h1>
+  <div class="dek">This alternative doesn't reorganize the original roadmap. It keeps every milestone, and simply makes two of them substantially smaller to build.</div>
+
+  <div class="roadmap">
+    <div class="track"></div>
+    <div class="nodes">
+      <div class="rnode"><div class="dot">1</div><div class="rname">Recognize the Future</div></div>
+      <div class="rnode"><div class="dot">2</div><div class="rname">Extend the Payout Engine</div></div>
+      <div class="rnode"><div class="dot">3</div><div class="rname">Connect Every Checkout</div></div>
+      <div class="rnode"><div class="dot">4</div><div class="rname">Make Refunds Just Work</div></div>
+      <div class="rnode"><div class="dot">5</div><div class="rname">Team Visibility</div></div>
+      <div class="rnode"><div class="dot">6</div><div class="rname">Safety Switch &amp; Launch</div></div>
+    </div>
+  </div>
+
+  <div class="roadmap-list">
+    <div class="rrow"><div class="rnum serif">1</div><div><div class="rname">Recognize the Future <span class="rtag same">Unchanged</span></div><div class="rdesc">Teach the system to spot a 2027+ booking the instant it's paid for, and permanently record which payment method applies to it. Identical to the original plan &mdash; and much of it is already built.</div></div></div>
+    <div class="rrow"><div class="rnum serif">2</div><div><div class="rname">Extend the Payout Engine We Already Have <span class="rtag lighter">Lighter</span></div><div class="rdesc">Teach Auto Payout &mdash; the system already sending operators their money today &mdash; to also carry each operator's ticket-cost share out of NAT's balance, on the same schedule it already uses. Smaller than building a brand-new instant-transfer engine.</div></div></div>
+    <div class="rrow"><div class="rnum serif">3</div><div><div class="rname">Connect Every Way Guests Can Pay <span class="rtag same">Unchanged</span></div><div class="rdesc">Roll the new charge routing out across every checkout flow &mdash; web, mobile, admin, and in-person card readers &mdash; one at a time, each fully tested. Identical to the original plan.</div></div></div>
+    <div class="rrow"><div class="rnum serif">4</div><div><div class="rname">Make Refunds Just Work <span class="rtag lighter">Lighter</span></div><div class="rdesc">Before an operator's payout has run, a refund is simply a plain refund &mdash; there's nothing to reverse. We only need new handling for the rare case where a refund lands after that operator's share has already gone out.</div></div></div>
+    <div class="rrow"><div class="rnum serif">5</div><div><div class="rname">Give Our Team Visibility <span class="rtag lighter">Lighter</span></div><div class="rdesc">Surface anything that didn't go through cleanly. Auto Payout already keeps its own run history and approval log today, so a meaningful part of this may already exist and just need extending.</div></div></div>
+    <div class="rrow"><div class="rnum serif">6</div><div><div class="rname">A Safety Switch, and a Careful Launch <span class="rtag same">Unchanged</span></div><div class="rdesc">The same controllable on/off switch, the same rehearsal in a safe test environment, the same instant way back if anything looks wrong.</div></div></div>
+  </div>
+</div>
+
+<!-- ============ WHAT HAPPENS TO THE WORK ALREADY STARTED ============ -->
+<div class="page">
+  <div class="eyebrow">Continuity</div>
+  <h1 class="title serif">What happens to the work already under way</h1>
+  <div class="dek">Nothing here is wasted. Most of it carries over directly.</div>
+
+  <p>Engineering has already made real progress against the original plan &mdash; most notably Milestone 1 (teaching the system to recognize a 2027+ booking) and a meaningful share of Milestone 3 (connecting the checkout flows). None of that changes under this alternative: it's the same foundation, reused exactly as built.</p>
+  <p>What this alternative retires is narrower than it might sound: specifically, the <i>instant, per-booking</i> transfer step from Milestone 2, and its matching per-booking reversal step from Milestone 4. That work wasn't wasted effort, either &mdash; it's precisely what let us discover this simpler alternative exists and confirm it's sound, and the pattern it proved out (a payment landing fully on NAT's balance, with a separate, explicit step paying the operator) is exactly what this alternative still relies on. The only change is that the "separate, explicit step" now runs on Auto Payout's schedule instead of firing the instant a guest pays.</p>
+
+  <div class="m-success" style="margin-top:18px;">
+    <b>Net effect</b>
+    <p>Less new code to write, fewer new edge cases to test for every refund and cancellation path, and a smaller, more isolated piece of engineering &mdash; while keeping every guarantee the original plan made.</p>
+  </div>
+</div>
+
+<!-- ============ OPEN QUESTIONS ============ -->
+<div class="page">
+  <div class="eyebrow">Worth Deciding Together</div>
+  <h1 class="title serif">A few honest questions before we commit</h1>
+  <div class="dek">This alternative is sound and meaningfully simpler to build &mdash; but holding guest funds for longer than an instant does raise a few real questions worth deciding on purpose, not by default.</div>
+
+  <div class="qlist">
+    <div class="qrow">
+      <svg class="icon"><use href="#i-clock"/></svg>
+      <div class="qtext"><b>How long should NAT hold a guest's payment before an operator sees their share?</b><span>Daily, weekly, and monthly payouts each mean a different length of time NAT is holding an operator's money. Worth agreeing on the default, and whether every operator gets the same choice.</span></div>
+    </div>
+    <div class="qrow">
+      <svg class="icon"><use href="#i-shield"/></svg>
+      <div class="qtext"><b>Who's responsible if a guest disputes a charge?</b><span>Because the full payment sits on NAT's own account rather than splitting immediately, a dispute lands with NAT first. If an operator's share has already been paid out, recovering it becomes something NAT follows up on directly, rather than something handled automatically. Worth a quick look from whoever handles compliance and finance.</span></div>
+    </div>
+    <div class="qrow">
+      <svg class="icon"><use href="#i-undo"/></svg>
+      <div class="qtext"><b>What happens if a refund lands after an operator's already been paid?</b><span>The clean answer: net it against that operator's next scheduled payout, the same way Auto Payout already recalculates what's owed each cycle. Worth confirming this is how we want it explained to operators, too.</span></div>
+    </div>
+    <div class="qrow">
+      <svg class="icon"><use href="#i-toggle"/></svg>
+      <div class="qtext"><b>Which payout schedules do we actually want to offer?</b><span>Daily, weekly, monthly, or some mix &mdash; worth deciding upfront, since it's the one change we're asking operators to notice.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ COMPARISON ============ -->
+<div class="page">
+  <div class="eyebrow">Side by Side</div>
+  <h1 class="title serif">Original plan versus this alternative</h1>
+  <div class="dek">Same starting point, same guarantees. The difference is concentrated in two rows.</div>
+
+  <table class="compare">
+    <tr><th>Dimension</th><th>Today (every booking)</th><th>Original Plan</th><th>This Alternative</th></tr>
+    <tr><td class="dim">When an operator is paid</td><td>Instantly, automatically</td><td>Instantly, via a new transfer step</td><td class="hi">On their schedule &mdash; daily, weekly, or monthly</td></tr>
+    <tr><td class="dim">Many operators, one checkout</td><td>Not possible today</td><td>Yes</td><td>Yes &mdash; unchanged</td></tr>
+    <tr><td class="dim">What a refund has to do</td><td>Nothing extra &mdash; handled automatically</td><td>Reverse the operator's transfer, then refund the guest</td><td class="hi">Nothing extra, unless the operator's already been paid for that booking</td></tr>
+    <tr><td class="dim">New engineering required</td><td>&mdash;</td><td>A full instant-transfer engine, plus matching reversal logic everywhere refunds happen</td><td class="hi">One extension to Auto Payout, plus a small clawback step for late refunds</td></tr>
+    <tr><td class="dim">Applies to</td><td>Every booking</td><td>2027+ bookings, if approved</td><td>2027+ bookings, if approved &mdash; 2026 and earlier unaffected either way</td></tr>
+  </table>
+
+  <p style="font-size:8.9pt;color:var(--ink-soft);">Both the original plan and this alternative are still proposals today &mdash; nothing described in either has been built or turned on for any live booking.</p>
+</div>
+
+<!-- ============ NEXT STEPS ============ -->
+<div class="page closing-page">
+  <div class="eyebrow">Moving Forward</div>
+  <h1 class="title serif">Recommended next steps</h1>
+  <div class="dek">This is presented as an alternative, not a replacement decided in advance &mdash; we'd like your read on it before we commit engineering time either way.</div>
+
+  <div class="closing">
+    <h2 class="serif">Let's decide together</h2>
+    <p>Once you've had a chance to weigh this alongside the original Transfer Upgrade plan, we're ready to proceed with whichever path &mdash; or combination &mdash; makes the most sense for NAT.</p>
+    <ol class="steps">
+      <li>Review this alongside <i>The 2027 Operator Transfer Upgrade</i> and share your read.</li>
+      <li>Confirm the open questions on the previous page &mdash; particularly payout timing and dispute handling.</li>
+      <li>Tell us which path to build, and we begin with Milestone 1 &mdash; already largely proven either way.</li>
+    </ol>
+  </div>
+
+  <h2 class="sub">How we'll keep you posted</h2>
+  <p>After each milestone is complete and tested, you'll get a short, plain-language update &mdash; what's now working, and what's next. No lengthy status meetings required unless you'd like them.</p>
+
+  <div class="signoff">
+    <div class="rule2"></div>
+    <p class="serif">We're looking forward to building this with you.</p>
+    <div class="signature">
+      <b>Devat Karetha</b>
+      <span>Solutions Lead</span>
+    </div>
+  </div>
+
+  <div class="foot"><span>The 2027 Payout Simplification</span><span>Prepared September 2026</span></div>
+</div>
+
+</body>
+</html>

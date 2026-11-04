@@ -1,0 +1,786 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Bokun Channel Manager API",
+    "version": "1.0.0",
+    "description": "Custom Bokun channel-manager plugin integration for Native American Tours (NAT). Bokun — and OTAs connected through it (Viator/TripAdvisor, GetYourGuide, Headout) — calls these endpoints to search products, check availability, and manage bookings.\n\nFollows the Bokun external channel-manager plugin protocol: business-logic failures are returned as HTTP 200 with a `failedX` payload rather than a 4xx status. Only auth failures (401) and unexpected server errors (500) use non-200 statuses.\n\nEvery request body except `plugin/definition` must include a `parameters` array with a `partner_id` entry so the tenant can be resolved:\n```json\n\"parameters\": [{ \"name\": \"partner_id\", \"value\": \"<tenant-id>\" }]\n```"
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Version 1 API"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BokunBasicAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "HTTP Basic Authentication checked against config('auth.bokun_auth.username') / config('auth.bokun_auth.password'). Required on every endpoint except GET /plugin/definition."
+      }
+    },
+    "schemas": {
+      "BokunAuthError": {
+        "type": "object",
+        "properties": {
+          "errorCode": { "type": "string", "example": "AUTHORIZATION_FAILURE" },
+          "errorMessage": { "type": "string", "example": "The provided authentication credentials are not valid." }
+        }
+      },
+      "BokunErrorResponse": {
+        "type": "object",
+        "description": "Fallback for an unhandled exception. Note this breaks the plugin protocol's \"always 200\" contract and is only meant for genuine server errors.",
+        "properties": {
+          "error": { "type": "string", "example": "Failed to retrieve product details" },
+          "message": { "type": "string" }
+        }
+      },
+      "BokunPartnerParameter": {
+        "type": "object",
+        "description": "Every Bokun request body (except plugin/definition) must include one of these in its `parameters` array so BokunIdentifyTenant middleware can resolve the tenant.",
+        "properties": {
+          "name": { "type": "string", "example": "partner_id" },
+          "value": { "type": "string", "description": "Tenant ID", "example": "kens" }
+        }
+      },
+      "BokunDatePart": {
+        "type": "object",
+        "properties": {
+          "year": { "type": "integer", "example": 2026 },
+          "month": { "type": "integer", "example": 8 },
+          "day": { "type": "integer", "example": 15 }
+        }
+      },
+      "BokunTimePart": {
+        "type": "object",
+        "properties": {
+          "hour": { "type": "integer", "example": 9 },
+          "minute": { "type": "integer", "example": 30 }
+        }
+      },
+      "BokunDateRange": {
+        "type": "object",
+        "properties": {
+          "from": { "$ref": "#/components/schemas/BokunDatePart" },
+          "to": { "$ref": "#/components/schemas/BokunDatePart" }
+        }
+      },
+      "BokunMoney": {
+        "type": "object",
+        "properties": {
+          "currency": { "type": "string", "example": "USD" },
+          "amount": { "type": "string", "description": "Decimal amount as a string", "example": "49.99" }
+        }
+      },
+      "BokunPricingCategory": {
+        "type": "object",
+        "description": "One age-band / rate group (tour_package_rates row) for a product.",
+        "properties": {
+          "id": { "type": "string", "example": "12" },
+          "label": { "type": "string", "example": "Adult" },
+          "minAge": { "type": "integer", "nullable": true, "example": 18 },
+          "maxAge": { "type": "integer", "nullable": true, "example": 64 }
+        }
+      },
+      "BokunRateType": {
+        "type": "object",
+        "description": "A rate/fare type. NAT only ever exposes the single \"Global Rate\".",
+        "properties": {
+          "id": { "type": "string", "example": "1" },
+          "label": { "type": "string", "example": "Global Rate" }
+        }
+      },
+      "BokunProductSummary": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Bokun product code (tour_packages.bokun_product_code)", "example": "10234" },
+          "name": { "type": "string", "example": "Grand Canyon Sunset Tour" },
+          "description": { "type": "string" },
+          "pricingCategories": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPricingCategory" } }
+        }
+      },
+      "BokunProductDetails": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "10234" },
+          "name": { "type": "string", "example": "Grand Canyon Sunset Tour" },
+          "description": { "type": "string" },
+          "pricingCategories": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPricingCategory" } },
+          "rates": { "type": "array", "items": { "$ref": "#/components/schemas/BokunRateType" } },
+          "bookingType": { "type": "string", "example": "DATE_AND_TIME" },
+          "dropoffAvailable": { "type": "boolean", "example": false },
+          "productCategory": { "type": "string", "example": "ACTIVITIES" },
+          "ticketSupport": { "type": "array", "items": { "type": "string" }, "example": ["TICKET_PER_BOOKING"] },
+          "countries": { "type": "array", "items": { "type": "string" }, "example": ["US"] },
+          "cities": { "type": "array", "items": { "type": "string" }, "example": ["Phoenix"] },
+          "startTimes": { "type": "array", "items": { "$ref": "#/components/schemas/BokunTimePart" } },
+          "ticketType": { "type": "string", "example": "QR_CODE" },
+          "meetingType": { "type": "string", "example": "MEET_ON_LOCATION" }
+        }
+      },
+      "BokunProductAvailabilityFlag": {
+        "type": "object",
+        "properties": {
+          "productId": { "type": "string", "example": "10234" },
+          "actualCheckDone": { "type": "boolean", "example": true }
+        }
+      },
+      "BokunPricingCategoryWithPrice": {
+        "type": "object",
+        "properties": {
+          "pricingCategoryId": { "type": "string", "example": "12" },
+          "price": { "$ref": "#/components/schemas/BokunMoney" }
+        }
+      },
+      "BokunRatePrice": {
+        "type": "object",
+        "properties": {
+          "rateId": { "type": "string", "example": "1" },
+          "pricePerPerson": {
+            "type": "object",
+            "properties": {
+              "pricingCategoryWithPrice": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPricingCategoryWithPrice" } }
+            }
+          }
+        }
+      },
+      "BokunAvailabilityEntry": {
+        "type": "object",
+        "properties": {
+          "capacity": { "type": "integer", "example": 12 },
+          "date": { "$ref": "#/components/schemas/BokunDatePart" },
+          "time": { "$ref": "#/components/schemas/BokunTimePart" },
+          "rates": { "type": "array", "items": { "$ref": "#/components/schemas/BokunRatePrice" } }
+        }
+      },
+      "BokunPassenger": {
+        "type": "object",
+        "properties": {
+          "pricingCategoryId": { "type": "string", "example": "12" },
+          "pricePerPassenger": { "$ref": "#/components/schemas/BokunMoney", "description": "Required on booking/confirm; ignored elsewhere." }
+        }
+      },
+      "BokunPassengerGroup": {
+        "type": "object",
+        "properties": {
+          "rateId": { "type": "string", "example": "1" },
+          "passengers": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPassenger" } }
+        }
+      },
+      "BokunCustomerContact": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string", "example": "Jane" },
+          "lastName": { "type": "string", "example": "Smith" },
+          "email": { "type": "string", "format": "email", "example": "jane@example.com" },
+          "phone": { "type": "string", "example": "+12025550100" }
+        }
+      },
+      "BokunBookingSource": {
+        "type": "object",
+        "properties": {
+          "bookingChannel": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string", "description": "OTA title, resolved to an OTA prefix via BokunUtils::generateBookingReferenceCode()", "example": "Viator" }
+            }
+          }
+        }
+      },
+      "BokunReservationData": {
+        "type": "object",
+        "properties": {
+          "productId": { "type": "string", "description": "Bokun product code", "example": "10234" },
+          "date": { "$ref": "#/components/schemas/BokunDatePart" },
+          "time": { "$ref": "#/components/schemas/BokunTimePart" },
+          "reservations": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPassengerGroup" } },
+          "customerContact": { "$ref": "#/components/schemas/BokunCustomerContact", "description": "Required on booking/confirm." },
+          "bookingSource": { "$ref": "#/components/schemas/BokunBookingSource", "description": "Required on booking/confirm and booking/amend." },
+          "notes": { "type": "string", "nullable": true },
+          "platformId": { "type": "string", "description": "Fallback OTA reference used when externalSaleId/platformBookingId are absent." },
+          "platformBookingId": { "type": "string", "nullable": true, "description": "Bokun's own booking ID; used to build bokun_reference_code." },
+          "externalSaleId": { "type": "string", "nullable": true, "description": "OTA sale reference (e.g. Viator/GetYourGuide/Headout booking ref)." }
+        }
+      },
+      "BokunBookingTicket": {
+        "type": "object",
+        "properties": {
+          "qrTicket": {
+            "type": "object",
+            "properties": {
+              "ticketBarcode": { "type": "string", "example": "NAT10432" }
+            }
+          }
+        }
+      },
+      "BokunSuccessfulReservation": {
+        "type": "object",
+        "properties": {
+          "successfulReservation": {
+            "type": "object",
+            "properties": {
+              "reservationConfirmationCode": { "type": "string", "example": "4G7ZK9LQ" }
+            }
+          }
+        }
+      },
+      "BokunFailedReservation": {
+        "type": "object",
+        "properties": {
+          "failedReservation": {
+            "type": "object",
+            "properties": {
+              "reservationError": { "type": "string", "example": "The selected tour date or time is unavailable or has already passed." }
+            }
+          }
+        }
+      },
+      "BokunSuccessfulReservationCancellation": {
+        "type": "object",
+        "properties": {
+          "successfulReservationCancellation": { "type": "object" }
+        }
+      },
+      "BokunFailedReservationCancellation": {
+        "type": "object",
+        "properties": {
+          "failedReservationCancellation": {
+            "type": "object",
+            "properties": {
+              "reservationCancellationError": { "type": "string", "example": "Reservation not found or already expired." }
+            }
+          }
+        }
+      },
+      "BokunSuccessfulBooking": {
+        "type": "object",
+        "properties": {
+          "successfulBooking": {
+            "type": "object",
+            "properties": {
+              "bookingConfirmationCode": { "type": "string", "example": "TRIP-88812" },
+              "bookingTicket": { "$ref": "#/components/schemas/BokunBookingTicket" }
+            }
+          }
+        }
+      },
+      "BokunFailedBooking": {
+        "type": "object",
+        "properties": {
+          "failedBooking": {
+            "type": "object",
+            "properties": {
+              "bookingError": { "type": "string", "example": "Reservation not found or already expired." }
+            }
+          }
+        }
+      },
+      "BokunSuccessfulCancellation": {
+        "type": "object",
+        "properties": {
+          "successfulCancellation": { "type": "object" }
+        }
+      },
+      "BokunFailedCancellation": {
+        "type": "object",
+        "properties": {
+          "failedCancellation": {
+            "type": "object",
+            "properties": {
+              "cancellationError": { "type": "string", "example": "Too late to cancel. Contact the tour operator." }
+            }
+          }
+        }
+      },
+      "BokunSuccessfulAmendment": {
+        "type": "object",
+        "properties": {
+          "successfulAmendment": {
+            "type": "object",
+            "properties": {
+              "amendmentConfirmationCode": { "type": "string", "example": "TRIP-88812" },
+              "bookingTicket": { "$ref": "#/components/schemas/BokunBookingTicket" }
+            }
+          }
+        }
+      },
+      "BokunFailedAmendment": {
+        "type": "object",
+        "properties": {
+          "failedAmendment": {
+            "type": "object",
+            "properties": {
+              "amendmentError": { "type": "string", "example": "Only 2 seat(s) are available." }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    { "BokunBasicAuth": [] }
+  ],
+  "tags": [
+    { "name": "Plugin", "description": "Plugin meta-data" },
+    { "name": "Products", "description": "Access to product data" },
+    { "name": "Availability", "description": "Operations pertaining to product availability" },
+    { "name": "Bookings", "description": "Operations pertaining to booking" }
+  ],
+  "paths": {
+    "/bokun/plugin/definition": {
+      "get": {
+        "tags": ["Plugin"],
+        "summary": "Plugin capability definition",
+        "description": "Public, unauthenticated. Bokun calls this once when the plugin is installed to discover its capabilities and required parameters.",
+        "operationId": "pluginDefinition",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Plugin definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string", "example": "NativeAmericanTours" },
+                    "description": { "type": "string" },
+                    "capabilities": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "example": ["SUPPORTS_RESERVATIONS", "SUPPORTS_AVAILABILITY", "SUPPORTS_RESERVATION_CANCELLATION", "SUPPORTS_AMENDMENT"]
+                    },
+                    "parameters": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string", "example": "partner_id" },
+                          "type": { "type": "string", "example": "STRING" },
+                          "required": { "type": "boolean", "example": true }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "name": "NativeAmericanTours",
+                  "description": "Custom Bokun integration for Native American Tours (NAT) to sync availability and reservations.",
+                  "capabilities": ["SUPPORTS_RESERVATIONS", "SUPPORTS_AVAILABILITY", "SUPPORTS_RESERVATION_CANCELLATION", "SUPPORTS_AMENDMENT"],
+                  "parameters": [{ "name": "partner_id", "type": "STRING", "required": true }]
+                }
+              }
+            }
+          },
+          "500": { "description": "Unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/product/search": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Search products",
+        "description": "Returns active, Bokun-enabled tour packages, optionally filtered by name.",
+        "operationId": "searchProduct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["parameters"],
+                "properties": {
+                  "productName": { "type": "string", "nullable": true, "description": "Optional case-insensitive substring match against the package name." },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "productName": "Grand Canyon",
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Matching products",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/BokunProductSummary" } }
+              }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/product/getById": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Get product by ID",
+        "description": "Retrieves full detail for a single product by its Bokun product code (externalId).",
+        "operationId": "productDetailsById",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["externalId", "parameters"],
+                "properties": {
+                  "externalId": { "type": "string", "description": "Bokun product code (tour_packages.bokun_product_code)", "example": "10234" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "externalId": "10234",
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product detail",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/BokunProductDetails" } }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Product not found, or an unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/product/getAvailable": {
+      "post": {
+        "tags": ["Availability"],
+        "summary": "Bulk availability flag check",
+        "description": "For each product ID given, reports whether it can satisfy requiredCapacity on at least one slot within the date range.",
+        "operationId": "productGetAvailable",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["externalProductIds", "requiredCapacity", "range", "parameters"],
+                "properties": {
+                  "externalProductIds": { "type": "array", "items": { "type": "string" }, "example": ["10234", "10567"] },
+                  "requiredCapacity": { "type": "integer", "example": 2 },
+                  "range": { "$ref": "#/components/schemas/BokunDateRange" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "externalProductIds": ["10234", "10567"],
+                "requiredCapacity": 2,
+                "range": {
+                  "from": { "year": 2026, "month": 8, "day": 1 },
+                  "to": { "year": 2026, "month": 8, "day": 31 }
+                },
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Only products that satisfy requiredCapacity are included.",
+            "content": {
+              "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/BokunProductAvailabilityFlag" } } }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/product/getAvailability": {
+      "post": {
+        "tags": ["Availability"],
+        "summary": "Get product availability",
+        "description": "Returns every open, capacity>0 date/time slot for one product within the date range, each with per-passenger pricing.",
+        "operationId": "getProductAvailability",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["productId", "range", "parameters"],
+                "properties": {
+                  "productId": { "type": "string", "description": "Bokun product code", "example": "10234" },
+                  "range": { "$ref": "#/components/schemas/BokunDateRange" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "productId": "10234",
+                "range": {
+                  "from": { "year": 2026, "month": 8, "day": 1 },
+                  "to": { "year": 2026, "month": 8, "day": 31 }
+                },
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Available slots; empty array if the product has no open slots in range.",
+            "content": {
+              "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/BokunAvailabilityEntry" } } }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Product/rate groups not found, or an unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/booking/reserve": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Reserve a slot",
+        "description": "Places a 30-minute hold on a slot ahead of booking/confirm. Never returns a non-2xx status for business-logic failures — check `successfulReservation` vs `failedReservation` in the 200 body.",
+        "operationId": "bookingReservation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["reservationData", "parameters"],
+                "properties": {
+                  "reservationData": { "$ref": "#/components/schemas/BokunReservationData" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "reservationData": {
+                  "productId": "10234",
+                  "date": { "year": 2026, "month": 8, "day": 15 },
+                  "time": { "hour": 9, "minute": 30 },
+                  "reservations": [
+                    { "rateId": "1", "passengers": [{ "pricingCategoryId": "12" }] }
+                  ]
+                },
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Always 200 — inspect the body for successfulReservation vs failedReservation.",
+            "content": {
+              "application/json": {
+                "schema": { "oneOf": [{ "$ref": "#/components/schemas/BokunSuccessfulReservation" }, { "$ref": "#/components/schemas/BokunFailedReservation" }] },
+                "examples": {
+                  "success": { "value": { "successfulReservation": { "reservationConfirmationCode": "4G7ZK9LQ" } } },
+                  "failure": { "value": { "failedReservation": { "reservationError": "Only 1 seat(s) are available." } } }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/booking/cancelReserve": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Cancel a reservation hold",
+        "description": "Releases a hold created by booking/reserve, identified by reservationConfirmationCode.",
+        "operationId": "bookingCancelReservation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["reservationConfirmationCode", "parameters"],
+                "properties": {
+                  "reservationConfirmationCode": { "type": "string", "example": "4G7ZK9LQ" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "reservationConfirmationCode": "4G7ZK9LQ",
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Always 200 — inspect the body for successfulReservationCancellation vs failedReservationCancellation.",
+            "content": {
+              "application/json": {
+                "schema": { "oneOf": [{ "$ref": "#/components/schemas/BokunSuccessfulReservationCancellation" }, { "$ref": "#/components/schemas/BokunFailedReservationCancellation" }] },
+                "examples": {
+                  "success": { "value": { "successfulReservationCancellation": {} } },
+                  "failure": { "value": { "failedReservationCancellation": { "reservationCancellationError": "Reservation not found or already expired." } } }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/booking/confirm": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Confirm a booking",
+        "description": "Converts a valid, non-expired reservation into a confirmed booking (writes tour_bookings_master + transactions). Requires `customerContact`, `bookingSource`, and a `pricePerPassenger.amount` for every passenger.",
+        "operationId": "bookingConfirmation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["reservationConfirmationCode", "reservationData", "parameters"],
+                "properties": {
+                  "reservationConfirmationCode": { "type": "string", "example": "4G7ZK9LQ" },
+                  "reservationData": { "$ref": "#/components/schemas/BokunReservationData" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "reservationConfirmationCode": "4G7ZK9LQ",
+                "reservationData": {
+                  "productId": "10234",
+                  "date": { "year": 2026, "month": 8, "day": 15 },
+                  "time": { "hour": 9, "minute": 30 },
+                  "reservations": [
+                    { "rateId": "1", "passengers": [{ "pricingCategoryId": "12", "pricePerPassenger": { "currency": "USD", "amount": "49.99" } }] }
+                  ],
+                  "customerContact": { "firstName": "Jane", "lastName": "Smith", "email": "jane@example.com", "phone": "+12025550100" },
+                  "bookingSource": { "bookingChannel": { "title": "Viator" } },
+                  "platformBookingId": "PB-9001",
+                  "externalSaleId": "EXT-30045"
+                },
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Always 200 — inspect the body for successfulBooking vs failedBooking.",
+            "content": {
+              "application/json": {
+                "schema": { "oneOf": [{ "$ref": "#/components/schemas/BokunSuccessfulBooking" }, { "$ref": "#/components/schemas/BokunFailedBooking" }] },
+                "examples": {
+                  "success": { "value": { "successfulBooking": { "bookingConfirmationCode": "TRIP-88812", "bookingTicket": { "qrTicket": { "ticketBarcode": "NAT10432" } } } } },
+                  "failure": { "value": { "failedBooking": { "bookingError": "Reservation not found or already expired." } } }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Unhandled server error (e.g. a malformed passenger price)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/booking/cancel": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Cancel a booking",
+        "description": "Cancels a confirmed booking by its OTA/Bokun reference and refunds it. Not blocked by check-in/redemption status — once an OTA calls cancel, NAT stays in sync with the OTA's own state. Still enforced: the operator's cancellation_within_days cutoff.",
+        "operationId": "bookingCancellation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["bookingConfirmationCode", "parameters"],
+                "properties": {
+                  "bookingConfirmationCode": { "type": "string", "description": "Matched against bokun_reference_code, ota_reference_booking, get_your_guide_reference_booking, or viator_bookingRef.", "example": "TRIP-88812" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "bookingConfirmationCode": "TRIP-88812",
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Always 200 — inspect the body for successfulCancellation vs failedCancellation.",
+            "content": {
+              "application/json": {
+                "schema": { "oneOf": [{ "$ref": "#/components/schemas/BokunSuccessfulCancellation" }, { "$ref": "#/components/schemas/BokunFailedCancellation" }] },
+                "examples": {
+                  "success": { "value": { "successfulCancellation": {} } },
+                  "failure": { "value": { "failedCancellation": { "cancellationError": "Too late to cancel. Contact the tour operator." } } }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    },
+    "/bokun/booking/amend": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Amend a booking (reschedule / add / remove passengers)",
+        "description": "Reschedules a booking to a new date/time and/or changes passenger counts, based on a diff between reservationData.reservations and the existing booking. Rejected if it would leave the booking with zero total passengers — use booking/cancel instead.",
+        "operationId": "bookingAmendment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["bookingConfirmationCode", "reservationData", "parameters"],
+                "properties": {
+                  "bookingConfirmationCode": { "type": "string", "example": "TRIP-88812" },
+                  "reservationData": { "$ref": "#/components/schemas/BokunReservationData" },
+                  "parameters": { "type": "array", "items": { "$ref": "#/components/schemas/BokunPartnerParameter" } }
+                }
+              },
+              "example": {
+                "bookingConfirmationCode": "TRIP-88812",
+                "reservationData": {
+                  "productId": "10234",
+                  "date": { "year": 2026, "month": 8, "day": 16 },
+                  "time": { "hour": 14, "minute": 0 },
+                  "reservations": [
+                    { "rateId": "1", "passengers": [{ "pricingCategoryId": "12" }, { "pricingCategoryId": "12" }] }
+                  ],
+                  "bookingSource": { "bookingChannel": { "title": "Viator" } }
+                },
+                "parameters": [{ "name": "partner_id", "value": "kens" }]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Always 200 — inspect the body for successfulAmendment vs failedAmendment.",
+            "content": {
+              "application/json": {
+                "schema": { "oneOf": [{ "$ref": "#/components/schemas/BokunSuccessfulAmendment" }, { "$ref": "#/components/schemas/BokunFailedAmendment" }] },
+                "examples": {
+                  "success": { "value": { "successfulAmendment": { "amendmentConfirmationCode": "TRIP-88812", "bookingTicket": { "qrTicket": { "ticketBarcode": "NAT10432" } } } } },
+                  "failure": { "value": { "failedAmendment": { "amendmentError": "Only 2 seat(s) are available." } } }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid Basic Auth credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunAuthError" } } } },
+          "500": { "description": "Unhandled server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BokunErrorResponse" } } } }
+        }
+      }
+    }
+  }
+}

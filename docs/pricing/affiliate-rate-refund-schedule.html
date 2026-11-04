@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Affiliate Rate Refunds</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+:root{--paper:#F6F2EA;--paper2:#EFE8DC;--ink:#1E2A2B;--muted:#6B6F68;--line:#D6CDBE;--clay:#C9A68A;--sage:#4F7F6A;--ember:#C2502E}
+@page{size:Letter;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;background:#d9d3c8;color:var(--ink);font:13px/1.55 Manrope,system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:8.5in;height:11in;margin:0 auto 24px;background:var(--paper);padding:.7in .75in .9in;position:relative;overflow:hidden;page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+@media print{body{background:none}.page{margin:0}}
+.cover{background:radial-gradient(120% 60% at 100% 0%,#E7DCCB 0%,var(--paper) 55%)}
+.cover::after{content:"";position:absolute;right:-1.2in;top:-1.2in;width:3.6in;height:3.6in;border-radius:50%;border:1px solid var(--clay);opacity:.5}
+.eyebrow{font:600 10.5px/1 Manrope;letter-spacing:.18em;text-transform:uppercase;color:var(--ember);margin-bottom:14px}
+h1{font:400 52px/1.02 "Instrument Serif",serif;margin:0 0 22px;letter-spacing:-.01em}
+h1 em{color:var(--sage)}
+h2{font:400 30px/1.15 "Instrument Serif",serif;margin:0 0 10px}
+h2 small{font:600 12px Manrope;color:var(--ember);margin-left:10px;letter-spacing:.02em}
+h2.gap{margin-top:30px}
+h3{font:700 11px Manrope;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
+p{margin:0 0 10px}
+.lede{font-size:15px;line-height:1.6;max-width:6.4in}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 22px}
+.kpi{border-top:2px solid var(--ink);padding-top:10px}
+.kpi span{display:block;font:400 34px/1 "Instrument Serif",serif}
+.kpi label{font-size:11px;color:var(--muted)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:#fff8;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card .k{font:700 10.5px Manrope;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.card .big{font:400 40px/1.1 "Instrument Serif",serif;margin:4px 0 6px}
+.sage-edge{border-left:4px solid var(--sage)}.sage-edge .big{color:var(--sage)}
+.ember-edge{border-left:4px solid var(--ember)}.ember-edge .big{color:var(--ember)}
+.note{margin-top:22px;padding:12px 16px;border-radius:10px;background:var(--ink);color:#F6F2EA;font-size:12.5px}
+.chart{width:100%;height:auto;display:block;margin:6px 0 4px}
+.chart .lbl{font:700 12px Manrope;fill:var(--ink)}
+.chart .lg{font:500 11px Manrope;fill:var(--muted)}
+.chart .in{font:600 11px Manrope;fill:#fff}
+.chart .tot{font:700 13px Manrope;fill:var(--ink)}
+.chart .tot.sm{font-size:11.5px}
+.chart .ember,.ember{fill:var(--ember);color:var(--ember)}
+.chart .sage{fill:var(--sage);font-weight:700}
+.callout{display:flex;gap:16px;align-items:center;margin-top:16px;padding:14px 18px;border:1px solid var(--line);border-radius:12px;background:#fff8}
+.big2{font:400 40px/1 "Instrument Serif",serif;color:var(--ember)}
+.grid2{display:grid;grid-template-columns:1.45fr 1fr;gap:20px;align-items:start}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+th{font:700 10px Manrope;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1.5px solid var(--ink);padding:6px 8px}
+td{padding:6px 8px;border-bottom:1px solid var(--line)}
+tbody tr:nth-child(even) td{background:#fff5}
+.r{text-align:right}.strong{font-weight:700}
+.mono{font:500 11.5px "JetBrains Mono",monospace}
+.muted{color:var(--muted)}.small{font-size:11px;margin-top:10px}
+tr.sub td{border-top:1.5px solid var(--ink);border-bottom:none;font-weight:700;background:transparent!important}
+table.mini{margin-top:14px}
+.steps{padding-left:18px;margin:6px 0 18px}.steps li{margin-bottom:8px}
+ul.plain{padding-left:18px;margin:6px 0 18px}ul.plain li{margin-bottom:6px}
+.next{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+.next div{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff8}
+.next span{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sage);color:#fff;font-weight:700;margin-bottom:8px}
+footer{position:absolute;left:.75in;right:.75in;bottom:.4in;display:flex;justify-content:space-between;font-size:10px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+footer b{color:var(--ink);font-weight:600}
+</style></head><body>
+<section class="page cover">
+<div class="eyebrow">Kens Tours · Affiliates package</div>
+<h1>Affiliate rate correction<br><em>refund schedule</em></h1>
+<p class="lede">Between June and October, some affiliate bookings made for tours starting between 10:00 am and 2:00 pm were charged
+the <b>May–October price of $52 per guest</b> instead of the <b>June–December standard price of $49</b>. Every booking was charged
+exactly what its own price said — the issue was which price list it was given. That rule is now fixed; this document lists
+what each affected booking is owed.</p>
+<div class="kpis">
+  <div class="kpi"><span>37</span><label>bookings affected</label></div>
+  <div class="kpi"><span>274</span><label>guests</label></div>
+  <div class="kpi"><span>$3.40</span><label>overcharge per guest</label></div>
+  <div class="kpi"><span>$931.60</span><label>total overcharge</label></div>
+</div>
+<div class="split">
+  <div class="card sage-edge"><div class="k">Already refunded</div><div class="big">$47.60</div>
+    <p>6 Ajoy Tours bookings were spotted and refunded by hand by Kens and NAT staff in September and October.</p></div>
+  <div class="card ember-edge"><div class="k">Still to refund</div><div class="big">$884.00</div>
+    <p>31 bookings across Empire Vacations, Ajoy Tours and Max Tour — listed booking by booking on pages 4 and 5.</p></div>
+</div>
+<div class="note"><b>Before refunding:</b> please confirm $49 was the agreed June–December price for <b>Empire Vacations</b> and
+<b>Max Tour</b> as well — their bookings make up most of the amount still owed.</div>
+<footer><span>Prepared by <b>Devat Karetha — Solutions Lead</b></span><span>Affiliate rate correction · October 19, 2026</span><span>1 / 6</span></footer></section><section class="page ">
+<div class="eyebrow">01 · What happened</div>
+<h2>Two price lists covered the same dates</h2>
+<p>Each affiliate had two price lists for this tour. From June to October they overlapped. The June–December list was
+given the higher priority so it would take over from June — but for tours between 10 am and 2 pm the system always used
+the time-specific May–October list instead, whatever its priority.</p>
+<svg viewBox="0 0 640 230" class="chart" role="img" aria-label="Two price lists overlapping from June to October"><text x="151.0" y="16" class="lg" text-anchor="middle">May</text><line x1="120" y1="24" x2="120" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><text x="213.0" y="16" class="lg" text-anchor="middle">Jun</text><line x1="182" y1="24" x2="182" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><text x="275.0" y="16" class="lg" text-anchor="middle">Jul</text><line x1="244" y1="24" x2="244" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><text x="337.0" y="16" class="lg" text-anchor="middle">Aug</text><line x1="306" y1="24" x2="306" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><text x="399.0" y="16" class="lg" text-anchor="middle">Sep</text><line x1="368" y1="24" x2="368" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><text x="461.0" y="16" class="lg" text-anchor="middle">Oct</text><line x1="430" y1="24" x2="430" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><text x="523.0" y="16" class="lg" text-anchor="middle">Nov</text><line x1="492" y1="24" x2="492" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><text x="585.0" y="16" class="lg" text-anchor="middle">Dec</text><line x1="554" y1="24" x2="554" y2="150" stroke="var(--line)" stroke-dasharray="2 3"/><rect x="182" y="24" width="310" height="126" fill="var(--ember)" opacity=".09"/><text x="337.0" y="144" class="lg ember" text-anchor="middle">Overlap: Jun 1 – Oct 31</text><text x="0" y="56" class="lbl">May–Oct list</text><text x="0" y="70" class="lg">10 am–2 pm only</text><rect x="120" y="40" width="372" height="30" rx="5" fill="var(--ink)"/><text x="132" y="60" class="in">$52 / guest · priority 1</text><text x="0" y="106" class="lbl">June–Dec list</text><text x="0" y="120" class="lg">all tour times</text><rect x="182" y="90" width="434" height="30" rx="5" fill="var(--sage)"/><text x="194" y="110" class="in">$49 / guest · priority 2 (higher)</text><rect x="0" y="166" width="310" height="58" rx="8" fill="var(--paper2)" stroke="var(--line)"/><text x="14" y="188" class="lbl">Before the fix</text><text x="14" y="208" class="lg">The 10 am–2 pm list always won → <tspan class="ember">$52</tspan></text><rect x="330" y="166" width="310" height="58" rx="8" fill="var(--paper2)" stroke="var(--sage)"/><text x="344" y="188" class="lbl">After the fix</text><text x="344" y="208" class="lg">The higher-priority list wins → <tspan class="sage">$49</tspan></text></svg>
+<h3>What one guest paid</h3>
+<p>Permit fee is the same on both lists; the ticket, its tax and the booking fee were each slightly higher.</p>
+<svg viewBox="0 0 640 190" class="chart" role="img" aria-label="Price per guest at $52 versus $49"><text x="0" y="52" class="lbl">Charged ($52 list)</text><rect x="150.0" y="30" width="291.2" height="34" rx="3" fill="var(--ink)"/><text x="295.6" y="52" class="in" text-anchor="middle">$52.00</text><rect x="442.7" y="30" width="17.5" height="34" rx="3" fill="var(--clay)"/><rect x="461.7" y="30" width="84.0" height="34" rx="3" fill="var(--sage)"/><text x="503.7" y="52" class="in" text-anchor="middle">$15.00</text><rect x="547.2" y="30" width="27.5" height="34" rx="3" fill="var(--ember)"/><text x="584.2" y="53" class="tot">$75.03</text><text x="0" y="122" class="lbl">Correct ($49 list)</text><rect x="150.0" y="100" width="274.4" height="34" rx="3" fill="var(--ink)"/><text x="287.2" y="122" class="in" text-anchor="middle">$49.00</text><rect x="425.9" y="100" width="16.5" height="34" rx="3" fill="var(--clay)"/><rect x="443.9" y="100" width="84.0" height="34" rx="3" fill="var(--sage)"/><text x="485.9" y="122" class="in" text-anchor="middle">$15.00</text><rect x="529.4" y="100" width="26.3" height="34" rx="3" fill="var(--ember)"/><text x="565.1" y="123" class="tot">$71.63</text><rect x="150" y="168" width="11" height="11" rx="2" fill="var(--ink)"/><text x="166" y="178" class="lg">Ticket</text><rect x="255" y="168" width="11" height="11" rx="2" fill="var(--clay)"/><text x="271" y="178" class="lg">Tax</text><rect x="360" y="168" width="11" height="11" rx="2" fill="var(--sage)"/><text x="376" y="178" class="lg">Permit</text><rect x="465" y="168" width="11" height="11" rx="2" fill="var(--ember)"/><text x="481" y="178" class="lg">Booking fee</text></svg>
+<div class="callout"><span class="big2">$3.40</span><span>more per guest — <b>$3.18</b> ticket and tax (operator) plus <b>$0.22</b> booking fee (NAT). A 2-guest booking paid <b>$150.06</b> instead of <b>$143.26</b>.</span></div>
+<footer><span>Prepared by <b>Devat Karetha — Solutions Lead</b></span><span>Affiliate rate correction · October 19, 2026</span><span>2 / 6</span></footer></section><section class="page ">
+<div class="eyebrow">02 · Who is affected</div>
+<h2>Three affiliates, June 1 – October 16</h2>
+<div class="grid2">
+  <div><h3>Refund by affiliate</h3><svg viewBox="0 0 470 170" class="chart" role="img" aria-label="Refund amount per affiliate"><text x="0" y="33" class="lbl">Empire Vacations</text><rect x="120.0" y="14" width="190.0" height="28" rx="3" fill="var(--ember)"/><text x="318.0" y="33" class="tot sm">$771.80</text><text x="0" y="79" class="lbl">Ajoy Tours</text><rect x="120" y="60" width="11.7" height="28" rx="3" fill="var(--sage)"/><rect x="133.2" y="60" width="10.9" height="28" rx="3" fill="var(--ember)"/><text x="152.1" y="79" class="tot sm">$44.20  ·  $47.60 already refunded</text><text x="0" y="125" class="lbl">Max Tour</text><rect x="120.0" y="106" width="16.7" height="28" rx="3" fill="var(--ember)"/><text x="144.7" y="125" class="tot sm">$68.00</text><rect x="120" y="152" width="11" height="11" rx="2" fill="var(--ember)"/><text x="136" y="162" class="lg">Still to refund</text><rect x="250" y="152" width="11" height="11" rx="2" fill="var(--sage)"/><text x="266" y="162" class="lg">Already refunded</text></svg></div>
+  <div class="narrow"><h3>Guests by tour month</h3><svg viewBox="0 0 300 190" class="chart" role="img" aria-label="Guests affected by tour month"><rect x="20" y="123.2" width="40" height="26.8" rx="4" fill="var(--clay)"/><text x="40.0" y="117.2" class="tot sm" text-anchor="middle">25</text><text x="40.0" y="168" class="lg" text-anchor="middle">Jun</text><rect x="78" y="30.0" width="40" height="120.0" rx="4" fill="var(--clay)"/><text x="98.0" y="24.0" class="tot sm" text-anchor="middle">112</text><text x="98.0" y="168" class="lg" text-anchor="middle">Jul</text><rect x="136" y="108.2" width="40" height="41.8" rx="4" fill="var(--clay)"/><text x="156.0" y="102.2" class="tot sm" text-anchor="middle">39</text><text x="156.0" y="168" class="lg" text-anchor="middle">Aug</text><rect x="194" y="145.7" width="40" height="4.3" rx="4" fill="var(--clay)"/><text x="214.0" y="139.7" class="tot sm" text-anchor="middle">4</text><text x="214.0" y="168" class="lg" text-anchor="middle">Sep</text><rect x="252" y="49.3" width="40" height="100.7" rx="4" fill="var(--clay)"/><text x="272.0" y="43.3" class="tot sm" text-anchor="middle">94</text><text x="272.0" y="168" class="lg" text-anchor="middle">Oct</text><line x1="12" y1="150" x2="292" y2="150" stroke="var(--line)"/></svg></div>
+</div>
+<table class="mini"><thead><tr><th>Affiliate</th><th class="r">Bookings</th><th class="r">Guests</th><th class="r">Already refunded</th><th class="r">Still to refund</th></tr></thead><tbody>
+<tr><td>Empire Vacations</td><td class="r">21</td><td class="r">227</td><td class="r">$0.00</td><td class="r strong">$771.80</td></tr><tr><td>Ajoy Tours</td><td class="r">11</td><td class="r">27</td><td class="r">$47.60</td><td class="r strong">$44.20</td></tr><tr><td>Max Tour</td><td class="r">5</td><td class="r">20</td><td class="r">$0.00</td><td class="r strong">$68.00</td></tr>
+<tr class="sub"><td>Total</td><td class="r">37</td><td class="r">274</td><td class="r">$47.60</td><td class="r strong">$884.00</td></tr></tbody></table>
+<h3>Already refunded — no action needed</h3>
+<table><thead><tr><th>Booking</th><th>Tour</th><th class="r">Guests</th><th class="r">Refunded</th><th>Refunded by</th></tr></thead><tbody><tr><td class="mono">KEN-368701</td><td>Sep 13</td><td class="r">2</td><td class="r">$6.80</td><td class="muted">Lane Gilmore (NAT) · Sep 16</td></tr><tr><td class="mono">KEN-374957</td><td>Sep 13</td><td class="r">2</td><td class="r">$6.80</td><td class="muted">Lane Gilmore (NAT) · Sep 16</td></tr><tr><td class="mono">KEN-368720</td><td>Oct 6</td><td class="r">4</td><td class="r">$13.60</td><td class="muted">Curvin Coleman (Kens) · Oct 5</td></tr><tr><td class="mono">KEN-384697</td><td>Oct 6</td><td class="r">2</td><td class="r">$6.80</td><td class="muted">Curvin Coleman (Kens) · Oct 5</td></tr><tr><td class="mono">KEN-384698</td><td>Oct 6</td><td class="r">2</td><td class="r">$6.80</td><td class="muted">Curvin Coleman (Kens) · Oct 5</td></tr><tr><td class="mono">KEN-384699</td><td>Oct 6</td><td class="r">2</td><td class="r">$6.80</td><td class="muted">Curvin Coleman (Kens) · Oct 5</td></tr><tr class="sub"><td colspan="2">Total · 6 bookings (Ajoy Tours)</td><td class="r">14</td><td class="r strong">$47.60</td><td></td></tr></tbody></table>
+<footer><span>Prepared by <b>Devat Karetha — Solutions Lead</b></span><span>Affiliate rate correction · October 19, 2026</span><span>3 / 6</span></footer></section><section class="page ">
+<div class="eyebrow">03 · Refund schedule</div>
+<h2>Ajoy Tours <small>$44.20 to refund</small></h2>
+<table><thead><tr><th>Booking</th><th>Tour</th><th class="r">Guests</th><th class="r">Paid</th><th class="r">Refund</th></tr></thead><tbody><tr><td class="mono">KEN-368744</td><td>Oct 16 · 12:30 pm</td><td class="r">5</td><td class="r">$375.15</td><td class="r strong">$17.00</td></tr><tr><td class="mono">KEN-389565</td><td>Oct 16 · 12:00 pm</td><td class="r">2</td><td class="r">$150.06</td><td class="r strong">$6.80</td></tr><tr><td class="mono">KEN-389566</td><td>Oct 16 · 12:30 pm</td><td class="r">2</td><td class="r">$150.06</td><td class="r strong">$6.80</td></tr><tr><td class="mono">KEN-389567</td><td>Oct 16 · 12:30 pm</td><td class="r">2</td><td class="r">$150.06</td><td class="r strong">$6.80</td></tr><tr><td class="mono">KEN-389568</td><td>Oct 16 · 12:30 pm</td><td class="r">2</td><td class="r">$150.06</td><td class="r strong">$6.80</td></tr><tr class="sub"><td colspan="2">Subtotal · 5 bookings</td><td class="r">13</td><td></td><td class="r strong">$44.20</td></tr></tbody></table>
+<h2 class="gap">Max Tour <small>$68.00 to refund</small></h2>
+<table><thead><tr><th>Booking</th><th>Tour</th><th class="r">Guests</th><th class="r">Paid</th><th class="r">Refund</th></tr></thead><tbody><tr><td class="mono">KEN-347208</td><td>Jun 1 · 1:30 pm</td><td class="r">6</td><td class="r">$450.18</td><td class="r strong">$20.40</td></tr><tr><td class="mono">KEN-352497</td><td>Jun 19 · 3:00 pm</td><td class="r">2</td><td class="r">$150.06</td><td class="r strong">$6.80</td></tr><tr><td class="mono">KEN-354238</td><td>Jun 24 · 1:30 pm</td><td class="r">2</td><td class="r">$150.06</td><td class="r strong">$6.80</td></tr><tr><td class="mono">KEN-357135</td><td>Jul 9 · 9:30 am</td><td class="r">6</td><td class="r">$450.18</td><td class="r strong">$20.40</td></tr><tr><td class="mono">KEN-358654</td><td>Jul 13 · 1:30 pm</td><td class="r">4</td><td class="r">$300.12</td><td class="r strong">$13.60</td></tr><tr class="sub"><td colspan="2">Subtotal · 5 bookings</td><td class="r">20</td><td></td><td class="r strong">$68.00</td></tr></tbody></table>
+<p class="muted small">Refund = $3.40 × guests on the booking today. “Paid” is what the affiliate has paid, net of any earlier refunds.
+KEN-352497 (moved 1:30 → 3:00 pm) and KEN-357135 (moved 10:00 → 9:30 am) were booked inside the 10 am–2 pm window and later moved by staff, keeping their original price.</p>
+<footer><span>Prepared by <b>Devat Karetha — Solutions Lead</b></span><span>Affiliate rate correction · October 19, 2026</span><span>4 / 6</span></footer></section><section class="page ">
+<div class="eyebrow">03 · Refund schedule (continued)</div>
+<h2>Empire Vacations <small>$771.80 to refund</small></h2>
+<table><thead><tr><th>Booking</th><th>Tour</th><th class="r">Guests</th><th class="r">Paid</th><th class="r">Refund</th></tr></thead><tbody><tr><td class="mono">KEN-347292</td><td>Jun 8 · 1:00 pm</td><td class="r">15</td><td class="r">$1,125.45</td><td class="r strong">$51.00</td></tr><tr><td class="mono">KEN-350018</td><td>Jul 3 · 2:00 pm</td><td class="r">15</td><td class="r">$1,125.45</td><td class="r strong">$51.00</td></tr><tr><td class="mono">KEN-307555</td><td>Jul 8 · 1:30 pm</td><td class="r">15</td><td class="r">$1,125.45</td><td class="r strong">$51.00</td></tr><tr><td class="mono">KEN-307556</td><td>Jul 8 · 1:30 pm</td><td class="r">12</td><td class="r">$900.36</td><td class="r strong">$40.80</td></tr><tr><td class="mono">KEN-358120</td><td>Jul 13 · 1:30 pm</td><td class="r">15</td><td class="r">$1,125.45</td><td class="r strong">$51.00</td></tr><tr><td class="mono">KEN-307568</td><td>Jul 15 · 1:30 pm</td><td class="r">9</td><td class="r">$675.27</td><td class="r strong">$30.60</td></tr><tr><td class="mono">KEN-307571</td><td>Jul 17 · 1:30 pm</td><td class="r">14</td><td class="r">$1,050.42</td><td class="r strong">$47.60</td></tr><tr><td class="mono">KEN-307583</td><td>Jul 24 · 1:30 pm</td><td class="r">8</td><td class="r">$600.24</td><td class="r strong">$27.20</td></tr><tr><td class="mono">KEN-358126</td><td>Jul 31 · 2:00 pm</td><td class="r">13</td><td class="r">$975.39</td><td class="r strong">$44.20</td></tr><tr><td class="mono">KEN-363158</td><td>Jul 31 · 2:30 pm</td><td class="r">1</td><td class="r">$75.03</td><td class="r strong">$3.40</td></tr><tr><td class="mono">KEN-368050</td><td>Aug 17 · 2:30 pm</td><td class="r">4</td><td class="r">$300.12</td><td class="r strong">$13.60</td></tr><tr><td class="mono">KEN-368519</td><td>Aug 19 · 1:00 pm</td><td class="r">8</td><td class="r">$600.24</td><td class="r strong">$27.20</td></tr><tr><td class="mono">KEN-307647</td><td>Aug 28 · 2:00 pm</td><td class="r">12</td><td class="r">$900.36</td><td class="r strong">$40.80</td></tr><tr><td class="mono">KEN-367511</td><td>Aug 28 · 2:00 pm</td><td class="r">15</td><td class="r">$1,125.45</td><td class="r strong">$51.00</td></tr><tr><td class="mono">KEN-384420</td><td>Oct 5 · 1:30 pm</td><td class="r">8</td><td class="r">$600.24</td><td class="r strong">$27.20</td></tr><tr><td class="mono">KEN-307767</td><td>Oct 7 · 2:00 pm</td><td class="r">17</td><td class="r">$1,275.51</td><td class="r strong">$57.80</td></tr><tr><td class="mono">KEN-385070</td><td>Oct 7 · 1:30 pm</td><td class="r">9</td><td class="r">$675.27</td><td class="r strong">$30.60</td></tr><tr><td class="mono">KEN-385581</td><td>Oct 7 · 1:30 pm</td><td class="r">1</td><td class="r">$75.03</td><td class="r strong">$3.40</td></tr><tr><td class="mono">KEN-384943</td><td>Oct 9 · 2:00 pm</td><td class="r">10</td><td class="r">$750.30</td><td class="r strong">$34.00</td></tr><tr><td class="mono">KEN-388313</td><td>Oct 14 · 1:30 pm</td><td class="r">11</td><td class="r">$825.33</td><td class="r strong">$37.40</td></tr><tr><td class="mono">KEN-389574</td><td>Oct 16 · 1:30 pm</td><td class="r">15</td><td class="r">$1,125.45</td><td class="r strong">$51.00</td></tr><tr class="sub"><td colspan="2">Subtotal · 21 bookings</td><td class="r">227</td><td></td><td class="r strong">$771.80</td></tr></tbody></table>
+<p class="muted small">KEN-307767 originally paid $1,350.54 for 18 guests; one guest was later removed and refunded $75.03, so the refund covers the 17 remaining guests. KEN-363158 and KEN-368050 were booked for 2:00 pm and later moved to 2:30 pm by staff, keeping their original price.</p>
+<footer><span>Prepared by <b>Devat Karetha — Solutions Lead</b></span><span>Affiliate rate correction · October 19, 2026</span><span>5 / 6</span></footer></section><section class="page ">
+<div class="eyebrow">04 · Checks and next steps</div>
+<h2>How these figures were checked</h2>
+<ol class="steps">
+  <li><b>Each booking against its own price.</b> All 37 bookings were charged exactly what their own price list said — there
+      were no calculation mistakes. The only problem was which list was chosen.</li>
+  <li><b>Against the live booking data.</b> Every amount here was produced by a read-only database query run on a copy of the
+      live Kens data, using the same rounding as the booking system. The query can be re-run before refunding to confirm
+      nothing has changed.</li>
+  <li><b>Against refunds already made.</b> Earlier manual refunds are subtracted, so no booking is refunded twice.</li>
+</ol>
+<h2>Not affected</h2>
+<ul class="plain">
+  <li><b>KEN-368745, KEN-389813, KEN-389814, KEN-389817</b> (Ajoy Tours, Oct 17) — charged the correct $49 price.</li>
+  <li><b>CHD</b> — both of its price lists are $48, so nothing changes.</li>
+  <li>Bookings made for tours outside 10 am–2 pm, and all tours from November onwards.</li>
+</ul>
+<h2>Next steps</h2>
+<div class="next">
+  <div><span>1</span><p><b>Kens confirms</b> $49 was the agreed June–December price for Empire Vacations and Max Tour.</p></div>
+  <div><span>2</span><p><b>Fix goes live</b> so remaining October bookings between 10 am and 2 pm are priced at $49.</p></div>
+  <div><span>3</span><p><b>Refunds issued</b> — 31 bookings, $884.00 — then the query is re-run to confirm every balance is zero.</p></div>
+</div>
+<footer><span>Prepared by <b>Devat Karetha — Solutions Lead</b></span><span>Affiliate rate correction · October 19, 2026</span><span>6 / 6</span></footer></section>
+</body></html>

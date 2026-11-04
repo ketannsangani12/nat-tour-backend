@@ -1,0 +1,156 @@
+[v-cloak] { display: none; } /* hide vue element until it is loaded */
+.data-col { border: 1px solid #ddd; padding: 4px; }
+.txt-search { background-image: url(../../images/search.png); background-repeat: no-repeat; background-position: 97%; padding-right: 32px; }
+
+.bookings-list { overflow: auto; }
+.bookings-list .bk-inf-cust-nm { color: var(--bs-blue); }
+.bookings-list .bk-inf-cust-nm, .bookings-list .bk-inf-pkg-nm { font-weight: bold; }
+.bookings-list .bk-inf-t-groups, .bookings-list .bk-inf-bk-time { color: #666; }
+.bookings-list .bk-inf-cust-nm-out .badge { font-size: 90%; }
+
+.cal-table .cal-week-days, .cal-table .cal-month-days { width: 100%; display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-table .cal-week-day, .cal-table .cal-month-day { vertical-align: top; }
+.cal-table .cal-month-day { border: 1px solid #ddd; }
+.cal-table .cal-week-day { padding-top: 4px; padding-bottom: 4px; font-size: smaller; }
+.cal-table .cal-week-day:first-child { border-left: 1px solid #ddd; }
+.cal-table .cal-week-day:last-child { border-right: 1px solid #ddd; }
+.cal-table .cal-week-day { background-color: #eee; font-weight: bold; }
+.cal-table .cal-week-day, .cal-table .cal-day-num-div { text-align: center; }
+.cal-table .cal-day-dim { opacity: 0.5; }
+.cal-table .cal-day-num-div { padding: 4px 8px; }
+.bookings-list .booking-info.booking-of-afl-No, .booking-info.soft-booking-of-afl-0, .booking-info.tripadvisor-booking-0, .booking-info.get-your-guide-booking-0, .cal-table .cal-package { background-color: #f4feff; }
+.bookings-list .booking-info.booking-of-afl-Yes, .cal-bookings-modal .booking-of-afl-Yes { background-color: #ff03; }
+.bookings-list .booking-info.soft-booking-of-afl-1, .cal-bookings-modal .soft-booking-of-afl-1 { background-color: #E4FFE6; }
+.bookings-list .booking-info.tripadvisor-booking-1, .cal-bookings-modal .tripadvisor-booking-1 { background-color: #fef5e9; }
+.bookings-list .booking-info.get-your-guide-booking-1, .cal-bookings-modal .get-your-guide-booking-1 { background-color: #fef5e9; }
+
+.bookings-list .booking-info,
+.cal-table .cal-package { border: 1px solid var(--bs-blue); margin: 1px 1px 3px; border-radius: 4px; padding: 0px 4px; font-size: 80%; cursor: pointer; min-width: 150px;}
+.bookings-list .booking-info.booking-of-afl-No:hover, .cal-table .cal-package:hover { background-color: #e4eeff; }
+.bookings-list .booking-info.booking-of-afl-Yes:hover, .cal-bookings-modal .modal-dialog .modal-content .modal-body .booking-warp .details-warp.booking-of-afl-Yes:hover { background-color: #ff05; }
+.bookings-list .booking-info.soft-booking-of-afl-1:hover, .cal-bookings-modal .modal-dialog .modal-content .modal-body .booking-warp .details-warp.soft-booking-of-afl-1:hover { background-color: #E4FFF6; }
+.bookings-list .booking-info.tripadvisor-booking-1:hover, .cal-bookings-modal .modal-dialog .modal-content .modal-body .booking-warp .details-warp.tripadvisor-booking-1:hover { background-color: #ffecd4; }
+.bookings-list .booking-info.get-your-guide-booking-1:hover, .cal-bookings-modal .modal-dialog .modal-content .modal-body .booking-warp .details-warp.get-your-guide-booking-1:hover { background-color: #ffecd4; }
+
+.cal-table .cal-package-title { font-weight: bold; margin: 2px 4px 0; color: var(--bs-blue); }
+.cal-table .cal-seats-info span { display: inline-block; padding: 0 3px; margin: 4px 0 4px 4px; border: 2px solid; border-radius: 4px; line-height: 1.2; }
+.cal-table .cal-seats-info .cal-b { border-color: var(--bs-blue); background-color: var(--bs-blue);; color: white; }
+.cal-table .cal-seats-filled, .cal-table .cal-seats-empty { min-width: 30px; text-align: center; }
+.cal-table .cal-seats-progress { background-color: #d7e6ee; height: 3px; margin: 3px 4px 6px; }
+.cal-table .cal-seats-progress div { background-color: #2fa136; height: 100%; max-width: 100%; }
+
+.themed-btn { padding-top: 6px; padding-bottom: 6px; }
+.btn-prev-month, .btn-next-month { line-height: 0; width: 34px; height: 34px; padding: 0; color: #999; background-color: #eee; font-size: smaller; }
+.btn-prev-month:hover, .btn-next-month:hover, .btn-prev-month:active, .btn-next-month:active, .btn-prev-month:focus, .btn-next-month:focus { background-color: #ddd; }
+.btn-prev-month { padding-right: 2px; }
+.btn-next-month { padding-left: 2px; }
+
+.btn-outline-primary:focus { border-color: #86b7fe; outline: 0; box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%); }
+.margin-t-2px { margin-top: 2px; }
+
+/* Dispute Indicator Styles */
+.dispute-indicator {
+	display: inline-flex;
+	align-items: center;
+	font-weight: 600;
+	font-size: 0.75rem;
+	white-space: nowrap;
+	transition: all 0.2s ease-in-out;
+}
+
+.dispute-indicator:hover {
+	transform: scale(1.05);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dispute-indicator i {
+	font-size: 0.7rem;
+}
+
+/* Dispute Status Colors */
+.dispute-indicator.bg-red-100 {
+	background-color: #fee2e2;
+	color: #991b1b;
+	border-color: #fecaca;
+}
+
+.dispute-indicator.bg-yellow-100 {
+	background-color: #fef3c7;
+	color: #92400e;
+	border-color: #fde68a;
+}
+
+.dispute-indicator.bg-blue-100 {
+	background-color: #dbeafe;
+	color: #1e40af;
+	border-color: #bfdbfe;
+}
+
+.dispute-indicator.bg-green-100 {
+	background-color: #dcfce7;
+	color: #166534;
+	border-color: #bbf7d0;
+}
+
+.dispute-indicator.bg-gray-100 {
+	background-color: #f3f4f6;
+	color: #374151;
+	border-color: #d1d5db;
+}
+
+/* Tooltip styling for dispute indicators */
+.dispute-indicator[data-bs-toggle="tooltip"] {
+	cursor: help;
+}
+
+/* Attention-required disputes get a pulsing animation */
+.dispute-indicator.bg-red-100.requires-attention {
+	animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+	0% {
+		box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+	}
+	70% {
+		box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+	}
+}
+
+#modal-new-booking, #modal-booking-info { padding: 10px; }
+#modal-new-booking .modal-dialog, #modal-booking-info .modal-dialog { max-width: none; }
+#frame-new-booking, #frame-booking-info { border: 0 none; width: 100%; height: 98%; }
+.modal-fullscreen { width: 100%; }
+
+.modal-dialog .rec-history-container { margin-top: 10px; padding: 0 1rem; background-color: #eee; }
+.modal-dialog .rec-history-container .rec-history { padding: 0.5rem 0; }
+.modal-dialog .rec-history-container .rec-history:not(:last-child) { border-bottom: 1px solid #ccc; }
+
+.ul-slot-status { min-width: 226px !important; }
+.li-slot-status { border-bottom: 1px solid lightgray !important; cursor: pointer; }
+.li-slot-status i { font-size: smaller; margin-right: 8px; }
+
+.from-time, .to-time, .time-slot-seats { width: 112px; }
+.btn-time-slot { padding: 5px 10px 5px 10px; }
+.btn-time-slot.btn-danger, .btn-time-slot.btn-success { margin-left: 5px; }
+
+.tourbookingButton, .add-time-slot { font-size: 13px; color: #0088cc; background: #ecf9ff; border: 1px solid #0088cc; border-radius: 3px; padding: 6px 16px; height: 32px; float: right; margin-top:-13px; }
+.tourbookingButton:hover, .add-time-slot:hover { font-size: 13px; color: #0088cc; background: #ecf9ff; border: 1px solid #0088cc; border-radius: 3px; padding: 6px 16px; height: 32px; float: right; }
+.tripadv-img { border-radius: 15px; height: 20px; width: 20px; }
+.gyg-img, .ota-img { border-radius: 15px; height: 20px; width: 20px; margin-bottom: 2px; }
+.select2-container .select2-selection--multiple {
+    min-height: 36px;
+}
+.select2-container .select2-search--inline .select2-search__field {
+    height: 20px; 
+}
+span.select2.select2-container.select2-container--default {
+    width: 100% !important;
+    text-align: left;
+}
+button.select2-selection__clear {
+    display: none;
+}

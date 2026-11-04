@@ -1,0 +1,101 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Native American Tours Project.",
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "aws/aws-sdk-php": "^3.316.0",
+        "aws/aws-sdk-php-laravel": "^3.9",
+        "barryvdh/laravel-dompdf": "^2.0",
+        "darkaonline/l5-swagger": "^9.0",
+        "doctrine/dbal": "^3.3",
+        "fruitcake/php-cors": "^1.2",
+        "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "^2.5",
+        "jdavidbakr/mail-tracker": "^7.9",
+        "laravel/framework": "^11.0",
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.8",
+        "laravel/ui": "^4.2",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "milon/barcode": "^11.0",
+        "mtownsend/request-xml": "^2.3",
+        "mtownsend/response-xml": "^2.2",
+        "mtownsend/xml-to-array": "^2.0",
+        "owen-it/laravel-auditing": "^13.6",
+        "phpnexus/cwh": "^3.1",
+        "phpseclib/phpseclib": "~3.0",
+        "predis/predis": "^2.1",
+        "pusher/pusher-php-server": "^7.0",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-google-calendar": "^3.5",
+        "spatie/laravel-permission": "^6.10",
+        "stancl/tenancy": "^3.6",
+        "stripe/stripe-php": "^7.113",
+        "yajra/laravel-datatables-oracle": "^11.0"
+    },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.12",
+        "fakerphp/faker": "^1.9.1",
+        "laravel/sail": "^1.18",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^8.0",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ignition": "^2.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": ["laravel/dusk"]
+        }
+    },
+    "autoload": {
+        "files": [
+            "app/helpers.php"
+        ],
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        },
+        "exclude-from-classmap": [
+            "vendor/league/flysystem/src/AwsS3V3",
+            "vendor/league/flysystem/src/Local"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
+    }
+}

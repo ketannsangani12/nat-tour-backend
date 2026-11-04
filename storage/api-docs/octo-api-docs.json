@@ -1,0 +1,2301 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OCTO API",
+    "version": "1.0.0",
+    "description": "OCTO (Open Connection for Tours & Activities) API — compliant with https://docs.octo.travel.\n\nAll requests require:\n- `Authorization: Bearer <token>` header\n- `Octo-Capabilities` header (comma-separated list, may be empty; supported values: `pricing`)\n- `Content-Type: application/json` for POST, PATCH, DELETE requests\n\nTwo surfaces are documented here:\n- `/octo/*` — the supplier's own OCTO endpoints, authenticated with an OCTO API key.\n- `/partner-api/*` — the cross-tenant Partner API. Identical request and response shapes, authenticated with the partner's reseller API key. Resellers integrating against the Partner API should use only this prefix."
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Version 1 API"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "OCTO API key issued per reseller. Pass in the Authorization header as `Bearer <token>`."
+      }
+    },
+    "parameters": {
+      "OctoCapabilities": {
+        "name": "Octo-Capabilities",
+        "in": "header",
+        "required": true,
+        "description": "Comma-separated list of OCTO capabilities to activate (e.g. `pricing`). Pass an empty string to request no extras.",
+        "schema": {
+          "type": "string",
+          "example": "pricing"
+        }
+      }
+    },
+    "schemas": {
+      "OctoError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "OCTO error code",
+            "example": "INVALID_PRODUCT_ID"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Human-readable error description",
+            "example": "The Product ID was invalid or missing."
+          }
+        }
+      },
+      "PricingObject": {
+        "type": "object",
+        "properties": {
+          "original": { "type": "integer", "description": "Original price in minor units (cents)", "example": 10000 },
+          "retail": { "type": "integer", "description": "Retail price in minor units", "example": 10000 },
+          "net": { "type": "integer", "description": "Net price in minor units", "example": 8500 },
+          "currency": { "type": "string", "example": "USD" },
+          "currencyPrecision": { "type": "integer", "example": 2 },
+          "includedTaxes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "example": "Tax" },
+                "retail": { "type": "integer", "example": 500 },
+                "net": { "type": "integer", "example": 425 }
+              }
+            }
+          }
+        }
+      },
+      "UnitItem": {
+        "type": "object",
+        "properties": {
+          "uuid": { "type": "string", "format": "uuid", "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890" },
+          "resellerReference": { "type": "string", "example": "RES-001" },
+          "supplierReference": { "type": "string", "example": "XJ5K2R" },
+          "unitId": { "type": "string", "example": "42" },
+          "contact": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "firstName": { "type": "string", "example": "John" },
+              "lastName": { "type": "string", "example": "Doe" },
+              "emailAddress": { "type": "string", "format": "email", "example": "john@example.com" },
+              "phoneNumber": { "type": "string", "example": "+12025550173" }
+            }
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string", "example": "Jane" },
+          "lastName": { "type": "string", "example": "Smith" },
+          "emailAddress": { "type": "string", "format": "email", "example": "jane@example.com" },
+          "phoneNumber": { "type": "string", "nullable": true, "example": "+12025550100" },
+          "country": { "type": "string", "nullable": true, "example": "US" },
+          "notes": { "type": "string", "nullable": true }
+        }
+      },
+      "Supplier": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "kens" },
+          "name": { "type": "string", "example": "Ken's Tours" },
+          "endpoint": { "type": "string", "format": "uri", "example": "https://app.example.com/api/v1/octo" },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "website": { "type": "string", "nullable": true, "example": "https://kenstours.com" },
+              "email": { "type": "string", "nullable": true, "example": "info@kenstours.com" },
+              "telephone": { "type": "string", "nullable": true, "example": "+12025550100" },
+              "address": { "type": "string", "nullable": true, "example": "123 Main St, Springfield, IL, US 62701" }
+            }
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true,
+            "description": "Present when `content` capability is active",
+            "example": "Premium tour operator based in Hawaii"
+          }
+        }
+      },
+      "Unit": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "12" },
+          "internalName": { "type": "string", "example": "Adult" },
+          "reference": { "type": "string", "nullable": true },
+          "type": { "type": "string", "enum": ["ADULT", "CHILD", "INFANT", "YOUTH", "SENIOR", "STUDENT", "MILITARY"] },
+          "restrictions": {
+            "type": "object",
+            "properties": {
+              "minAge": { "type": "integer", "example": 18 },
+              "maxAge": { "type": "integer", "example": 99 },
+              "idRequired": { "type": "boolean", "example": false },
+              "minQuantity": { "type": "integer", "nullable": true, "example": 1 },
+              "maxQuantity": { "type": "integer", "nullable": true, "example": 10 },
+              "paxCount": { "type": "integer", "example": 1 },
+              "accompaniedBy": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "requiredContactFields": { "type": "array", "items": { "type": "string" } },
+          "pricingFrom": {
+            "type": "array",
+            "description": "Present when `pricing` capability is active",
+            "items": { "$ref": "#/components/schemas/PricingObject" }
+          }
+        }
+      },
+      "Option": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "default" },
+          "default": { "type": "boolean", "example": true },
+          "internalName": { "type": "string", "example": "Sunset Luau Tour" },
+          "reference": { "type": "string", "nullable": true },
+          "availabilityLocalStartTimes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["09:00", "14:00"]
+          },
+          "cancellationCutoff": { "type": "string", "example": "1 day" },
+          "cancellationCutoffAmount": { "type": "integer", "example": 1 },
+          "cancellationCutoffUnit": { "type": "string", "example": "day" },
+          "requiredContactFields": { "type": "array", "items": { "type": "string" } },
+          "restrictions": {
+            "type": "object",
+            "properties": {
+              "minUnits": { "type": "integer", "example": 1 },
+              "maxUnits": { "type": "integer", "example": 20 }
+            }
+          },
+          "units": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Unit" }
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "7" },
+          "internalName": { "type": "string", "example": "Sunset Luau Tour" },
+          "reference": { "type": "string", "nullable": true },
+          "locale": { "type": "string", "example": "en" },
+          "timeZone": { "type": "string", "example": "Pacific/Honolulu" },
+          "allowFreesale": { "type": "boolean", "example": true },
+          "instantConfirmation": { "type": "boolean", "example": true },
+          "instantDelivery": { "type": "boolean", "example": true },
+          "availabilityRequired": { "type": "boolean", "example": true },
+          "availabilityType": { "type": "string", "enum": ["START_TIME", "OPENING_HOURS"], "example": "START_TIME" },
+          "deliveryFormats": { "type": "array", "items": { "type": "string" }, "example": ["QRCODE"] },
+          "deliveryMethods": { "type": "array", "items": { "type": "string" }, "example": ["VOUCHER"] },
+          "redemptionMethod": { "type": "string", "example": "DIGITAL" },
+          "options": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Option" }
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "description": "Present when `pricing` capability is active",
+            "example": "USD"
+          },
+          "pricingPer": {
+            "type": "string",
+            "description": "Present when `pricing` capability is active",
+            "enum": ["UNIT", "BOOKING"]
+          }
+        }
+      },
+      "AvailabilityCalendarEntry": {
+        "type": "object",
+        "properties": {
+          "localDate": { "type": "string", "format": "date", "example": "2026-07-04" },
+          "available": { "type": "boolean", "example": true },
+          "status": { "type": "string", "enum": ["AVAILABLE", "SOLD_OUT", "CLOSED"], "example": "AVAILABLE" },
+          "vacancies": { "type": "integer", "nullable": true, "example": 12 },
+          "openingHours": { "type": "array", "items": { "type": "object" } },
+          "pricingFrom": {
+            "type": "array",
+            "description": "Present when `pricing` capability is active",
+            "items": { "$ref": "#/components/schemas/PricingObject" }
+          }
+        }
+      },
+      "AvailabilitySlot": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "101" },
+          "localDateTimeStart": { "type": "string", "format": "date-time", "example": "2026-07-04T09:00:00" },
+          "localDateTimeEnd": { "type": "string", "format": "date-time", "example": "2026-07-04T12:00:00" },
+          "available": { "type": "boolean", "example": true },
+          "status": { "type": "string", "enum": ["AVAILABLE", "SOLD_OUT", "CLOSED"], "example": "AVAILABLE" },
+          "vacancies": { "type": "integer", "nullable": true, "example": 8 },
+          "openingHours": { "type": "array", "items": { "type": "object" } },
+          "utcCutoffAt": { "type": "string", "format": "date-time", "nullable": true },
+          "pricing": {
+            "nullable": true,
+            "description": "Present when `pricing` capability is active",
+            "$ref": "#/components/schemas/PricingObject"
+          },
+          "unitPricing": {
+            "type": "array",
+            "description": "Present when `pricing` capability is active and pricingPer=UNIT",
+            "items": {
+              "allOf": [
+                { "$ref": "#/components/schemas/PricingObject" },
+                { "type": "object", "properties": { "unitId": { "type": "string" } } }
+              ]
+            }
+          }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "OCTO-000001" },
+          "uuid": { "type": "string", "format": "uuid", "example": "550e8400-e29b-41d4-a716-446655440000" },
+          "testMode": { "type": "boolean", "example": false },
+          "resellerReference": { "type": "string", "nullable": true, "example": "RES-20260101-001" },
+          "supplierReference": { "type": "string", "example": "OCTO-000001" },
+          "status": { "type": "string", "enum": ["ON_HOLD", "CONFIRMED", "CANCELLED", "EXPIRED"], "example": "ON_HOLD" },
+          "utcCreatedAt": { "type": "string", "format": "date-time", "example": "2026-06-01T10:00:00Z" },
+          "utcUpdatedAt": { "type": "string", "format": "date-time", "example": "2026-06-01T10:05:00Z" },
+          "utcExpiresAt": { "type": "string", "format": "date-time", "nullable": true, "example": "2026-06-01T10:30:00Z" },
+          "utcConfirmedAt": { "type": "string", "format": "date-time", "nullable": true, "example": null },
+          "utcRedeemedAt": { "type": "string", "format": "date-time", "nullable": true, "example": null },
+          "productId": { "type": "string", "example": "7" },
+          "optionId": { "type": "string", "example": "default" },
+          "availabilityId": { "type": "string", "example": "101" },
+          "cancellable": { "type": "boolean", "example": true },
+          "cancellation": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "refund": { "type": "string", "example": "NONE" },
+              "reason": { "type": "string", "example": "" },
+              "utcCancelledAt": { "type": "string", "format": "date-time" }
+            }
+          },
+          "freesale": { "type": "boolean", "example": false },
+          "contact": { "$ref": "#/components/schemas/Contact" },
+          "notes": { "type": "string", "nullable": true, "example": "Wheelchair accessible seat needed" },
+          "deliveryMethods": { "type": "array", "items": { "type": "string" }, "example": ["VOUCHER"] },
+          "voucher": {
+            "type": "object",
+            "properties": {
+              "redemptionMethod": { "type": "string", "example": "DIGITAL" },
+              "utcRedeemedAt": { "type": "string", "nullable": true },
+              "deliveryOptions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "deliveryFormat": { "type": "string", "example": "QRCODE" },
+                    "deliveryValue": { "type": "string", "example": "OCTO-000001" }
+                  }
+                }
+              }
+            }
+          },
+          "unitItems": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UnitItem" }
+          },
+          "pricing": {
+            "description": "Present when `pricing` capability is active",
+            "$ref": "#/components/schemas/PricingObject"
+          }
+        }
+      },
+      "Webhook": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "url": { "type": "string", "format": "uri", "example": "https://my-ota.com/webhooks/octo" },
+          "event": { "type": "string", "example": "booking_update" },
+          "retries": { "type": "integer", "example": 3 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "security": [
+    { "BearerAuth": [] }
+  ],
+  "tags": [
+    { "name": "Supplier", "description": "Supplier / tenant information" },
+    { "name": "Products", "description": "Tour product catalog" },
+    { "name": "Availability", "description": "Date-level and slot-level availability" },
+    { "name": "Bookings", "description": "Booking lifecycle — hold, confirm, update, cancel" },
+    { "name": "Webhooks", "description": "Webhook management (notifications capability)" },
+    { "name": "Partner API", "description": "Cross-tenant Partner API — OCTO-shaped endpoints under /partner-api, authenticated with the partner reseller API key" }
+  ],
+  "paths": {
+    "/octo/supplier": {
+      "get": {
+        "tags": ["Supplier"],
+        "summary": "Get supplier details",
+        "description": "Returns the OCTO supplier object for this tenant, including contact details and base endpoint URL. Includes `shortDescription` and `media` when the `content` capability is requested.",
+        "operationId": "getSupplier",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Supplier details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Supplier" },
+                "example": {
+                  "id": "kens",
+                  "name": "Ken's Tours",
+                  "endpoint": "https://app.example.com/api/v1/octo",
+                  "contact": {
+                    "website": "https://kenstours.com",
+                    "email": "info@kenstours.com",
+                    "telephone": "+18085550100",
+                    "address": "123 Kalakaua Ave, Honolulu, Hawaii, US 96815"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request (missing Octo-Capabilities header)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized — missing Bearer token", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden — invalid API key", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/products": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "List products",
+        "description": "Returns all active tour products assigned to the authenticated reseller. Includes content fields (`title`, `description`, `media`, `locations`) when the `content` capability is requested, and pricing fields (`pricingPer`, `pricingFrom`, `defaultCurrency`) when the `pricing` capability is requested.",
+        "operationId": "getProductList",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of products",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/products/{productId}": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get product by ID",
+        "description": "Returns a single product by its ID. The product must be assigned to the authenticated reseller.",
+        "operationId": "getProductById",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "description": "The tour package ID",
+            "schema": { "type": "string", "example": "7" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Product" }
+              }
+            }
+          },
+          "400": { "description": "Invalid product ID", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" }, "example": { "error": "INVALID_PRODUCT_ID", "errorMessage": "The Product ID was invalid or missing.", "productId": "99" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/availability/calendar": {
+      "post": {
+        "tags": ["Availability"],
+        "summary": "Availability calendar (date-level)",
+        "description": "Returns day-by-day availability for a product within a date range. Use this to build a calendar view. Includes `pricingFrom` and `unitPricingFrom` per date entry when the `pricing` capability is active.",
+        "operationId": "getAvailabilityCalendar",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["productId", "optionId", "localDateStart", "localDateEnd"],
+                "properties": {
+                  "productId": { "type": "string", "description": "Tour package ID", "example": "7" },
+                  "optionId": { "type": "string", "description": "Always `default`", "example": "default" },
+                  "localDateStart": { "type": "string", "format": "date", "description": "Start date (inclusive), format: YYYY-MM-DD", "example": "2026-07-01" },
+                  "localDateEnd": { "type": "string", "format": "date", "description": "End date (inclusive), format: YYYY-MM-DD", "example": "2026-07-31" },
+                  "currency": { "type": "string", "description": "ISO 4217 currency code (used when `pricing` capability is active)", "example": "USD" },
+                  "units": {
+                    "type": "array",
+                    "description": "Unit quantities for aggregate pricing calculation",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string", "example": "12" },
+                        "quantity": { "type": "integer", "example": 2 }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "productId": "7",
+                "optionId": "default",
+                "localDateStart": "2026-07-01",
+                "localDateEnd": "2026-07-31"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Array of calendar availability entries",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/AvailabilityCalendarEntry" } },
+                "example": [
+                  { "localDate": "2026-07-04", "available": true, "status": "AVAILABLE", "vacancies": 12, "openingHours": [] },
+                  { "localDate": "2026-07-05", "available": false, "status": "SOLD_OUT", "vacancies": 0, "openingHours": [] }
+                ]
+              }
+            }
+          },
+          "400": { "description": "Bad request — missing or invalid parameters", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/availability": {
+      "post": {
+        "tags": ["Availability"],
+        "summary": "Availability check (slot-level)",
+        "description": "Returns slot-level availability for a product. Can be queried either by date range (`localDateStart` + `localDateEnd`) or by specific availability IDs (`availabilityIds`). These two modes are mutually exclusive.\n\nEach slot in the response carries `id` which should be passed as `availabilityId` when creating a booking.",
+        "operationId": "getAvailabilityCheck",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["productId", "optionId"],
+                "properties": {
+                  "productId": { "type": "string", "example": "7" },
+                  "optionId": { "type": "string", "example": "default" },
+                  "localDateStart": { "type": "string", "format": "date", "description": "Required when not using `availabilityIds`", "example": "2026-07-04" },
+                  "localDateEnd": { "type": "string", "format": "date", "description": "Required when not using `availabilityIds`", "example": "2026-07-04" },
+                  "availabilityIds": {
+                    "type": "array",
+                    "description": "Fetch specific slots by ID. Mutually exclusive with localDateStart/localDateEnd.",
+                    "items": { "type": "string" },
+                    "example": ["101", "102"]
+                  },
+                  "currency": { "type": "string", "example": "USD" },
+                  "units": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string", "example": "12" },
+                        "quantity": { "type": "integer", "example": 2 }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "byDateRange": {
+                  "summary": "Query by date range",
+                  "value": { "productId": "7", "optionId": "default", "localDateStart": "2026-07-04", "localDateEnd": "2026-07-04" }
+                },
+                "byIds": {
+                  "summary": "Query by availability IDs",
+                  "value": { "productId": "7", "optionId": "default", "availabilityIds": ["101", "102"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Array of availability slots",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/AvailabilitySlot" } },
+                "example": [
+                  {
+                    "id": "101",
+                    "localDateTimeStart": "2026-07-04T09:00:00",
+                    "localDateTimeEnd": "2026-07-04T12:00:00",
+                    "available": true,
+                    "status": "AVAILABLE",
+                    "vacancies": 8,
+                    "openingHours": []
+                  }
+                ]
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/bookings": {
+      "get": {
+        "tags": ["Bookings"],
+        "summary": "List bookings",
+        "description": "Returns bookings for the authenticated reseller. At least one filter (`resellerReference` or `supplierReference`) is required.\n\n- `resellerReference` — the reseller's own booking reference stored in the contact payload\n- `supplierReference` — the OCTO supplier reference in the format `OCTO-000001`",
+        "operationId": "listBookings",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "resellerReference",
+            "in": "query",
+            "description": "Filter by the reseller's booking reference",
+            "schema": { "type": "string", "example": "RES-20260101-001" }
+          },
+          {
+            "name": "supplierReference",
+            "in": "query",
+            "description": "Filter by the supplier reference (e.g. `OCTO-000001`)",
+            "schema": { "type": "string", "example": "OCTO-000001" }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "ISO 4217 currency code for pricing fields (when `pricing` capability active)",
+            "schema": { "type": "string", "example": "USD" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of bookings",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Booking" } }
+              }
+            }
+          },
+          "400": { "description": "Bad request — filter is required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      },
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Create booking (ON_HOLD)",
+        "description": "Creates a new booking in `ON_HOLD` status. Seats are held until the booking is confirmed or the hold expires.\n\n**Idempotency:** If a booking with the supplied `uuid` already exists it is returned unchanged — safe to retry.\n\n**Hold expiration:** Defaults to 30 minutes. Override with `expirationMinutes`.",
+        "operationId": "createBooking",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["productId", "optionId", "availabilityId", "unitItems"],
+                "properties": {
+                  "uuid": { "type": "string", "format": "uuid", "description": "Client-generated UUID acting as an idempotency key. Auto-generated if omitted, and must be a valid RFC 4122 UUID when supplied. Repeating a request with the same uuid returns the original booking without reserving inventory again; reusing it for a booking with different product, availability or unit details returns 409 BOOKING_UUID_CONFLICT.", "example": "550e8400-e29b-41d4-a716-446655440000" },
+                  "productId": { "type": "string", "example": "7" },
+                  "optionId": { "type": "string", "description": "Must be `default`", "example": "default" },
+                  "availabilityId": { "type": "string", "description": "Slot ID from the availability check response", "example": "101" },
+                  "unitItems": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "One entry per guest",
+                    "items": {
+                      "type": "object",
+                      "required": ["unitId"],
+                      "properties": {
+                        "uuid": { "type": "string", "format": "uuid", "description": "Reseller's per-guest reference UUID", "example": "a1b2c3d4-0000-0000-0000-000000000001" },
+                        "unitId": { "type": "string", "description": "Rate/unit ID from the product catalog", "example": "12" },
+                        "contact": { "$ref": "#/components/schemas/Contact" }
+                      }
+                    }
+                  },
+                  "notes": { "type": "string", "description": "Booking-level notes / special requests", "example": "Wheelchair accessible seat needed" },
+                  "expirationMinutes": { "type": "integer", "description": "Hold duration in minutes (default: 30, minimum: 1)", "example": 30 }
+                }
+              },
+              "example": {
+                "productId": "7",
+                "optionId": "default",
+                "availabilityId": "101",
+                "unitItems": [
+                  { "uuid": "a1b2c3d4-0000-0000-0000-000000000001", "unitId": "12" },
+                  { "uuid": "a1b2c3d4-0000-0000-0000-000000000002", "unitId": "12" }
+                ],
+                "notes": "Window seat please"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking created (ON_HOLD) or existing booking returned (idempotent)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "400": { "description": "Validation error (invalid product, option, availability, or unit IDs, or a malformed uuid)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "409": { "description": "Conflict — the supplied uuid is already in use for a different booking (BOOKING_UUID_CONFLICT)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/bookings/{uuid}": {
+      "get": {
+        "tags": ["Bookings"],
+        "summary": "Get booking",
+        "description": "Returns the current state of a booking by its UUID.",
+        "operationId": "getBooking",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "Booking UUID",
+            "schema": { "type": "string", "format": "uuid", "example": "550e8400-e29b-41d4-a716-446655440000" }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "ISO 4217 currency code for pricing fields",
+            "schema": { "type": "string", "example": "USD" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "400": { "description": "Invalid booking UUID", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" }, "example": { "error": "INVALID_BOOKING_UUID", "errorMessage": "The booking UUID was not found.", "uuid": "550e8400-e29b-41d4-a716-446655440000" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      },
+      "patch": {
+        "tags": ["Bookings"],
+        "summary": "Update booking",
+        "description": "Updates an `ON_HOLD` or `CONFIRMED` booking.\n\n**ON_HOLD bookings** — all fields are editable: `unitItems`, `availabilityId` (reschedule), `expirationMinutes`, `notes`, `contact`.\n\n**CONFIRMED bookings** — `notes`, `contact`, and `resellerReference` are always editable. Structural changes (`unitItems`, `availabilityId`) are allowed only outside the cancellation cutoff window; rescheduling across calendar years is prohibited.\n\nCancelled or expired bookings cannot be updated.",
+        "operationId": "updateBooking",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "example": "550e8400-e29b-41d4-a716-446655440000" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "unitItems": {
+                    "type": "array",
+                    "description": "Replace the full guest list (ON_HOLD or CONFIRMED within cutoff window)",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "uuid": { "type": "string", "format": "uuid" },
+                        "unitId": { "type": "string", "example": "12" }
+                      }
+                    }
+                  },
+                  "availabilityId": { "type": "string", "description": "Reschedule to a new slot (ON_HOLD or CONFIRMED within cutoff window)", "example": "205" },
+                  "expirationMinutes": { "type": "integer", "description": "Adjust hold expiry (ON_HOLD only)", "example": 60 },
+                  "notes": { "type": "string", "description": "Update booking notes" },
+                  "contact": { "$ref": "#/components/schemas/Contact" },
+                  "resellerReference": { "type": "string", "description": "Update reseller reference (CONFIRMED only)", "example": "RES-20260101-002" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated booking",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "400": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "409": { "description": "Conflict — booking already cancelled or expired", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/bookings/{uuid}/confirm": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Confirm booking",
+        "description": "Confirms an `ON_HOLD` booking. The booking is created in the internal system and a voucher QR code is attached to the response.\n\n**Required fields:** `contact.firstName`, `contact.lastName`, `contact.emailAddress`.\n\n**Idempotent:** If the booking is already `CONFIRMED` the current state is returned without modification.\n\nReturns `409 BOOKING_EXPIRED` if the hold has expired.",
+        "operationId": "confirmBooking",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "example": "550e8400-e29b-41d4-a716-446655440000" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["contact"],
+                "properties": {
+                  "contact": {
+                    "type": "object",
+                    "required": ["firstName", "lastName", "emailAddress"],
+                    "properties": {
+                      "firstName": { "type": "string", "example": "Jane" },
+                      "lastName": { "type": "string", "example": "Smith" },
+                      "emailAddress": { "type": "string", "format": "email", "example": "jane@example.com" },
+                      "phoneNumber": { "type": "string", "example": "+12025550100" },
+                      "country": { "type": "string", "example": "US" }
+                    }
+                  },
+                  "resellerReference": { "type": "string", "description": "Reseller's booking reference stored on the tour booking record", "example": "RES-20260101-001" },
+                  "unitItems": {
+                    "type": "array",
+                    "description": "Optional — update unit items at confirm time",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "uuid": { "type": "string", "format": "uuid" },
+                        "unitId": { "type": "string", "example": "12" },
+                        "contact": { "$ref": "#/components/schemas/Contact" }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "contact": {
+                  "firstName": "Jane",
+                  "lastName": "Smith",
+                  "emailAddress": "jane@example.com",
+                  "phoneNumber": "+12025550100"
+                },
+                "resellerReference": "RES-20260101-001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking confirmed (or already confirmed — idempotent)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "400": { "description": "Missing required contact fields or invalid unit IDs", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "409": { "description": "Booking expired or already cancelled", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/bookings/{uuid}/extend": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Extend booking hold",
+        "description": "Extends the expiration time of an `ON_HOLD` booking. The booking must not have already expired.",
+        "operationId": "extendBooking",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "example": "550e8400-e29b-41d4-a716-446655440000" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expirationMinutes": { "type": "integer", "description": "Additional minutes to add to the hold", "example": 30 }
+                }
+              },
+              "example": { "expirationMinutes": 30 }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated booking with new expiry time",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "400": { "description": "Invalid booking UUID", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "409": { "description": "Booking expired or already cancelled", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/bookings/{uuid}/cancel": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Cancel booking",
+        "description": "Cancels a booking. Both `ON_HOLD` and `CONFIRMED` bookings can be cancelled provided the cancellation cutoff window has not been passed.\n\nReturns `409 BOOKING_ALREADY_CANCELLED` if the booking is already cancelled, and `409 CANCELLATION_NOT_ALLOWED` if the cutoff window has passed.",
+        "operationId": "cancelBooking",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "example": "550e8400-e29b-41d4-a716-446655440000" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": { "type": "string", "description": "Optional cancellation reason", "example": "Customer changed plans" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking cancelled",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "400": { "description": "Invalid booking UUID", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "409": { "description": "Already cancelled or cancellation not allowed (past cutoff)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/webhooks": {
+      "get": {
+        "tags": ["Webhooks"],
+        "summary": "List webhooks",
+        "description": "Returns all webhooks registered for the authenticated reseller.",
+        "operationId": "listWebhooks",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of webhooks",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Webhook" } }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      },
+      "post": {
+        "tags": ["Webhooks"],
+        "summary": "Create webhook",
+        "description": "Registers a new webhook URL to receive OCTO event notifications.",
+        "operationId": "createWebhook",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "event"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri", "description": "HTTPS endpoint to receive webhook payloads", "example": "https://my-ota.com/webhooks/octo" },
+                  "event": { "type": "string", "description": "Event type to subscribe to", "example": "booking_update" },
+                  "retries": { "type": "integer", "description": "Number of delivery retries on failure (default: 3)", "example": 3 }
+                }
+              },
+              "example": {
+                "url": "https://my-ota.com/webhooks/octo",
+                "event": "booking_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Webhook" }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/webhooks/{id}": {
+      "get": {
+        "tags": ["Webhooks"],
+        "summary": "Get webhook",
+        "description": "Returns the details of a specific webhook by its ID.",
+        "operationId": "getWebhook",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Webhook ID",
+            "schema": { "type": "string", "example": "1" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Webhook" }
+              }
+            }
+          },
+          "400": { "description": "Webhook not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      },
+      "delete": {
+        "tags": ["Webhooks"],
+        "summary": "Delete webhook",
+        "description": "Permanently deletes a webhook by its ID.",
+        "operationId": "deleteWebhook",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Webhook ID",
+            "schema": { "type": "string", "example": "1" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook deleted",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "message": { "type": "string", "example": "Webhook deleted." } } }
+              }
+            }
+          },
+          "400": { "description": "Webhook not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+    "/octo/webhooks/{id}/ping": {
+      "post": {
+        "tags": ["Webhooks"],
+        "summary": "Ping webhook",
+        "description": "Sends a test ping to the specified webhook URL to verify connectivity.",
+        "operationId": "pingWebhook",
+        "parameters": [
+          { "$ref": "#/components/parameters/OctoCapabilities" },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Webhook ID",
+            "schema": { "type": "string", "example": "1" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ping sent successfully",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "message": { "type": "string", "example": "Ping sent." } } }
+              }
+            }
+          },
+          "400": { "description": "Webhook not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OctoError" } } } }
+        }
+      }
+    },
+      "/partner-api/supplier": {
+        "get": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Get supplier details",
+          "description": "Returns the OCTO supplier object for this tenant, including contact details and base endpoint URL. Includes `shortDescription` and `media` when the `content` capability is requested.",
+          "operationId": "partnerGetSupplier",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Supplier details",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Supplier"
+                  },
+                  "example": {
+                    "id": "kens",
+                    "name": "Ken's Tours",
+                    "endpoint": "https://app.example.com/api/v1/partner-api",
+                    "contact": {
+                      "website": "https://kenstours.com",
+                      "email": "info@kenstours.com",
+                      "telephone": "+18085550100",
+                      "address": "123 Kalakaua Ave, Honolulu, Hawaii, US 96815"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request (missing Octo-Capabilities header)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized — missing Bearer token",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden — invalid API key",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/products": {
+        "get": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "List products",
+          "description": "Returns all active tour products assigned to the authenticated reseller. Includes content fields (`title`, `description`, `media`, `locations`) when the `content` capability is requested, and pricing fields (`pricingPer`, `pricingFrom`, `defaultCurrency`) when the `pricing` capability is requested.",
+          "operationId": "partnerGetProductList",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Array of products",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Product"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/products/{productId}": {
+        "get": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Get product by ID",
+          "description": "Returns a single product by its ID. The product must be assigned to the authenticated reseller.",
+          "operationId": "partnerGetProductById",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            },
+            {
+              "name": "productId",
+              "in": "path",
+              "required": true,
+              "description": "The tour package ID",
+              "schema": {
+                "type": "string",
+                "example": "7"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Product details",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid product ID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  },
+                  "example": {
+                    "error": "INVALID_PRODUCT_ID",
+                    "errorMessage": "The Product ID was invalid or missing.",
+                    "productId": "99"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/availability/calendar": {
+        "post": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Availability calendar (date-level)",
+          "description": "Returns day-by-day availability for a product within a date range. Use this to build a calendar view. Includes `pricingFrom` and `unitPricingFrom` per date entry when the `pricing` capability is active.",
+          "operationId": "partnerGetAvailabilityCalendar",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "productId",
+                    "optionId",
+                    "localDateStart",
+                    "localDateEnd"
+                  ],
+                  "properties": {
+                    "productId": {
+                      "type": "string",
+                      "description": "Tour package ID",
+                      "example": "7"
+                    },
+                    "optionId": {
+                      "type": "string",
+                      "description": "Always `default`",
+                      "example": "default"
+                    },
+                    "localDateStart": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Start date (inclusive), format: YYYY-MM-DD",
+                      "example": "2026-07-01"
+                    },
+                    "localDateEnd": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "End date (inclusive), format: YYYY-MM-DD",
+                      "example": "2026-07-31"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "description": "ISO 4217 currency code (used when `pricing` capability is active)",
+                      "example": "USD"
+                    },
+                    "units": {
+                      "type": "array",
+                      "description": "Unit quantities for aggregate pricing calculation",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "12"
+                          },
+                          "quantity": {
+                            "type": "integer",
+                            "example": 2
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "productId": "7",
+                  "optionId": "default",
+                  "localDateStart": "2026-07-01",
+                  "localDateEnd": "2026-07-31"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Array of calendar availability entries",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AvailabilityCalendarEntry"
+                    }
+                  },
+                  "example": [
+                    {
+                      "localDate": "2026-07-04",
+                      "available": true,
+                      "status": "AVAILABLE",
+                      "vacancies": 12,
+                      "openingHours": []
+                    },
+                    {
+                      "localDate": "2026-07-05",
+                      "available": false,
+                      "status": "SOLD_OUT",
+                      "vacancies": 0,
+                      "openingHours": []
+                    }
+                  ]
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request — missing or invalid parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/availability": {
+        "post": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Availability check (slot-level)",
+          "description": "Returns slot-level availability for a product. Can be queried either by date range (`localDateStart` + `localDateEnd`) or by specific availability IDs (`availabilityIds`). These two modes are mutually exclusive.\n\nEach slot in the response carries `id` which should be passed as `availabilityId` when creating a booking.",
+          "operationId": "partnerGetAvailabilityCheck",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "productId",
+                    "optionId"
+                  ],
+                  "properties": {
+                    "productId": {
+                      "type": "string",
+                      "example": "7"
+                    },
+                    "optionId": {
+                      "type": "string",
+                      "example": "default"
+                    },
+                    "localDateStart": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Required when not using `availabilityIds`",
+                      "example": "2026-07-04"
+                    },
+                    "localDateEnd": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Required when not using `availabilityIds`",
+                      "example": "2026-07-04"
+                    },
+                    "availabilityIds": {
+                      "type": "array",
+                      "description": "Fetch specific slots by ID. Mutually exclusive with localDateStart/localDateEnd.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "101",
+                        "102"
+                      ]
+                    },
+                    "currency": {
+                      "type": "string",
+                      "example": "USD"
+                    },
+                    "units": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "12"
+                          },
+                          "quantity": {
+                            "type": "integer",
+                            "example": 2
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "byDateRange": {
+                    "summary": "Query by date range",
+                    "value": {
+                      "productId": "7",
+                      "optionId": "default",
+                      "localDateStart": "2026-07-04",
+                      "localDateEnd": "2026-07-04"
+                    }
+                  },
+                  "byIds": {
+                    "summary": "Query by availability IDs",
+                    "value": {
+                      "productId": "7",
+                      "optionId": "default",
+                      "availabilityIds": [
+                        "101",
+                        "102"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Array of availability slots",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AvailabilitySlot"
+                    }
+                  },
+                  "example": [
+                    {
+                      "id": "101",
+                      "localDateTimeStart": "2026-07-04T09:00:00",
+                      "localDateTimeEnd": "2026-07-04T12:00:00",
+                      "available": true,
+                      "status": "AVAILABLE",
+                      "vacancies": 8,
+                      "openingHours": []
+                    }
+                  ]
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/bookings": {
+        "get": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "List bookings",
+          "description": "Returns bookings for the authenticated reseller. At least one filter (`resellerReference` or `supplierReference`) is required.\n\n- `resellerReference` — the reseller's own booking reference stored in the contact payload\n- `supplierReference` — the OCTO supplier reference in the format `OCTO-000001`",
+          "operationId": "partnerListBookings",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            },
+            {
+              "name": "resellerReference",
+              "in": "query",
+              "description": "Filter by the reseller's booking reference",
+              "schema": {
+                "type": "string",
+                "example": "RES-20260101-001"
+              }
+            },
+            {
+              "name": "supplierReference",
+              "in": "query",
+              "description": "Filter by the supplier reference (e.g. `OCTO-000001`)",
+              "schema": {
+                "type": "string",
+                "example": "OCTO-000001"
+              }
+            },
+            {
+              "name": "currency",
+              "in": "query",
+              "description": "ISO 4217 currency code for pricing fields (when `pricing` capability active)",
+              "schema": {
+                "type": "string",
+                "example": "USD"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Array of bookings",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Booking"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request — filter is required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Create booking (ON_HOLD)",
+          "description": "Creates a new booking in `ON_HOLD` status. Seats are held until the booking is confirmed or the hold expires.\n\n**Idempotency:** If a booking with the supplied `uuid` already exists it is returned unchanged — safe to retry.\n\n**Hold expiration:** Defaults to 30 minutes. Override with `expirationMinutes`.",
+          "operationId": "partnerCreateBooking",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "productId",
+                    "optionId",
+                    "availabilityId",
+                    "unitItems"
+                  ],
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Client-generated UUID acting as an idempotency key. Auto-generated if omitted, and must be a valid RFC 4122 UUID when supplied. Repeating a request with the same uuid returns the original booking without reserving inventory again; reusing it for a booking with different product, availability or unit details returns 409 BOOKING_UUID_CONFLICT.",
+                      "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "productId": {
+                      "type": "string",
+                      "example": "7"
+                    },
+                    "optionId": {
+                      "type": "string",
+                      "description": "Must be `default`",
+                      "example": "default"
+                    },
+                    "availabilityId": {
+                      "type": "string",
+                      "description": "Slot ID from the availability check response",
+                      "example": "101"
+                    },
+                    "unitItems": {
+                      "type": "array",
+                      "minItems": 1,
+                      "description": "One entry per guest",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "unitId"
+                        ],
+                        "properties": {
+                          "uuid": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Reseller's per-guest reference UUID",
+                            "example": "a1b2c3d4-0000-0000-0000-000000000001"
+                          },
+                          "unitId": {
+                            "type": "string",
+                            "description": "Rate/unit ID from the product catalog",
+                            "example": "12"
+                          },
+                          "contact": {
+                            "$ref": "#/components/schemas/Contact"
+                          }
+                        }
+                      }
+                    },
+                    "notes": {
+                      "type": "string",
+                      "description": "Booking-level notes / special requests",
+                      "example": "Wheelchair accessible seat needed"
+                    },
+                    "expirationMinutes": {
+                      "type": "integer",
+                      "description": "Hold duration in minutes (default: 30, minimum: 1)",
+                      "example": 30
+                    }
+                  }
+                },
+                "example": {
+                  "productId": "7",
+                  "optionId": "default",
+                  "availabilityId": "101",
+                  "unitItems": [
+                    {
+                      "uuid": "a1b2c3d4-0000-0000-0000-000000000001",
+                      "unitId": "12"
+                    },
+                    {
+                      "uuid": "a1b2c3d4-0000-0000-0000-000000000002",
+                      "unitId": "12"
+                    }
+                  ],
+                  "notes": "Window seat please"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Booking created (ON_HOLD) or existing booking returned (idempotent)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Validation error (invalid product, option, availability, or unit IDs, or a malformed uuid)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict — the supplied uuid is already in use for a different booking (BOOKING_UUID_CONFLICT)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/bookings/{uuid}": {
+        "get": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Get booking",
+          "description": "Returns the current state of a booking by its UUID.",
+          "operationId": "partnerGetBooking",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            },
+            {
+              "name": "uuid",
+              "in": "path",
+              "required": true,
+              "description": "Booking UUID",
+              "schema": {
+                "type": "string",
+                "format": "uuid",
+                "example": "550e8400-e29b-41d4-a716-446655440000"
+              }
+            },
+            {
+              "name": "currency",
+              "in": "query",
+              "description": "ISO 4217 currency code for pricing fields",
+              "schema": {
+                "type": "string",
+                "example": "USD"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Booking details",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid booking UUID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  },
+                  "example": {
+                    "error": "INVALID_BOOKING_UUID",
+                    "errorMessage": "The booking UUID was not found.",
+                    "uuid": "550e8400-e29b-41d4-a716-446655440000"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/bookings/{uuid}/confirm": {
+        "post": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Confirm booking",
+          "description": "Confirms an `ON_HOLD` booking. The booking is created in the internal system and a voucher QR code is attached to the response.\n\n**Required fields:** `contact.firstName`, `contact.lastName`, `contact.emailAddress`.\n\n**Idempotent:** If the booking is already `CONFIRMED` the current state is returned without modification.\n\nReturns `409 BOOKING_EXPIRED` if the hold has expired.",
+          "operationId": "partnerConfirmBooking",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            },
+            {
+              "name": "uuid",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid",
+                "example": "550e8400-e29b-41d4-a716-446655440000"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "contact"
+                  ],
+                  "properties": {
+                    "contact": {
+                      "type": "object",
+                      "required": [
+                        "firstName",
+                        "lastName",
+                        "emailAddress"
+                      ],
+                      "properties": {
+                        "firstName": {
+                          "type": "string",
+                          "example": "Jane"
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "example": "Smith"
+                        },
+                        "emailAddress": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "jane@example.com"
+                        },
+                        "phoneNumber": {
+                          "type": "string",
+                          "example": "+12025550100"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "US"
+                        }
+                      }
+                    },
+                    "resellerReference": {
+                      "type": "string",
+                      "description": "Reseller's booking reference stored on the tour booking record",
+                      "example": "RES-20260101-001"
+                    },
+                    "unitItems": {
+                      "type": "array",
+                      "description": "Optional — update unit items at confirm time",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "unitId": {
+                            "type": "string",
+                            "example": "12"
+                          },
+                          "contact": {
+                            "$ref": "#/components/schemas/Contact"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "contact": {
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "emailAddress": "jane@example.com",
+                    "phoneNumber": "+12025550100"
+                  },
+                  "resellerReference": "RES-20260101-001"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Booking confirmed (or already confirmed — idempotent)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Missing required contact fields or invalid unit IDs",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Booking expired or already cancelled",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/partner-api/bookings/{uuid}/cancel": {
+        "post": {
+          "tags": [
+            "Partner API"
+          ],
+          "summary": "Cancel booking",
+          "description": "Cancels a booking. Both `ON_HOLD` and `CONFIRMED` bookings can be cancelled provided the cancellation cutoff window has not been passed.\n\nReturns `409 BOOKING_ALREADY_CANCELLED` if the booking is already cancelled, and `409 CANCELLATION_NOT_ALLOWED` if the cutoff window has passed.",
+          "operationId": "partnerCancelBooking",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/OctoCapabilities"
+            },
+            {
+              "name": "uuid",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid",
+                "example": "550e8400-e29b-41d4-a716-446655440000"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reason": {
+                      "type": "string",
+                      "description": "Optional cancellation reason",
+                      "example": "Customer changed plans"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Booking cancelled",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid booking UUID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Already cancelled or cancellation not allowed (past cutoff)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/OctoError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+  }
+}

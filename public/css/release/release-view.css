@@ -1,0 +1,97 @@
+.detail-section .detail-wrap .text h1,
+.detail-section .detail-wrap .text h2,
+.detail-section .detail-wrap .text h3,
+.detail-section .detail-wrap .text h4,
+.detail-section .detail-wrap .text h5,
+.detail-section .detail-wrap .text h6 {
+    margin: 20px 0 10px;
+    font-weight: 600;
+}
+
+.detail-section .detail-wrap .text p {
+    margin: 0 0 12px;
+    line-height: 1.6;
+}
+
+.detail-section .detail-wrap .text ul {
+    margin: 10px 0 10px 20px;
+    padding-left: 20px;
+    list-style: disc;
+}
+
+.detail-section .detail-wrap .text ul ul {
+    list-style: circle;
+    margin-left: 20px;
+}
+
+.detail-section .detail-wrap .text li {
+    margin: 5px 0;
+}
+
+.detail-section .detail-wrap .text hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+.detail-section .detail-wrap .text img {
+    max-width: 100%;
+    height: auto;
+    margin: 15px 0;
+    display: block;
+}
+
+.detail-section .detail-wrap .text ol {
+    margin: 10px 0 10px 20px;
+    padding-left: 20px;
+    list-style: decimal;
+}
+
+.detail-section .detail-wrap .text ol ol {
+    list-style: lower-alpha;
+    margin-left: 20px;
+}
+
+.detail-section .detail-wrap .text blockquote {
+    margin: 15px 0;
+    padding: 10px 20px;
+    border-left: 4px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.detail-section .detail-wrap .text table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.detail-section .detail-wrap .text table td,
+.detail-section .detail-wrap .text table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.detail-section .detail-wrap .text table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+
+.detail-section .detail-wrap .text a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.detail-section .detail-wrap .text a:hover {
+    text-decoration: underline;
+}
+
+.loading-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 999999;
+    background-color: #0008;
+}

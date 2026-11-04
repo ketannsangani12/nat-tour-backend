@@ -1,0 +1,616 @@
+.booking-note { margin-bottom: 10px; }
+.booking-note:first-child { margin-top: 16px; border-top: 1px solid #ddd; padding-top: 12px; }
+.booking-note .note-text { white-space: break-spaces; }
+
+/* 6.75% opacity of bg color */
+.check-in-status-N { background-color: #ffc10720; }
+.check-in-status-1 { background-color: #19875430; }
+.check-in-status-2 { background-color: #0dcaf020; }
+.check-in-status-A { background-color: #dc354520; }
+
+.sel-check-in.check-in-status-N { border: 1px solid var(--bs-warning); }
+.sel-check-in.check-in-status-1 { border: 1px solid var(--bs-success); }
+.sel-check-in.check-in-status-2 { border: 1px solid var(--bs-info); }
+.sel-check-in.check-in-status-A { border: 1px solid var(--bs-danger); }
+
+.ul-check-in li { padding: 4px 15px; cursor: pointer; }
+.ul-check-in li.check-in-status-N:hover, .ul-check-in li.check-in-status-N:focus { background-color: #ffc10740; }
+.ul-check-in li.check-in-status-1:hover, .ul-check-in li.check-in-status-1:focus { background-color: #19875450; }
+.ul-check-in li.check-in-status-2:hover, .ul-check-in li.check-in-status-2:focus { background-color: #0dcaf040; }
+.ul-check-in li.check-in-status-A:hover, .ul-check-in li.check-in-status-A:focus { background-color: #dc354540; }
+
+.booking-history.table > :not(caption) > *:last-child > * { border-bottom: 0 none; }
+.booking-history .book-hist-d-t { width: 210px; }
+
+.custom-scrollbar {
+	max-height: 1000px;
+	overflow-y: auto;
+}
+
+thead.thead-fixed th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	/* Simulate top and bottom borders using box-shadow */
+	box-shadow: inset 0 1px 0 #acacac, inset 0 -1px 0 #acacac;
+}
+
+tfoot.tfoot-fixed td {
+	position: sticky;
+	bottom: 0;
+	z-index: 1;
+	/* Simulate top and bottom borders using box-shadow */
+	box-shadow: inset 0 1px 0 #acacac, inset 0 -1px 0 #acacac;
+}
+
+@media print {
+	body { height: 0; overflow: hidden; }
+	body * { visibility: hidden; }
+	.booking-action-sec { position: initial; }
+	#billing-table, #billing-table * { visibility: visible; }
+	#billing-table { position: absolute; left: 0; top: 0; margin: 0; }
+	#billing-table th, #billing-table td { padding: 4px 8px; }
+	#billing-table .input-group-prepend { display: none; }
+	#billing-table select { color: #565656; padding: 0; background-color: initial; border: initial; }
+	abbr { text-decoration: none; }
+}
+#card-error {
+	color: red;
+	font-size: 14px;
+	margin-bottom: 14px;
+}
+
+#waiverbtn {
+	background-color: #19875430 !important;
+	color: #000 !important;
+	border-color: #035a32;
+}
+
+#waiverbtn:hover {
+	background-color: #19875430 !important;
+	color: #000 !important;
+	border-color: #035a32 !important;
+}
+.discount-code-input.diff input {
+	max-width: 170px;
+	margin-left: auto;
+	margin-right: 5px;
+}
+.discount-code-input.diff .field-icon.per-icon {
+	left: 30px;
+}
+.btn-color {
+	background-color: #2f9dd5;
+    border-color: #2f9dd5;
+    border: 2px solid;
+    border-radius: 5px;
+    height: 37px;
+    font-size: 15px;
+    padding: 5px 7px;
+}
+
+.booking-actions-button-small {
+	font-size: 14px;
+	display: flex;
+	white-space: nowrap;
+}
+
+.booking-actions-button-large {
+	font-size: 16px;
+}
+.fa-usd:before {
+	content: "\f155";
+}
+
+.select-tour-wrp .select2 .select2-selection__arrow {
+	display: inline-block;
+}
+
+select.tourists {
+	box-shadow: none;
+}
+
+.payment-method-form-wrp .stripe-card-element {
+	background-color: white;
+	border-radius: 4px;
+	border: 1px solid #aaa;
+	padding: 4px 8px 6px 12px;
+	box-shadow: -1px -6px 5px 0px rgb(0 0 0 / 12%) inset;
+	margin-bottom: 14px;
+}
+
+.custom-charge-section {
+	position: absolute;
+	right: 22px;
+}
+
+#custom-charge-table .refund-custom-charge-heading, .refund-custom-charge {
+	width: 70px;
+}
+
+#custom-charge-table .cc-heading {
+	width: 150px;
+}
+
+#custom-charge-table .cc-reason {
+	width: 300px;
+	padding: 7px;
+}
+
+#custom-charge-table .cc-child {
+	width: 150px;
+	padding: 7px;
+}
+
+.refund-cc {
+	float: right;
+	margin-right: 20px;
+}
+
+.redeem-ticket {
+	border-bottom: 1px solid #d3d3d36b;
+}
+
+.redeem-ticket:last-child {
+	border-bottom: none;
+}
+
+td.redeem-ticket-section button {
+	--bs-text-opacity: 1;
+	display: block;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 50%;
+    background: #FFFFFF;
+    border-radius: 7px;
+    padding: 13px 15px;
+	width: 75%;
+    -webkit-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
+
+td.redeem-ticket-section button.redeem-ticket-success {
+    color: rgba(var(--bs-success-rgb), var(--bs-text-opacity)) !important;
+	border: 1px solid rgba(var(--bs-success-rgb), var(--bs-text-opacity));
+}
+
+td.redeem-ticket-section button.redeem-ticket-danger {
+    color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
+	border: 1px solid rgba(var(--bs-danger-rgb), var(--bs-text-opacity));
+}
+
+td.redeem-ticket-section button:not(:last-child) {
+	margin-bottom: 5px;
+}
+
+td.redeem-ticket-section .redeem-ticket-success:hover, .redeem-ticket-success:active {
+	background: rgba(var(--bs-success-rgb), var(--bs-text-opacity));
+	color: #FFFFFF !important;
+}
+
+td.redeem-ticket-section .redeem-ticket-danger:hover, .redeem-ticket-danger:active {
+	background: rgba(var(--bs-danger-rgb), var(--bs-text-opacity));
+	color: #FFFFFF !important;
+}
+
+.swal-button--yes:active, .swal-button--yes:hover {
+    background-color: #198754dc !important;
+    border-color: #198754dc !important;
+}
+
+.swal-button--no:active, .swal-button--no:hover {
+    background-color: #dc3546e8 !important;
+    border-color: #dc3546e8 !important;
+}
+
+.bundle-package-check-in {
+	font-weight: 600;
+    padding-bottom: 5px;
+}
+
+.bundle-check-in {
+	width: 85%;
+}
+
+.booking-action-sec .detail-wrp .agent-detail-wrp .select2-container--default {
+	width: 100% !important;
+}
+
+.edit-contact, .edit-contact-pos {
+	cursor: pointer;
+    background-color: #ffffff;
+    border-color: #724444;
+    padding: 0.5rem;
+}
+
+.rate-group-header {
+	padding: 10px;
+    background-color: rgba(0,0,0,.03);
+	margin-bottom: 5px;
+}
+
+.contact-td {
+	border-radius: 5px;
+}
+
+#edit_contacts .card-body {
+	padding: 0 !important;
+}
+
+.contact-fields {
+    padding: 0.2rem 1rem 0.2rem 1rem;
+}
+
+.contact-fields:not(:last-child) {
+	border-bottom: 1px solid lightgray;
+}
+
+.contact-title {
+	margin-left: 8px;
+}
+
+.contact-section {
+	cursor: pointer;
+}
+
+.select-contact-inactive {
+	position: absolute;
+    margin-left: 20.4rem;
+    margin-top: 9px;
+}
+
+.select-contact {
+	border: 2px solid darkgray;
+}
+
+.delete-contact-text {
+	margin-left: 12px;
+}
+
+.add-contact-section .form-group {
+	margin-bottom: 10px;
+}
+
+.note-field {
+	width: 13.8rem;
+}
+
+.contact-card .fa-check:before {
+	content: "\f058";
+    color: #393;
+    font-size: 22px;
+}
+
+.add-contact-form .col-form-label {
+	width: 100px;
+}
+
+.add-contact-form .field-icon-wrp, .add-contact-form textarea {
+	width: 100%;
+}
+
+.edit-contact-form .form-label {
+	width: 100px;
+}
+
+.edit-contact-form .form-control {
+	width: calc(100% - 100px);
+}
+
+#edit_contacts .modal-body,  #edit_booking_add_contacts .modal-body {
+	max-height: 830px;
+    overflow-y: scroll;
+	overflow-x: hidden;
+}
+.tour-guide-label {
+	font-weight: bold;
+	margin: 0;
+	display: inline-block;
+}
+.tour-guide-display {
+	cursor: pointer;
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	display: inline-block;
+	min-width: 150px;
+	background-color: #fff;
+	border-radius: 5px;
+	border-color: #0d6efd;
+	font-size: 14px;
+	font-weight: 400;
+	color: #505150;
+	box-shadow: -1px -6px 5px 0px rgb(0 0 0 / 9%) inset;
+}
+.tour-guide-select {
+	display: inline-block;
+	width: auto;
+	background-color: #fff;
+	border-radius: 5px;
+	border-color: #0d6efd;
+	font-size: 14px;
+	font-weight: 400;
+	color: #505150;
+	box-shadow: -1px -6px 5px 0px rgb(0 0 0 / 9%) inset;
+}
+.tour-guide-edit-icon {
+	cursor: pointer;
+	font-size: large;
+}
+.make-payment-with-card-reader {
+    padding: 7px 30px;
+    font-size: 14px;
+    background-color: #155724;
+    color: #ffffff;
+    border-radius: 7px;
+    border-color: #155724;
+	border: 1px solid #155724;
+}
+
+.make-payment-with-card-reader svg {
+    margin-right: 5px;
+}
+
+.make-payment-with-card-reader:hover {
+    background-color: #ffffff;
+    border-color: #155724;
+    color: #155724;
+}
+
+.make-payment-with-card-reader:hover svg path {
+    fill: #155724;
+}
+
+.cancel-card-reader-payment {
+    padding: 7px 30px;
+    font-size: 14px;
+    background-color: #155724;
+    color: #ffffff;
+    border-radius: 7px;
+    border-color: #155724;
+	border: 1px solid #155724;
+}
+
+.cancel-card-reader-payment:hover {
+    background-color: #ffffff;
+    border-color: #155724;
+    color: #155724;
+}
+
+.custom-payment-modal .modal-content {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+.custom-payment-modal .payment-box {
+    text-align: center;
+    padding: 5px;
+}
+.custom-payment-modal .modal-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+}
+.custom-payment-modal .btn-close {
+    border: none;
+    font-size: 20px;
+}
+.custom-payment-modal .modal-header {
+    border-bottom: none;
+    text-align: center;
+    padding-bottom: 10px;
+}
+.custom-payment-modal .card-detail-wrp {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+.custom-payment-modal .form-group {
+    margin-top: 15px;
+}
+.custom-payment-modal .payment-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3sease;
+}
+.custom-payment-modal .secure-info {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.custom-payment-modal .secure-info i {
+    margin-right: 5px;
+    color: #4CAF50;
+}
+
+
+.tour-guide-edit-icon {
+	cursor: pointer;
+	font-size: large;
+}
+
+.make-payment-with-card-reader {
+    padding: 7px 30px;
+    font-size: 14px;
+    background-color: #155724;
+    color: #ffffff;
+    border-radius: 7px;
+    border-color: #155724;
+	border: 1px solid #155724;
+}
+
+.make-payment-with-card-reader svg {
+    margin-right: 5px;
+}
+
+.make-payment-with-card-reader:hover {
+    background-color: #ffffff;
+    border-color: #155724;
+    color: #155724;
+}
+
+.make-payment-with-card-reader:hover svg path {
+    fill: #155724;
+}
+
+.cancel-card-reader-payment {
+    padding: 7px 30px;
+    font-size: 14px;
+    background-color: #155724;
+    color: #ffffff;
+    border-radius: 7px;
+    border-color: #155724;
+	border: 1px solid #155724;
+}
+
+.cancel-card-reader-payment:hover {
+    background-color: #ffffff;
+    border-color: #155724;
+    color: #155724;
+}
+
+.save-card-list {
+    padding: 0;
+}
+
+#saved-cards-container h5 {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #7c7e84;
+    letter-spacing: 0.14px;
+    margin-bottom: 8px;
+}
+
+.save-card-list input {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    margin: 0 !important;
+    transform: none !important;
+}
+
+.save-card-list label {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    color: #333;
+    letter-spacing: 0.14px;
+    width: calc(100% - 40px);
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    box-shadow: -1px -6px 5px 0px rgba(0, 0, 0, 0.12) inset;
+    position: relative;
+    padding: 7px 7px 7px 25px;
+}
+
+.save-card-list label:hover {
+    background-color: #2f9dd5;
+    color: #fff;
+}
+
+.save-card-checkmark {
+    padding-left: 1.75rem;
+}
+
+.delete-card.fas.fa-trash {
+    font-size: 1.2rem; /* Larger size for visibility */
+    color: #dc3545; /* Bootstrap danger color */
+    cursor: pointer;
+    margin-left: 10px; /* Space from label */
+    transition: color 0.2s;
+}
+
+.delete-card.fas.fa-trash:hover {
+    color: #a71d2a; /* Darker red on hover */
+}
+
+.save-card-list .checkmark {
+    position: absolute;
+    top: 6px;
+    left: 5px;
+    height: 15px;
+    width: 15px;
+    background-color: #fff;
+    border-radius: 50px;
+    box-shadow: -1px -6px 5px 0px rgba(0, 0, 0, 0.12) inset;
+    border: 1px solid #aaa;
+}
+
+.save-card-list input:checked + label .checkmark {
+    background-color: #2f9dd5;
+    border-color: #2f9dd5;
+    color: #fff;
+}
+
+.save-card-list input:checked + label {
+    background-color: #2f9dd5;
+    border-color: #2f9dd5;
+    color: #fff;
+}
+
+.save-card-list .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.save-card-list input:checked + label .checkmark:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.save-card-list label .checkmark:after {
+    top: 3px;
+    left: 3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: white;
+}
+
+
+.payment-link-section button {
+    font-weight: 700;
+    font-weight: 700;
+    background-color: #FF033E;
+    border-color: #FF033E;
+    color: #ffffff;
+}
+
+.payment-link-section button:hover, .payment-link-section button:active, .payment-link-section button:focus {
+    background-color: #FF5E66;
+    border-color: #FF5E66;
+    color: #ffffff;
+}
+
+.cancel-payment-link {
+    color: #ffffff;
+    background-color: var(--fg-red);
+    border-color: var(--fg-red);
+    padding: 6px 0 6px 0 !important;
+    margin-left: 3px;
+    font-weight: 600;
+    box-shadow: -1px -6px 5px 0 rgb(0 0 0 / 12%) inset, 0px -3px 5px 0 rgb(0 0 0 / 21%);
+    border-radius: 4px;
+    min-width: 90px !important;
+}
+
+.cancel-payment-link:hover, .cancel-payment-link:active, .cancel-payment-link:focus { 
+    color: #ffffff;
+    background-color: #FF5E66 !important;
+    border-color: #FF5E66;
+}

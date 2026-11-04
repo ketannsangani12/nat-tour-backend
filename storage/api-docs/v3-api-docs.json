@@ -1,0 +1,293 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NAT API",
+    "version": "3.0.0",
+    "description": "API for iPad and Mobile NAT App"
+  },
+  "servers": [
+    {
+      "url": "/api/v3",
+      "description": "Version 3 API"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/agenda-day-time-slots": {
+      "post": {
+        "summary": "Get Agenda Day Time Slots",
+        "description": "Fetches day-time slots for agenda based on the provided date and optional parameters. Requires authentication.",
+        "operationId": "getAgendaDayTimeSlots",
+        "tags": [
+          "Agenda Api"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "description": "The date for fetching time slots (format: YYYYMMDD).",
+                    "example": "20230423"
+                  },
+                  "tour_package_id": {
+                    "type": "integer",
+                    "description": "Optional tour package ID.",
+                    "example": 0
+                  },
+                  "payment_status": {
+                    "type": "integer",
+                    "description": "Optional payment status.",
+                    "example": 0
+                  },
+                  "slot_id": {
+                    "type": "integer",
+                    "description": "Optional slot ID.",
+                    "example": 0
+                  },
+                  "tour_booking_id": {
+                    "type": "integer",
+                    "description": "Optional tour booking ID.",
+                    "example": 95441
+                  }
+                },
+                "required": [
+                  "date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Data fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Data fetched successfully!"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "example": "2025-04-01"
+                        },
+                        "agendaView": {
+                          "type": "string",
+                          "example": "1"
+                        },
+                        "tourPackages": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "example": 28
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "Backhaul Taxi"
+                              }
+                            }
+                          }
+                        },
+                        "tourOperatorCheckInStatues": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "N",
+                            "1",
+                            "2",
+                            "A"
+                          ]
+                        },
+                        "checkInStatues": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "example": {
+                            "N": "Not Checked In",
+                            "1": "1st Check In",
+                            "2": "2nd Check In",
+                            "A": "Absent"
+                          }
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "slotTime": {
+                                "type": "string",
+                                "example": "11:00:00 - 12:00:00"
+                              },
+                              "slotArray": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "booking_id": {
+                                      "type": "integer",
+                                      "example": 95441
+                                    },
+                                    "tour_slot_id": {
+                                      "type": "integer",
+                                      "example": 104197
+                                    },
+                                    "hotel_id": {
+                                      "type": "integer",
+                                      "example": 0
+                                    },
+                                    "tourists": {
+                                      "type": "integer",
+                                      "example": 2
+                                    },
+                                    "comments": {
+                                      "type": "string",
+                                      "example": ""
+                                    },
+                                    "note": {
+                                      "type": "string",
+                                      "example": ""
+                                    },
+                                    "created_by_user_type": {
+                                      "type": "string",
+                                      "example": "Customer"
+                                    },
+                                    "tour_package_id": {
+                                      "type": "integer",
+                                      "example": 1
+                                    },
+                                    "tour_package_name": {
+                                      "type": "string",
+                                      "example": "General Tour"
+                                    },
+                                    "stripe_destination_id": {
+                                      "type": "string",
+                                      "example": "acct_1OMbCT2Uz51bFHfW"
+                                    },
+                                    "customer_name": {
+                                      "type": "string",
+                                      "example": "Devat B Karetha"
+                                    },
+                                    "email": {
+                                      "type": "string",
+                                      "example": "devat73@gmail.com"
+                                    },
+                                    "via": {
+                                      "type": "string",
+                                      "example": "Card"
+                                    },
+                                    "phone_number": {
+                                      "type": "string",
+                                      "example": "+52"
+                                    },
+                                    "counter": {
+                                      "type": "integer",
+                                      "example": 0
+                                    },
+                                    "background_colour_class": {
+                                      "type": "string",
+                                      "example": "normal-booking"
+                                    },
+                                    "dayBookings": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "tourists": {
+                                            "type": "integer",
+                                            "example": 2
+                                          },
+                                          "check_in_status": {
+                                            "type": [
+                                              "array",
+                                              "null"
+                                            ],
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "status": {
+                                                  "type": "string",
+                                                  "example": "1"
+                                                },
+                                                "dateTime": {
+                                                  "type": "string",
+                                                  "format": "date-time",
+                                                  "example": "2025-04-07 05:29:54"
+                                                }
+                                              }
+                                            },
+                                            "example": null
+                                          },
+                                          "rate_for": {
+                                            "type": "string",
+                                            "example": "Guest(s)"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "availableSeats": {
+                                "type": "string",
+                                "example": "74"
+                              },
+                              "seats": {
+                                "type": "string",
+                                "example": "84"
+                              },
+                              "ageTotalGroup": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "example": [
+                                  "10 Guest(s)"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

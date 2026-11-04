@@ -1,0 +1,35 @@
+#content{padding-bottom: 60px; }
+/*#loading{display:none; width: 100%; padding:5px 10px; position: fixed; bottom: 0; left: 0; text-align: center; color:white; background: rgba(0,0,23,0.71); box-shadow: 0 0 10px black; }*/
+
+.listing-section {padding: 50px 0px;}
+.listing-section .list-wrap {margin-bottom: 35px;}
+.listing-section .list-wrap:last-child {margin-bottom: 0;}
+.listing-section .list-wrap .date-wrap {margin-right: 20px; width: 10%;}
+.listing-section .list-wrap .date-wrap .date {font-size: 80px; line-height: 1; font-weight: 700; color: #000;}
+.listing-section .list-wrap .date-wrap .month {font-size: 15px; line-height: 1; font-weight: 600; color: #000; text-transform: uppercase;}
+.listing-section .list-wrap .content-wrap {margin-right: 20px; width: 70%;}
+.listing-section .list-wrap .content-wrap .list-title {font-size: 28px; line-height: 39px; color: #0088cc; font-weight: 700; margin-bottom: 5px;}
+.listing-section .list-wrap .content-wrap .list-subtitle {font-size: 22px; line-height: 30px; color: #000000; font-weight: 600; margin-bottom: 10px;}
+.listing-section .list-wrap .content-wrap .list-text {font-size: 18px; color: #000000; line-height: 24px; margin-bottom: 10px; display:-webkit-box; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:3;}
+.listing-section .list-wrap .content-wrap a {margin: 0 5px}
+.listing-section .list-wrap .content-wrap a svg {margin-right: 5px; position: relative; top: -1px;}
+.listing-section .list-wrap .content-wrap a svg path {stroke: #08c;}
+.listing-section .list-wrap .content-wrap a.delete svg path {stroke: #f44;}
+.listing-section .list-wrap .content-wrap a.view svg path {stroke: #393;}
+.listing-section .list-wrap .img-wrap img {max-width: 200px; object-fit: cover;}
+.btn-delete{background: none !important}
+
+/* Max Media CSS */
+@media (max-width: 991px) {
+    .listing-section .list-wrap .date-wrap,.listing-section .list-wrap .content-wrap {margin-right: 0; margin-bottom: 15px; width: 100%;}
+}
+
+.detail-section {padding: 50px;}
+.detail-section .detail-wrap .img-wrap img {max-width: 100%; object-fit: cover; margin-bottom: 15px;}
+.detail-section .detail-wrap .title {font-size: 28px; line-height: 1.2; color: #0088cc; font-weight: 700; margin: 10px 0px;}
+.detail-section .detail-wrap .subtitle {font-size: 22px; line-height: 1.2; color: #000000; font-weight: 600; margin-bottom: 10px;}
+.detail-section .detail-wrap .text {font-size: 18px; color: #000000; line-height: 1.3;}
+.img-wrap-detail {
+    width: 50%;
+    height: auto;
+}

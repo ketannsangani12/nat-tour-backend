@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>The 2027 Operator Transfer Upgrade</title>
+<style>
+  @page { size: Letter; margin: 20mm 18mm 18mm 18mm; }
+  * { box-sizing: border-box; }
+
+  :root {
+    --ink: #1c2333;
+    --ink-soft: #565c6e;
+    --ink-faint: #8991a3;
+    --paper: #ffffff;
+    --panel: #ffffff;
+    --brass: #a9762f;
+    --brass-deep: #7c5620;
+    --brass-pale: #f4e9d6;
+    --teal: #2c6b5e;
+    --teal-pale: #e7f2ee;
+    --line: #e6ddc9;
+    --navy-deep: #0f1a2e;
+    --navy-mid: #1b2c48;
+  }
+
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt;
+    line-height: 1.58;
+    color: var(--ink);
+    margin: 0;
+    background: var(--paper);
+  }
+  .serif { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif; }
+
+  /* ---------- SPRITE (hidden) ---------- */
+  .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  .icon { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .icon.lg { width: 34px; height: 34px; }
+
+  /* ---------- COVER ---------- */
+  .cover {
+    min-height: 235mm;
+    padding: 32mm 20mm 20mm 20mm;
+    border-radius: 16px;
+    background: radial-gradient(1100px 700px at 82% -10%, #24365a 0%, transparent 60%), linear-gradient(165deg, var(--navy-deep) 0%, var(--navy-mid) 55%, #223454 100%);
+    color: #eef1f8;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover .ring { position: absolute; right: -140px; top: -140px; width: 460px; height: 460px; border-radius: 50%; border: 1px solid rgba(214,178,120,0.28); }
+  .cover .ring.b { right: -60px; top: -60px; width: 300px; height: 300px; border-color: rgba(214,178,120,0.18); }
+  .cover .kicker {
+    text-transform: uppercase; letter-spacing: 3px; font-size: 9pt; font-weight: 600;
+    color: #d7b06a; margin-bottom: 22px;
+  }
+  .cover .rule { width: 46px; height: 2px; background: #d7b06a; margin-bottom: 22px; }
+  .cover h1 {
+    font-size: 32pt; line-height: 1.2; margin: 0 0 16px 0; color: #ffffff; font-weight: 400; max-width: 460px;
+  }
+  .cover .subtitle { font-size: 13pt; color: #b9c2d6; max-width: 420px; margin-bottom: auto; line-height: 1.6; }
+  .cover-meta {
+    font-size: 9.3pt; color: #aab3c6; border-top: 1px solid rgba(255,255,255,0.16); padding-top: 16px; max-width: 440px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-top: 40px;
+  }
+  .cover-meta b { color: #f2f4f9; display: block; font-weight: 600; }
+  .cover-tag {
+    display: inline-block; margin-top: 22px; padding: 6px 14px; border-radius: 20px;
+    background: rgba(215,176,106,0.14); border: 1px solid rgba(215,176,106,0.45); color: #e7c98a;
+    font-size: 8.4pt; font-weight: 600; letter-spacing: 0.4px; width: fit-content;
+  }
+
+  /* ---------- SECTION SCAFFOLDING ---------- */
+  .page { page-break-before: always; padding-top: 2mm; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 2.2px; font-size: 8.4pt; font-weight: 700; color: var(--brass); margin-bottom: 8px; }
+  h1.title { font-size: 20pt; font-weight: 400; color: var(--ink); margin: 0 0 6px 0; }
+  h1.title + .dek { color: var(--ink-soft); font-size: 10.6pt; max-width: 92%; margin-bottom: 18px; }
+  .hr { height: 1px; background: var(--line); border: 0; margin: 18px 0; }
+  h2.sub { font-size: 13pt; font-weight: 600; color: var(--ink); margin: 22px 0 8px 0; }
+  p { margin: 6px 0; }
+
+  /* ---------- BENEFIT TILES ---------- */
+  .tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0 6px 0; }
+  .tile {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 15px;
+  }
+  .tile .icon { color: var(--brass); margin-bottom: 8px; }
+  .tile h3 { font-size: 10.4pt; margin: 0 0 4px 0; color: var(--ink); font-weight: 700; }
+  .tile p { font-size: 9.1pt; color: var(--ink-soft); margin: 0; }
+
+  /* ---------- DIAGRAM ---------- */
+  .flow-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 14px 0; }
+  .flow-card .flabel { font-size: 8.4pt; text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700; margin-bottom: 14px; }
+  .flow-card.today .flabel { color: var(--ink-faint); }
+  .flow-card.future .flabel { color: var(--brass); }
+  .flow-row { display: flex; align-items: center; gap: 10px; }
+  .fbox { flex: 1; border: 1.5px solid var(--line); border-radius: 9px; padding: 12px 10px; text-align: center; font-size: 9pt; background: #fdfcf9; }
+  .fbox b { display: block; font-size: 9.6pt; margin-bottom: 2px; }
+  .fbox.guest { border-color: #9db3d6; background: #eef2fa; color: #24406e; }
+  .fbox.platform { border-color: var(--brass); background: var(--brass-pale); color: var(--brass-deep); }
+  .fbox.operator { border-color: var(--teal); background: var(--teal-pale); color: var(--teal); }
+  .farrow { font-size: 16pt; color: var(--ink-faint); }
+  .flow-card .fnote { font-size: 8.6pt; color: var(--ink-soft); margin-top: 10px; text-align: center; }
+  .flow-card .fan-label {
+    text-align: center; font-size: 8pt; color: var(--ink-faint); text-transform: uppercase;
+    letter-spacing: 0.8px; margin: 4px 0 10px 0;
+  }
+  .flow-card .fan-label::before { content: ''; display: block; width: 1px; height: 14px; background: var(--line); margin: 0 auto 8px auto; }
+  .fan-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .fbox.operator.small { flex: 0 1 150px; font-size: 8.3pt; padding: 10px 8px; }
+
+  /* ---------- REASSURANCE / WHY NOW PANELS ---------- */
+  .panel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .panel { border-radius: 10px; padding: 16px 17px; }
+  .panel.check { background: var(--teal-pale); border: 1px solid #c7e0d8; }
+  .panel.brass { background: var(--brass-pale); border: 1px solid #e5cf9f; }
+  .panel h3 { margin: 0 0 8px 0; font-size: 10.6pt; }
+  .panel.check h3 { color: var(--teal); }
+  .panel.brass h3 { color: var(--brass-deep); }
+  .panel ul { margin: 0; padding-left: 0; list-style: none; }
+  .panel li { display: flex; gap: 8px; margin-bottom: 7px; font-size: 9.1pt; color: var(--ink); }
+  .panel li .icon { flex: none; width: 15px; height: 15px; margin-top: 1px; }
+  .panel.check li .icon { color: var(--teal); }
+  .panel.brass p { font-size: 9.1pt; color: var(--ink); margin: 0; }
+
+  /* ---------- ROADMAP ---------- */
+  .roadmap { position: relative; margin: 30px 4px 10px 4px; }
+  .roadmap .track { position: absolute; top: 21px; left: 21px; right: 21px; height: 2px; background: var(--line); }
+  .roadmap .nodes { display: flex; justify-content: space-between; position: relative; }
+  .rnode { width: 62px; text-align: center; }
+  .rnode .dot {
+    width: 42px; height: 42px; border-radius: 50%; background: var(--panel); border: 2px solid var(--brass);
+    color: var(--brass-deep); display: flex; align-items: center; justify-content: center; font-weight: 700;
+    font-size: 12pt; margin: 0 auto 8px auto; position: relative; z-index: 1; font-family: Georgia, serif;
+  }
+  .rnode .rname { font-size: 7.8pt; color: var(--ink-soft); font-weight: 600; line-height: 1.3; }
+
+  .roadmap-list { margin-top: 26px; }
+  .rrow { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px dotted var(--line); }
+  .rrow .rnum { font-family: Georgia, serif; font-size: 13pt; color: var(--brass); width: 26px; flex: none; }
+  .rrow .rname { font-weight: 700; font-size: 9.8pt; color: var(--ink); }
+  .rrow .rdesc { font-size: 9.1pt; color: var(--ink-soft); }
+
+  /* ---------- MILESTONE PAGE ---------- */
+  .m-page { position: relative; }
+  .m-bignum {
+    position: absolute; top: -6mm; right: 0; font-family: Georgia, serif; font-size: 88pt; color: var(--brass-pale);
+    line-height: 1; z-index: 0; font-weight: 700;
+  }
+  .m-head { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .m-head .m-icon {
+    width: 46px; height: 46px; border-radius: 10px; background: var(--navy-deep); color: #e7c98a;
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .m-head .m-icon .icon { width: 24px; height: 24px; }
+  .m-eyebrow { text-transform: uppercase; letter-spacing: 2px; font-size: 8.2pt; font-weight: 700; color: var(--brass); }
+  .m-title { font-size: 18pt; font-weight: 400; margin: 2px 0 0 0; font-family: Georgia, serif; color: var(--ink); }
+  .m-objective { font-size: 10.4pt; color: var(--ink-soft); margin: 14px 0 4px 0; position: relative; z-index: 1; max-width: 96%; }
+
+  .m-involves { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 14px 0; position: relative; z-index: 1; }
+  .m-involves h4 { margin: 0 0 8px 0; font-size: 9.2pt; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-faint); }
+  .m-involves ul { list-style: none; margin: 0; padding: 0; }
+  .m-involves li { display: flex; gap: 9px; margin-bottom: 8px; font-size: 9.4pt; }
+  .m-involves li .icon { flex: none; color: var(--brass); margin-top: 1px; width: 15px; height: 15px; }
+
+  .m-success { background: var(--teal-pale); border-left: 4px solid var(--teal); border-radius: 6px; padding: 12px 15px; margin-top: 14px; position: relative; z-index: 1; }
+  .m-success b { color: var(--teal); display: block; font-size: 8.4pt; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px; }
+  .m-success p { margin: 0; font-size: 9.4pt; color: var(--ink); }
+
+  .m-example { margin-top: 20px; padding-top: 16px; border-top: 1px dotted var(--line); position: relative; z-index: 1; max-width: 96%; }
+  .m-example b { display: block; font-size: 8.2pt; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-faint); margin-bottom: 5px; }
+  .m-example p { margin: 0; font-size: 9.8pt; color: var(--navy-mid); font-family: Georgia, serif; font-style: italic; line-height: 1.6; }
+
+  .commit-list { margin: 16px 0; }
+  .commit-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px dotted var(--line); }
+  .commit-row:last-child { border-bottom: 0; }
+  .commit-row .icon { color: var(--teal); flex: none; margin-top: 2px; }
+  .commit-row span { font-size: 9.4pt; color: var(--ink); }
+
+  .signoff { margin-top: 26px; text-align: center; }
+  .signoff .rule2 { width: 60px; height: 1px; background: var(--line); margin: 0 auto 14px auto; }
+  .signoff p { font-family: Georgia, serif; font-style: italic; font-size: 11pt; color: var(--navy-mid); margin: 0; }
+  .signoff .signature { margin-top: 16px; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; }
+  .signoff .signature b { display: block; font-size: 9.6pt; color: var(--ink); font-weight: 700; }
+  .signoff .signature span { font-size: 8.6pt; color: var(--ink-soft); letter-spacing: 0.3px; }
+
+  /* Last page only: stretch to the full printable height and pin the footer to the bottom edge,
+     instead of letting it float directly under the content with dead space beneath it. */
+  .page.closing-page { display: flex; flex-direction: column; min-height: 235mm; }
+  .page.closing-page .foot { margin-top: auto; }
+
+  /* ---------- QUOTE / PULLQUOTE ---------- */
+  .pullquote {
+    font-family: Georgia, serif; font-style: italic; font-size: 13pt; color: var(--navy-mid);
+    border-left: 3px solid var(--brass); padding: 4px 0 4px 18px; margin: 20px 0; line-height: 1.55;
+  }
+
+  /* ---------- QUESTIONS LIST ---------- */
+  .qlist { margin: 16px 0; }
+  .qrow { display: flex; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 13px 15px; margin-bottom: 10px; }
+  .qrow .icon { color: var(--brass); flex: none; margin-top: 2px; }
+  .qrow .qtext b { display: block; font-size: 9.8pt; color: var(--ink); margin-bottom: 2px; }
+  .qrow .qtext span { font-size: 8.9pt; color: var(--ink-soft); }
+
+  /* ---------- CLOSING ---------- */
+  .closing { background: var(--navy-deep); color: #eef1f8; border-radius: 14px; padding: 28px 30px; margin-top: 18px; }
+  .closing h2 { font-family: Georgia, serif; font-weight: 400; font-size: 17pt; margin: 0 0 10px 0; color: #fff; }
+  .closing p { color: #b9c2d6; font-size: 9.6pt; }
+  .closing .steps { margin: 16px 0 0 0; padding: 0; list-style: none; counter-reset: step; }
+  .closing .steps li { counter-increment: step; padding-left: 30px; position: relative; margin-bottom: 10px; font-size: 9.6pt; color: #e5e9f2; }
+  .closing .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: -1px; width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(215,176,106,0.18); border: 1px solid #d7b06a; color: #e7c98a; font-size: 8pt; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .foot { margin-top: 20px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 7.8pt; color: var(--ink-faint); display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M15.2 8.8l-2 4.4-4.4 2 2-4.4z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.1 5.9l-1.7 1.7M7.6 16.4l-1.7 1.7M18.1 18.1l-1.7-1.7M7.6 7.6L5.9 5.9"/></symbol>
+  <symbol id="i-network" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M6.9 7.2L11 16M17.1 7.2L13 16M7.2 6h9.6"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 10h9a5.5 5.5 0 1 1 0 11h-2"/><path d="M8 5L4 10l4 5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-toggle" viewBox="0 0 24 24"><rect x="2.5" y="7.5" width="19" height="9" rx="4.5"/><circle cx="16" cy="12" r="3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 5-3.2 8-7 9.5-3.8-1.5-7-4.5-7-9.5V6z"/><path d="M8.7 12.2l2.2 2.2 4.4-4.6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-4 4V16H4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M8 12.3l2.6 2.6L16.3 9"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h14l-3 4 3 4H5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5.3l3.6 2.1"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4zM9 4v13M15 6.5v13"/></symbol>
+</svg>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="ring"></div>
+  <div class="ring b"></div>
+  <div class="kicker">Business Proposal &middot; Payments Modernization</div>
+  <div class="rule"></div>
+  <h1 class="serif">The 2027 Operator<br>Transfer Upgrade</h1>
+  <div class="subtitle">A milestone plan for how tour operators get paid on bookings for 2027 and beyond &mdash; built for clarity, safety, and a rollout you can control every step of the way.</div>
+  <div class="cover-tag">PROJECT PROPOSAL &middot; MILESTONE PLAN</div>
+  <div class="cover-meta">
+    <div><b>Prepared for</b>NAT Leadership</div>
+    <div><b>Prepared by</b>Product &amp; Engineering</div>
+    <div><b>Date</b>September 2026</div>
+    <div><b>Applies to</b>Tours departing 2027 onward</div>
+  </div>
+</div>
+
+<!-- ============ THE OPPORTUNITY ============ -->
+<div class="page">
+  <div class="eyebrow">Executive Overview</div>
+  <h1 class="title serif">Why we're doing this</h1>
+  <div class="dek">An upgrade that unlocks single-payment checkout across multiple tour operators &mdash; without changing what guests see, what operators earn, or how anything is priced.</div>
+
+  <p>Today, when a guest pays for a tour, our payment processor splits that single payment automatically &mdash; but only ever to <b>one</b> tour operator's account. That's a hard technical limit of how card payments work today, not a business choice: a single charge can only ever settle to a single connected account.</p>
+  <p>That limit is exactly what's stood in the way of a true <b>NAT Network checkout</b> &mdash; a guest buying tour packages from several different operators in one single payment. For any tour <b>departing in 2027 or later</b>, we're changing how the charge settles: the full payment lands with NAT first, and NAT's own systems then send each operator their exact share as its own explicit step. Because that step is ours to control, it's no longer limited to one operator &mdash; a single guest payment can now be distributed across as many operators as the cart actually contains.</p>
+  <p>This also gives our own team a clearer, first-class record of every operator payment, instead of it happening invisibly inside the payment processor's own settlement &mdash; improving visibility and our ability to react quickly if anything ever needs attention.</p>
+
+  <div class="tiles">
+    <div class="tile">
+      <svg class="icon"><use href="#i-network"/></svg>
+      <h3>One Checkout, Many Operators</h3>
+      <p>A single guest payment can now be split across every operator in a combo cart &mdash; not just one.</p>
+    </div>
+    <div class="tile">
+      <svg class="icon"><use href="#i-eye"/></svg>
+      <h3>Full Visibility</h3>
+      <p>Every operator transfer becomes its own recorded event NAT can see, trace, and report on &mdash; not a hidden side effect.</p>
+    </div>
+    <div class="tile">
+      <svg class="icon"><use href="#i-lock"/></svg>
+      <h3>Zero Guest Impact</h3>
+      <p>Guests check out exactly the same way, on every device, with no visible change whatsoever.</p>
+    </div>
+    <div class="tile">
+      <svg class="icon"><use href="#i-toggle"/></svg>
+      <h3>Safe, Reversible Rollout</h3>
+      <p>A dedicated on/off control means we can turn this on gradually, and instantly back off if anything looks wrong.</p>
+    </div>
+  </div>
+
+  <div class="pullquote">"Nothing about the guest experience, operator earnings, or booking price changes. What's new is what becomes possible &mdash; one payment, many operators &mdash; with full visibility into every transfer along the way."</div>
+</div>
+
+<!-- ============ TODAY VS TOMORROW ============ -->
+<div class="page">
+  <div class="eyebrow">How It Works</div>
+  <h1 class="title serif">Today, versus what we're proposing</h1>
+  <div class="dek">Two payment calls instead of one &mdash; fired back to back, at the exact same moment. Because the second call is ours to make, it can go to more than one operator, not just one.</div>
+
+  <div class="flow-card today">
+    <div class="flabel">Today &middot; every booking, every tour date</div>
+    <div class="flow-row">
+      <div class="fbox guest"><b>Guest's Card</b>Pays for the tour</div>
+      <div class="farrow">&rarr;</div>
+      <div class="fbox platform"><b>NAT Platform</b>Receives payment</div>
+      <div class="farrow">&rarr;</div>
+      <div class="fbox operator"><b>Tour Operator</b>Paid automatically</div>
+    </div>
+    <div class="fnote">Our payment processor performs the split as one single, automatic step &mdash; but only ever to one operator's account. A cart spanning multiple operators has no clean way to settle today.</div>
+  </div>
+
+  <div class="flow-card future">
+    <div class="flabel">Proposed &middot; tours departing 2027 and later, only</div>
+    <div class="flow-row">
+      <div class="fbox guest"><b>Guest's Card</b>Pays once, for the whole cart</div>
+      <div class="farrow">&rarr;</div>
+      <div class="fbox platform"><b>NAT Platform</b>Receives the full payment</div>
+    </div>
+    <div class="fan-label">splits into as many explicit, recorded transfers as the cart needs</div>
+    <div class="fan-row">
+      <div class="fbox operator small"><b>Operator A</b>Paid their share</div>
+      <div class="fbox operator small"><b>Operator B</b>Paid their share</div>
+      <div class="fbox operator small"><b>Operator C</b>Paid their share</div>
+    </div>
+    <div class="fnote">NAT's own systems now explicitly send each operator their share as its own event &mdash; the same moment as today, recorded and traceable, and no longer limited to a single operator per payment.</div>
+  </div>
+
+  <h2 class="sub">Why now?</h2>
+  <p>As of today, <b>no tour dated 2027 or later has been booked or sold anywhere on the platform yet.</b> That gives us a rare, completely risk-free window: we can build and thoroughly test this upgrade quietly, in the background, with zero chance of disrupting a real guest or a booking already in progress. The only real deadline is having this fully in place before the first 2027 tour date is ever opened for sale on any operator's calendar &mdash; not January&nbsp;1, 2027 itself, which has no bearing on booking dates.</p>
+</div>
+
+<!-- ============ WHAT WON'T CHANGE ============ -->
+<div class="page">
+  <div class="eyebrow">Set Expectations</div>
+  <h1 class="title serif">What stays exactly the same</h1>
+  <div class="dek">This upgrade is intentionally narrow. Everything below continues to work precisely as it does today.</div>
+
+  <div class="panel-row">
+    <div class="panel check">
+      <h3>Unchanged, guaranteed</h3>
+      <ul>
+        <li><svg class="icon"><use href="#i-check"/></svg>Guests check out exactly the same way, on web, mobile, and in person.</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>Operators are paid at the exact same moment as today &mdash; nothing is delayed or held back.</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>Every booking for a tour dated 2026 or earlier is completely unaffected, forever.</li>
+        <li><svg class="icon"><use href="#i-check"/></svg>Pricing, fees, and commission splits are calculated exactly as they are today.</li>
+      </ul>
+    </div>
+    <div class="panel brass">
+      <h3>Built on proven technology</h3>
+      <p>NAT's platform already uses this exact payment-splitting approach successfully today, for a different kind of booking &mdash; multi-operator partner tours. This project takes that same trusted, working approach and extends it to cover 2027+ bookings too. We are reusing a pattern that already works, not inventing one from scratch &mdash; which meaningfully lowers the risk of this project before we've written a line of it.</p>
+    </div>
+  </div>
+
+  <h2 class="sub">Scope, in one sentence</h2>
+  <p>This upgrade covers <b>card and card-reader payments only</b>, for tours departing in <b>2027 or later</b>. It does not touch cash, check, or other offline payment records, and it does not touch the separate system that already pays tour guides their own gratuities.</p>
+
+  <h2 class="sub">Our commitment to you</h2>
+  <div class="commit-list">
+    <div class="commit-row"><svg class="icon"><use href="#i-check"/></svg><span>Every change is tested against a real booking scenario before it's considered complete &mdash; not just reviewed on paper.</span></div>
+    <div class="commit-row"><svg class="icon"><use href="#i-check"/></svg><span>No booking for a tour dated 2026 or earlier is ever touched by this work, at any point, in any milestone.</span></div>
+    <div class="commit-row"><svg class="icon"><use href="#i-check"/></svg><span>You'll hear from us as each milestone completes &mdash; a short, plain-language update, not a lengthy status meeting.</span></div>
+  </div>
+</div>
+
+<!-- ============ ROADMAP OVERVIEW ============ -->
+<div class="page">
+  <div class="eyebrow">The Plan</div>
+  <h1 class="title serif">Six milestones, start to finish</h1>
+  <div class="dek">Each milestone is a complete, testable unit of work. We move to the next only once the current one is solid.</div>
+
+  <div class="roadmap">
+    <div class="track"></div>
+    <div class="nodes">
+      <div class="rnode"><div class="dot">1</div><div class="rname">Recognize the Future</div></div>
+      <div class="rnode"><div class="dot">2</div><div class="rname">Build the Transfer Engine</div></div>
+      <div class="rnode"><div class="dot">3</div><div class="rname">Connect Every Checkout</div></div>
+      <div class="rnode"><div class="dot">4</div><div class="rname">Refunds &amp; Cancellations</div></div>
+      <div class="rnode"><div class="dot">5</div><div class="rname">Team Visibility</div></div>
+      <div class="rnode"><div class="dot">6</div><div class="rname">Safety Switch &amp; Launch</div></div>
+    </div>
+  </div>
+
+  <div class="roadmap-list">
+    <div class="rrow"><div class="rnum serif">1</div><div><div class="rname">Recognize the Future</div><div class="rdesc">Teach the system to spot a 2027+ booking the instant it's paid for, and permanently record which payment method applies to it.</div></div></div>
+    <div class="rrow"><div class="rnum serif">2</div><div><div class="rname">Build the New Transfer Engine</div><div class="rdesc">Build the mechanism that sends an operator their share as its own clear, recorded step &mdash; modeled on a proven pattern already in use elsewhere.</div></div></div>
+    <div class="rrow"><div class="rnum serif">3</div><div><div class="rname">Connect Every Way Guests Can Pay</div><div class="rdesc">Roll the new method out across every checkout flow &mdash; web, mobile, admin, and in-person card readers &mdash; one at a time, each fully tested.</div></div></div>
+    <div class="rrow"><div class="rnum serif">4</div><div><div class="rname">Make Refunds &amp; Cancellations Just Work</div><div class="rdesc">Ensure a cancellation, refund, or dispute correctly and safely reverses a 2027+ operator transfer, exactly as it already does today.</div></div></div>
+    <div class="rrow"><div class="rnum serif">5</div><div><div class="rname">Give Our Team Visibility</div><div class="rdesc">Surface any transfer that didn't go through cleanly, so our team can follow up &mdash; instead of it going unnoticed.</div></div></div>
+    <div class="rrow"><div class="rnum serif">6</div><div><div class="rname">A Safety Switch, and a Careful Launch</div><div class="rdesc">Add a controllable on/off switch, rehearse everything in a safe test environment, and launch gradually with an instant way back.</div></div></div>
+  </div>
+</div>
+
+<!-- ============ MILESTONE 1 ============ -->
+<div class="page m-page">
+  <div class="m-bignum">01</div>
+  <div class="m-head">
+    <div class="m-icon"><svg class="icon"><use href="#i-compass"/></svg></div>
+    <div>
+      <div class="m-eyebrow">Milestone One &middot; Foundation</div>
+      <h2 class="m-title">Recognize the Future</h2>
+    </div>
+  </div>
+  <p class="m-objective">Before we can change how an operator is paid, the system needs to reliably recognize <i>which</i> bookings this even applies to &mdash; and remember that decision permanently, so it can never be second-guessed later, even if a trip gets rescheduled.</p>
+
+  <div class="m-involves">
+    <h4>What this involves</h4>
+    <ul>
+      <li><svg class="icon"><use href="#i-check"/></svg>A simple internal rule that checks a booking's tour date the moment payment is taken.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>A permanent record attached to every transaction, noting which payment method applies to it &mdash; written once, never rewritten.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>Safe, conservative handling for multi-tour "combo cart" purchases, so a single order mixing 2026 and 2027 tours is never handled ambiguously.</li>
+    </ul>
+  </div>
+
+  <div class="m-success">
+    <b>You'll know it's working when</b>
+    <p>Every new booking, from the instant it's paid for, is correctly and permanently tagged &mdash; with zero manual involvement, and no way for that tag to be lost or overwritten later, even by a rescheduled trip date.</p>
+  </div>
+
+  <div class="m-example">
+    <b>In practice</b>
+    <p>A guest books a 2029 kayaking trip today. The moment they pay, the system quietly notes &ldquo;this one uses the new method&rdquo; &mdash; a decision that never changes again, even if the trip date is later moved.</p>
+  </div>
+</div>
+
+<!-- ============ MILESTONE 2 ============ -->
+<div class="page m-page">
+  <div class="m-bignum">02</div>
+  <div class="m-head">
+    <div class="m-icon"><svg class="icon"><use href="#i-gear"/></svg></div>
+    <div>
+      <div class="m-eyebrow">Milestone Two &middot; Core Engine</div>
+      <h2 class="m-title">Build the New Transfer Engine</h2>
+    </div>
+  </div>
+  <p class="m-objective">This is the heart of the upgrade: the actual mechanism that sends a tour operator their share of a booking, built as its own clear, distinct step &mdash; modeled closely on a payment-splitting tool NAT already relies on successfully today for its partner-commission bookings.</p>
+
+  <div class="m-involves">
+    <h4>What this involves</h4>
+    <ul>
+      <li><svg class="icon"><use href="#i-check"/></svg>A dedicated internal process that calculates the operator's share and sends it as its own distinct, trackable transaction.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>A permanent internal ledger entry for every transfer &mdash; success or failure &mdash; that our team can look back on later.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>Careful handling so a rare failed transfer is safely logged, never silently lost, and never accidentally charges the guest twice or blocks their booking.</li>
+    </ul>
+  </div>
+
+  <div class="m-success">
+    <b>You'll know it's working when</b>
+    <p>Every 2027+ booking generates a clear, separate, auditable transfer record &mdash; visible internally the moment it happens, success or failure alike.</p>
+  </div>
+
+  <div class="m-example">
+    <b>In practice</b>
+    <p>When that same 2029 booking is confirmed, the new transfer engine sends the operator's share as its own clearly logged transaction &mdash; separate from, but at the exact same instant as, the guest's payment.</p>
+  </div>
+</div>
+
+<!-- ============ MILESTONE 3 ============ -->
+<div class="page m-page">
+  <div class="m-bignum">03</div>
+  <div class="m-head">
+    <div class="m-icon"><svg class="icon"><use href="#i-network"/></svg></div>
+    <div>
+      <div class="m-eyebrow">Milestone Three &middot; Platform-Wide Rollout</div>
+      <h2 class="m-title">Connect Every Way Guests Can Pay</h2>
+    </div>
+  </div>
+  <p class="m-objective">Guests can pay in many different ways today &mdash; booking online, paying a remaining balance, adding extras, tipping, paying in person with a card reader, using the mobile app, and more. This milestone updates every one of those moments so they all correctly use the new method for 2027+ bookings.</p>
+
+  <div class="m-involves">
+    <h4>What this involves</h4>
+    <ul>
+      <li><svg class="icon"><use href="#i-check"/></svg>Auditing every place across the website, admin dashboard, mobile app, and point-of-sale devices where a payment can be taken.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>Updating each one individually, with its own dedicated test, before moving on to the next.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>Leaving every other flow &mdash; gift cards, cash, offline payments, and anything for a tour before 2027 &mdash; completely untouched.</li>
+    </ul>
+  </div>
+
+  <div class="m-success">
+    <b>You'll know it's working when</b>
+    <p>No matter how or where a guest pays for a 2027+ tour, the new transfer method is used correctly and automatically, every single time.</p>
+  </div>
+
+  <div class="m-example">
+    <b>In practice</b>
+    <p>Whether that guest paid on the website, over the phone with a card reader, or through the mobile app, the outcome is identical &mdash; the new method applies consistently, everywhere a payment can happen.</p>
+  </div>
+</div>
+
+<!-- ============ MILESTONE 4 ============ -->
+<div class="page m-page">
+  <div class="m-bignum">04</div>
+  <div class="m-head">
+    <div class="m-icon"><svg class="icon"><use href="#i-undo"/></svg></div>
+    <div>
+      <div class="m-eyebrow">Milestone Four &middot; Refund &amp; Dispute Safety Net</div>
+      <h2 class="m-title">Make Refunds &amp; Cancellations Just Work</h2>
+    </div>
+  </div>
+  <p class="m-objective">When a guest cancels, requests a refund, or disputes a charge, the operator's earlier transfer needs to be safely and correctly pulled back &mdash; matching exactly how refunds already work today, just adapted to the new payment method.</p>
+
+  <div class="m-involves">
+    <h4>What this involves</h4>
+    <ul>
+      <li><svg class="icon"><use href="#i-check"/></svg>Updating every refund and cancellation flow across the platform to correctly reverse a 2027+ booking's transfer.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>Special handling for partial refunds, so only the correct, proportional share is ever pulled back.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>Extending the same protection to chargeback and dispute cases, so a lost dispute is always handled safely.</li>
+    </ul>
+  </div>
+
+  <div class="m-success">
+    <b>You'll know it's working when</b>
+    <p>A refund, cancellation, or dispute on a 2027+ booking behaves exactly as guests and operators already expect &mdash; the right amount, landing in the right place, every time.</p>
+  </div>
+
+  <div class="m-example">
+    <b>In practice</b>
+    <p>If that same guest later cancels and receives a partial refund, only the operator's fair share of that refund is pulled back &mdash; automatically and correctly, without anyone needing to calculate it by hand.</p>
+  </div>
+</div>
+
+<!-- ============ MILESTONE 5 ============ -->
+<div class="page m-page">
+  <div class="m-bignum">05</div>
+  <div class="m-head">
+    <div class="m-icon"><svg class="icon"><use href="#i-eye"/></svg></div>
+    <div>
+      <div class="m-eyebrow">Milestone Five &middot; Internal Reporting</div>
+      <h2 class="m-title">Give Our Team Visibility</h2>
+    </div>
+  </div>
+  <p class="m-objective">On the rare occasion a transfer to an operator doesn't go through &mdash; for example, if their bank account needs attention &mdash; NAT's own team should be able to see it clearly and follow up, rather than it going unnoticed.</p>
+
+  <div class="m-involves">
+    <h4>What this involves</h4>
+    <ul>
+      <li><svg class="icon"><use href="#i-check"/></svg>A simple internal view highlighting any transfer that didn't complete successfully.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>Enough detail for someone on the team to understand which booking and which operator are affected.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>A clear path to follow up manually and resolve it, without digging through raw logs.</li>
+    </ul>
+  </div>
+
+  <div class="m-success">
+    <b>You'll know it's working when</b>
+    <p>A failed transfer is never a silent, invisible problem &mdash; it shows up somewhere a real person on the team will see it.</p>
+  </div>
+
+  <div class="m-example">
+    <b>In practice</b>
+    <p>If an operator's bank details ever cause a transfer to stumble, it appears on an internal list our team already checks &mdash; not buried in a system log no one reads.</p>
+  </div>
+</div>
+
+<!-- ============ MILESTONE 6 ============ -->
+<div class="page m-page">
+  <div class="m-bignum">06</div>
+  <div class="m-head">
+    <div class="m-icon"><svg class="icon"><use href="#i-flag"/></svg></div>
+    <div>
+      <div class="m-eyebrow">Milestone Six &middot; Rollout Controls &amp; Go-Live</div>
+      <h2 class="m-title">A Safety Switch, and a Careful Launch</h2>
+    </div>
+  </div>
+  <p class="m-objective">The final milestone is about how we turn this on &mdash; gradually, safely, and with a way to instantly turn it back off if anything ever looks wrong, after a full rehearsal in a completely safe test environment.</p>
+
+  <div class="m-involves">
+    <h4>What this involves</h4>
+    <ul>
+      <li><svg class="icon"><use href="#i-check"/></svg>A simple on/off control, adjustable per operator or region, so rollout can start small and expand deliberately.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>A complete rehearsal in Stripe's test environment &mdash; simulating real bookings, refunds, and edge cases before go-live.</li>
+      <li><svg class="icon"><use href="#i-check"/></svg>A clear rollback plan, so the platform can instantly fall back to today's method with zero guest impact, if ever needed.</li>
+    </ul>
+  </div>
+
+  <div class="m-success">
+    <b>You'll know it's working when</b>
+    <p>The switch can be flipped on for one operator at a time, watched closely, and confidently expanded &mdash; with an instant way back if ever needed.</p>
+  </div>
+
+  <div class="m-example">
+    <b>In practice</b>
+    <p>We might start by turning this on for a single, closely-watched operator. If everything looks right, we expand from there &mdash; and if it doesn't, we flip it back off instantly, with no visible change for anyone.</p>
+  </div>
+</div>
+
+<!-- ============ NEXT STEPS ============ -->
+<div class="page closing-page">
+  <div class="eyebrow">Moving Forward</div>
+  <h1 class="title serif">Recommended next steps</h1>
+  <div class="dek">We recommend building and confirming each milestone in order &mdash; each one is independently useful and independently testable, so progress stays visible throughout.</div>
+
+  <div class="closing">
+    <h2 class="serif">Let's get started</h2>
+    <p>Once you've had a chance to review this plan, we're ready to begin with Milestone&nbsp;1. Because no 2027-dated tour has been sold yet, this work can proceed entirely in the background, with zero risk to any current guest or booking.</p>
+    <ol class="steps">
+      <li>Review this plan and share any questions or adjustments.</li>
+      <li>We begin with Milestone 1, and check in as each milestone completes.</li>
+    </ol>
+  </div>
+
+  <h2 class="sub">How we'll keep you posted</h2>
+  <p>After each milestone is complete and tested, you'll get a short, plain-language update &mdash; what's now working, and what's next. No lengthy status meetings required unless you'd like them.</p>
+
+  <div class="signoff">
+    <div class="rule2"></div>
+    <p class="serif">We're looking forward to building this with you.</p>
+    <div class="signature">
+      <b>Devat Karetha</b>
+      <span>Solutions Lead</span>
+    </div>
+  </div>
+
+  <div class="foot"><span>The 2027 Operator Transfer Upgrade</span><span>Prepared September 2026</span></div>
+</div>
+
+</body>
+</html>

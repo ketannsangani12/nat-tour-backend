@@ -1,0 +1,119 @@
+.booking-note {
+    margin-bottom: 10px;
+}
+
+.booking-note:first-child {
+    margin-top: 16px;
+    border-top: 1px solid #ddd;
+    padding-top: 12px;
+}
+
+.booking-note .note-text {
+    white-space: break-spaces;
+}
+
+/* 6.75% opacity of bg color */
+.check-in-status-N {
+    background-color: #ffc10720;
+}
+
+.check-in-status-1 {
+    background-color: #19875430;
+}
+
+.check-in-status-2 {
+    background-color: #0dcaf020;
+}
+
+.check-in-status-A {
+    background-color: #dc354520;
+}
+
+.sel-check-in.check-in-status-N {
+    border: 1px solid var(--bs-warning);
+}
+
+.sel-check-in.check-in-status-1 {
+    border: 1px solid var(--bs-success);
+}
+
+.sel-check-in.check-in-status-2 {
+    border: 1px solid var(--bs-info);
+}
+
+.sel-check-in.check-in-status-A {
+    border: 1px solid var(--bs-danger);
+}
+
+.ul-check-in li {
+    padding: 4px 15px;
+    cursor: pointer;
+}
+
+.ul-check-in li.check-in-status-N:hover,
+.ul-check-in li.check-in-status-N:focus {
+    background-color: #ffc10740;
+}
+
+.ul-check-in li.check-in-status-1:hover,
+.ul-check-in li.check-in-status-1:focus {
+    background-color: #19875450;
+}
+
+.ul-check-in li.check-in-status-2:hover,
+.ul-check-in li.check-in-status-2:focus {
+    background-color: #0dcaf040;
+}
+
+.ul-check-in li.check-in-status-A:hover,
+.ul-check-in li.check-in-status-A:focus {
+    background-color: #dc354540;
+}
+
+.booking-history.table> :not(caption)>*:last-child>* {
+    border-bottom: 0 none;
+}
+
+.booking-history .book-hist-d-t {
+    width: 210px;
+}
+
+.contact {
+    font-size: 18px;
+    font-weight: 400;
+    color: #333333;
+    line-height: 1;
+    display: block;
+    margin-top: 15px;
+    padding-bottom: 0px;
+    position: relative;
+}
+
+@media print {
+    .booking-details {
+        overflow: hidden;
+    }
+
+    body {
+        padding: 0;
+    }
+
+    .div-print-btn {
+        display: none;
+    }
+
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 33.33333333%;
+    }
+}
+
+@media print and (orientation: landscape) {
+    .print-area {
+        max-width: 90% !important;
+    }
+
+    .print-area * {
+        font-size: 42px !important;
+    }
+}

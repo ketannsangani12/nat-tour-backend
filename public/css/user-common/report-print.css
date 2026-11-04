@@ -1,0 +1,133 @@
+.header-section { border-bottom: 1px solid white; }
+.navbar-light .navbar-toggler { display: none; }
+
+#reportdrop {
+	display: none;
+}
+.login-wrp {
+	visibility: hidden;
+}
+#btnPrint {
+	display: none;
+}
+#fromDateDiv {
+	width: 100%;
+	margin-left: calc(100% - 23%);
+	margin-top: calc(100% - 105%);
+}
+#toDateDiv {
+	/*width: 100%;*/
+	margin-left: calc(100% - 23%);
+}
+#affiliatereport{
+	display: none;
+}
+#toDate {
+	width: 100px;
+	margin-left: 20px;
+	margin-top: -40px;
+}
+#btnSearch {
+	display: none;
+}
+#text-start .logo-wrp{
+	width: 100% !important;
+	height: 10000000px !important;
+}
+#customer-data{
+	display: none;
+}
+#btnserchprint{
+	display: none;
+}
+#sectionForDisplay{
+	display: none;
+}
+
+#reportHeadingPrint {
+	text-align: center;
+	display: block!important;
+	margin-top: -70px;
+	font-size: 40px;
+}
+
+#packageDiv{
+	margin-top: -50px;;
+	margin-bottom: -70px;;
+}
+
+#summaryreport{
+	margin-top:10px;
+}
+
+#toDate{
+	display: none;
+}
+#tour_slot_date-1 {
+	display: none;
+}
+#fromDate{
+	display: none;
+}
+#fromDateValue {
+	display: block!important;
+	margin-bottom: 20px;
+}
+#toDateValue {
+	display: block!important;
+	margin-left: 20px;
+	margin-top:30px
+}
+
+#fromLabelMain {
+	display: none;
+}
+#toLabelMain {
+	display: none;
+}
+#tour_operator {
+	display: none;
+}
+#tourOperatorValue {
+	display: block!important;
+	font-size: 20px;
+	margin-top: 50px;
+}
+#tour_package {
+	display: none;
+}
+#tourPackageValue {
+	display: block!important;
+	font-size: 20px;
+	margin-top: -20px;
+}
+.select2 {
+	display: none;
+}
+#datatable_wrapper {
+	margin-top: -50px;
+}
+#booking-action-sec {
+	border: 1px solid white;
+}
+#mainLogo {
+	display: none;
+}
+#mainLogoPrint {
+	display: block!important;
+	/* width: 1000px !important; */
+}
+#logoDiv {
+	border-right: 10px solid white;
+}
+
+@media print{ #printDivReport{display:block;}
+    #mainTableDiv{
+		overflow: initial !important;
+	}
+	#printDates{
+		float: left;
+		font-size: 14px;
+	}
+}
+

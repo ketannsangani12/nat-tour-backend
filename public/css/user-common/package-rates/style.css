@@ -1,0 +1,289 @@
+.section-container {
+    height: 100%;
+}
+
+.select2-selection__rendered {
+    line-height: 31px !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 35px !important;
+}
+
+.select2-selection__arrow {
+    height: 34px !important;
+}
+
+.btn-filter-general-rate-group,
+.btn-clear-general-rate-group {
+    height: 35px;
+}
+
+.filter-general-rate-group {
+    padding-top: 29px;
+}
+
+.general-rate-group-separator {
+    border: none;
+    height: 5px !important;
+    color: #333;
+    background-color: #333;
+}
+
+/* General Slot Container */
+#slots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    margin: 20px 0px;
+    padding: 1%;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* Style for individual slot */
+.slot {
+    position: relative;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hidden checkbox */
+.slot-checkbox {
+    display: none;
+}
+
+/* Label Style for Slot (Showing Time) */
+.slot-label {
+    font-size: 16px;
+    color: #333;
+}
+
+/* Style when slot is selected */
+.slot.selected {
+    background-color: #4caf50;
+    color: white;
+}
+
+.slot.selected .slot-label {
+    color: white;
+}
+
+/* Checkbox visual appearance (checked state) */
+.slot-checkbox:checked+.slot-label {
+    font-weight: bold;
+    color: white;
+    background-color: #4caf50;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.sub-nav {
+    display: flex;
+    align-items: center;
+}
+
+.sub-nav a {
+    margin-right: 10px;
+}
+
+.sub-nav-sep {
+    margin-right: 10px;
+}
+
+.add-custom-date-rate, .view-scheduled-events {
+    margin-left: auto;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+    /* Red border */
+    background-color: #f8d7da !important;
+    /* Light red background */
+}
+
+.is-invalid::placeholder {
+    color: #dc3545 !important;
+    /* Red placeholder text */
+}
+
+#form-container {
+    background: #ffffff;
+    transition: all 0.3s ease-in-out;
+}
+
+#form-container h5 {
+    margin-bottom: 15px;
+}
+
+#slots-section h5 {
+    margin-bottom: 0;
+}
+
+#form-container .form-control,
+.form-select {
+    box-shadow: none;
+    border-radius: 0%;
+}
+
+.table {
+    background: #f9f9f9;
+}
+
+.table th,
+.table td {
+    text-align: left;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: #38c172;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #1bc361;
+    color: #fff;
+}
+
+.edit-custom-date-rate {
+    padding: .25rem .5rem !important;
+}
+
+.delete-custom-date-rate {
+    border: 1px solid #f44;
+}
+
+.list-group-item.selected-item {
+    background-color: #ed8105;
+    /* Bootstrap Primary color */
+    color: #fff;
+    /* White text */
+    font-weight: bold;
+}
+
+.rate-group-total {
+    display: flex;
+    justify-content: space-between; /* Spread items to the left and right */
+    align-items: center; /* Center items vertically */
+    background-color: #ed8105;
+    border: 1px solid rgba(0, 0, 0, .125);
+    color: #fff;
+    padding: 0px 5px;
+}
+
+.rate-group-total .created-by {
+    flex: 1; /* Take up available space to push the other content to the right */
+    text-align: left;
+}
+
+.rate-group-total .created-by span {
+    color: #000;
+}
+
+.rate-group-total > div {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.rate-group-pipe {
+    color: #333;
+    padding: 0 5px;
+}
+
+.rate-group-total .subtotal,
+.rate-group-total .total {
+    padding-left: 5px;
+    color: #000;
+}
+
+.flatpickr-calendar {
+    font-size: 14px;
+}
+
+.flatpickr-day.today {
+    border: #fff;
+}
+
+/* Style for the actions column to ensure buttons are inline */
+#schedule-event-table .table-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsive table */
+#schedule-event-table {
+    overflow-x: auto;
+}
+
+#schedule-event-table .table th, .table td {
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#schedule-event-table .table thead th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+#schedule-event-table .table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Default badge for Active */
+.badge-active {
+    background-color: #007bff; /* Default blue */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+/* Error badge for Inactive */
+.badge-inactive {
+    background-color: #dc3545; /* Error red */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+/* Success badge for Executed */
+.badge-executed {
+    background-color: #28a745; /* Success green */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}

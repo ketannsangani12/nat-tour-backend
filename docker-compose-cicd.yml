@@ -1,0 +1,51 @@
+services:
+  mysql-cicd:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: nat_central
+      MYSQL_USER: nat_user
+      MYSQL_PASSWORD: nat_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis-cicd:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", ""]
+
+  tour_backend_cicd:
+    build:
+      context: .
+      dockerfile: Dockerfile.cicd
+    volumes:
+      - .:/var/www
+    depends_on:
+      mysql-cicd:
+        condition: service_healthy
+      redis-cicd:
+        condition: service_started
+    environment:
+      APP_NAME: NATTours
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://tour-backend.local
+      DB_CONNECTION: mysql
+      DB_HOST: mysql-cicd
+      DB_PORT: 3306
+      DB_DATABASE: nat_central
+      DB_USERNAME: nat_user
+      DB_PASSWORD: nat_password
+      REDIS_HOST: redis-cicd
+      REDIS_PORT: 6379
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: log
+      TENANCY_DATABASE_PREFIX: tenant_
+      COMPOSER_CACHE_DIR: /var/www/.docker-cicd/composer-cache
+      TEST_SHARD_INDEX: ${TEST_SHARD_INDEX:-1}
+      TEST_SHARD_TOTAL: ${TEST_SHARD_TOTAL:-1}
+    command: ["/bin/bash", "/var/www/.docker-cicd/run-tests.sh"]

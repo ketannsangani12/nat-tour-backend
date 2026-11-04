@@ -1,0 +1,109 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    container_name: nat-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./.docker-local/data:/var/www/data:ro
+      # Local-only OPcache tuning (overrides app.ini; not used by deployment).
+      - ./.docker-local/opcache.ini:/usr/local/etc/php/conf.d/zz-opcache.ini:ro
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=nat_central
+      - DB_USERNAME=nat_user
+      - DB_PASSWORD=nat_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - nat-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: nat-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: nat_user
+      MYSQL_PASSWORD: nat_password
+    ports:
+      - "3337:3306"
+    volumes:
+      - nat-mysql-data:/var/lib/mysql
+      - ./.docker-local/data:/docker-entrypoint-initdb.d/data:ro
+      - ./.docker-local/init-db.sh:/docker-entrypoint-initdb.d/01-init-db.sh:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nat-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: nat-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - nat-redis-data:/data
+    networks:
+      - nat-network
+
+  # phpMyAdmin for database management
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: nat-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: nat_user
+      PMA_PASSWORD: nat_password
+      UPLOAD_LIMIT: 100M
+    ports:
+      - "8888:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - nat-network
+
+  # Caddy reverse proxy with automatic HTTPS
+  caddy:
+    image: caddy:2-alpine
+    container_name: nat-caddy
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./.docker-local/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+    networks:
+      - nat-network
+
+networks:
+  nat-network:
+    driver: bridge
+
+volumes:
+  nat-mysql-data:
+  nat-redis-data:
+  caddy-data:
+  caddy-config:

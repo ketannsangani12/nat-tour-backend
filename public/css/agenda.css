@@ -1,0 +1,131 @@
+th.booking-date {
+    width: 10%;
+}
+
+th.created-date {
+    width: 10%;
+}
+
+th.booking-amount {
+    width: 12%;
+}
+
+th.paid-amount {
+    width: 10%;
+}
+
+th.status {
+    width: 7%;
+}
+
+th.redeem {
+    width: 10%;
+}
+
+button#filter-submit {
+    margin-top: 4px;
+    padding: 5px 21px 5px 21px;
+}
+
+button#filter-download {
+    margin-top: 4px;
+    margin-left: 5px;
+    padding: 5px 21px 5px 21px;
+}
+
+button#filter-clear {
+    margin-top: 4px;
+    margin-left: 5px;
+    padding: 5px 21px 5px 21px;
+}
+
+.table-sortable > thead > tr > th {
+    cursor: pointer;
+    position: relative;
+}
+
+.table-sortable > thead > tr > th > .anchor-tag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.table-sortable > thead > tr > th > a {
+    color: #212529;
+}
+
+.table-sortable > thead > tr > th:not(:last-child):after,
+.table-sortable > thead > tr > th:not(:last-child):after,
+.table-sortable > thead > tr > th:not(:last-child):after {
+    content: ' ';
+    position: absolute;
+    height: 0;
+    width: 0;
+    right: 10px;
+    top: 16px;
+}
+
+.table-sortable > thead > tr > th:not(:last-child):after {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #333;
+    border-bottom: 0px solid transparent;
+}
+
+.table-sortable > thead > tr > th.asc:not(:last-child):after {
+    border-top-color: #ccc;
+}
+
+.table-sortable > thead > tr > th.desc:not(:last-child):after {    
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #ccc;
+    border-bottom: 5px solid transparent;
+}
+
+.table-sortable > thead > tr > th:not(:last-child):before,
+.table-sortable > thead > tr > th:not(:last-child):before,
+.table-sortable > thead > tr > th:not(:last-child):before {
+    content: ' ';
+    position: absolute;
+    height: 0;
+    width: 0;
+    right: 10px;
+    top: 9px;
+}
+
+.table-sortable > thead > tr > th:not(:last-child):before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 0px solid transparent;
+    border-bottom: 5px solid #333;
+}
+
+.table-sortable > thead > tr > th.asc:not(:last-child):before {
+    border-bottom-color: #333;
+}
+
+.table-sortable > thead > tr > th.asc.selected:not(:last-child):before {
+    border-bottom-color: red;
+}
+
+.table-sortable > thead > tr > th.desc.selected:not(:last-child):after {
+    border-top-color: red;
+}
+
+.table-sortable > thead > tr > th.desc:not(:last-child):before {    
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 0px solid transparent;
+    border-bottom: 5px solid #ccc;
+}
+
+td.redeem-ticket-section button {
+	width: 170px;
+}
+
+td.redeem-ticket-section button:not(:last-child) {
+	margin-bottom: 5px;
+}

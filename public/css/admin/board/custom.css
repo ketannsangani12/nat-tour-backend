@@ -1,0 +1,325 @@
+/* Fullscreen modal */
+    .modal.modal-xxl .modal-dialog {
+      max-width: 99% !important;   /* almost full width */
+      width: 99% !important;
+      margin: 0 auto;
+    }
+
+    .modal.modal-xxl .modal-content {
+      height: 95vh;                /* take most of screen height */
+      border-radius: 8px;          /* optional rounding */
+    }
+
+    .ui-state-highlight {
+        height: 40px;
+        background: #f0f0f0;
+        border: 2px dashed #ccc;
+    }
+
+    .guide-capacity {
+        font-weight: bold;
+        margin-left: 10px;
+        font-size: 14px;
+    }
+
+    .tourist-count {
+        color: green;
+    }
+
+    /* Add to your CSS file (e.g., board.css) */
+    .loading-container { display: none; position: fixed; top: 0; left: 0; bottom: 0; right: 0; z-index: 999999; background-color: #0008; }
+    .loading-img { position: fixed; top: 50%; left: 50%; margin-left: -8px; margin-top: -8px; }
+
+    .list-group-item {
+        border: none !important;
+        border-bottom: 1px solid #e9ecef !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none !important;
+    }
+
+    .assigned-booking {
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .assigned-booking .assigned-booking-details {
+        margin-top: 4px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .assigned-guide {
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff; /* White text for strong contrast */
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .assigned-guide-info {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    /* Strong distinctive backgrounds */
+    .assigned-tag-1 { background: linear-gradient(135deg, #007bff, #0056b3); } /* Deep blue */
+    .assigned-tag-2 { background: linear-gradient(135deg, #28a745, #1e7e34); } /* Deep green */
+
+    /* Status badge styling */
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        color: #fff;  /* White text always */
+        text-transform: capitalize;
+        background: rgba(255,255,255,0.2);
+    }
+
+    /* Status-specific strong colors */
+    .status-available {
+        background: #17a2b8;   /* Teal (Bootstrap info) */
+    }
+
+    .status-busy {
+        background: #dc3545;   /* Strong red */
+    }
+
+    .assigned-guide-name {
+        font-weight: 600;
+        color: #fff;
+    }
+
+    /*Pending assign list css start*/
+    /* Ensure styles apply inside SweetAlert modal */
+    .swal2-html-container .booking-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0;
+      color: #111827; /* text visible */
+    }
+
+    .swal2-html-container .booking-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      background: transparent;
+      width: 100%;
+    }
+
+    .swal2-html-container .booking-checkbox {
+      transform: scale(1.15);
+      margin: 0 6px 0 2px;
+    }
+
+    .swal2-html-container .booking-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .swal2-html-container .booking-id {
+      flex: 0 0 150px;
+      font-weight: 700;
+    }
+
+    .swal2-html-container .booking-customer {
+      flex: 1 1 auto;
+    }
+
+    .swal2-html-container .booking-package {
+      flex: 0 0 180px;
+      text-align: right;
+      color: #374151;
+    }
+
+    .swal2-html-container .assigned-booking-details {
+      padding-left: 36px;
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: #374151;
+    }
+
+    /* force background color for booking cards inside SweetAlert */
+    .swal2-html-container .booking-card.assigned-bg-1 { background-color: #e2e3e5 !important; }
+
+    /* remove SweetAlert default white background */
+    .swal2-html-container .booking-card {
+      background: transparent !important;
+    }
+    /*Pending assign list css end*/
+
+    /* Modal body full height */
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      /*height: calc(100vh - 120px); */
+      overflow: hidden;
+    }
+
+    /* Full height grid */
+    .app-container,
+    .max-w-container,
+    .main-grid {
+      height: 100%;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr; /* sidebar + stations */
+      gap: 1rem;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100%;
+      /*overflow: hidden;*/
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar cards */
+    .sidebar .card:first-child {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: calc(6 * 48px + 60px); /* 6 rows (48px each) + header space */
+      max-height: 50%; /* don’t grow too large */
+    }
+
+    .guides-list {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding-right: 6px;
+    }
+
+    /* Pending Bookings card */
+    .sidebar .card:last-child {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: calc(5 * 48px + 60px); /* 5 rows + header space */
+    }
+
+    .bookings-list {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding-right: 6px;
+    }
+
+    /* Standardize item height */
+    .guides-list .guide-item,
+    .bookings-list .booking-item {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* Available Guides */
+    #guidesList {
+      max-height: 270px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    /* Pending Bookings */
+    #pendingBookingsList {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    /* Stations grid (right side) */
+    .stations-grid {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .stations-container {
+      flex: 1;
+      overflow-y: auto;  /* scroll if too many stations */
+      min-height: 0;
+      padding-right: 6px;
+    }
+
+    /* Section headers */
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* highlight the whole card */
+    .slot-card.is-current {
+      border: 3px solid #28a745 !important; /* Bootstrap green */
+      box-shadow: 0 0 12px rgba(40, 167, 69, 0.7);
+    }
+
+    .station-locked {
+        pointer-events: none; /* disables all interactions */
+        opacity: 0.6;         /* visually faded */
+    }
+    /*Modal close button*/
+    .custom-close {
+      background-color: #fff;
+      width: 1.6rem;
+      height: 1.6rem;
+      background-size: 1.2rem;
+      box-shadow: 0 0 3px rgba(0,0,0,0.2);
+      opacity: 1;
+    }
+
+    .copied-booking {
+        border: 2px dashed #0dcaf0;
+        background-color: #e7f3f8 !important;
+    }
+
+    /* Guide Management (base modal) */
+    #guideManagementModal {
+        z-index: 1055;
+    }
+
+    /* Time Slot Modal */
+    #timeSlotModal {
+        z-index: 1080;
+    }
+    #timeSlotModal + .modal-backdrop {
+        z-index: 1079;
+    }
+
+    /* Transfer Booking Modal (top layer) */
+    #transferBookingModal {
+        z-index: 1085;
+    }
+    #transferBookingModal + .modal-backdrop {
+        z-index: 1084;
+    }

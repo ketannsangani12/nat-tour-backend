@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Paying Operators for 2027 Bookings — Operator Payments Plan</title>
+<style>
+  /* ───────── Identity: Graphite & Lime ───────── */
+  :root {
+    --ink:      #0e1217;
+    --ink-2:    #2a313a;
+    --muted:    #5b6470;
+    --rule:     #dde1d6;
+    --paper:    #f7f8f3;
+    --card:     #ffffff;
+    --lime:     #c8f23a;
+    --lime-soft:#eef9c4;
+    --lime-ink: #4d6b00;
+    /* chart colours — validated colour-blind safe (green / amber / blue), coral = deductions */
+    --c-green:  #2f8f4e;
+    --c-amber:  #e8a317;
+    --c-blue:   #3b6fd9;
+    --c-coral:  #d9482b;
+    --c-green-bg:#e5f3ea;
+    --c-amber-bg:#fdf1d4;
+    --c-coral-bg:#fbe6e0;
+    --c-blue-bg: #e4ecfb;
+  }
+  @page {
+    size: Letter;
+    margin: 20mm 17mm 24mm 17mm;
+    background: #f7f8f3;
+    @bottom-left  { content: "Devat Karetha — Solutions Lead"; font: 600 8pt "Avenir Next", -apple-system, sans-serif; color: #5b6470; letter-spacing: .3px; }
+    @bottom-right { content: "Operator Payments · 2027 plan  ·  " counter(page); font: 500 8pt "Avenir Next", -apple-system, sans-serif; color: #5b6470; }
+  }
+  @page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: "Avenir Next", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.4pt; line-height: 1.55;
+  }
+  .mono { font-family: "SF Mono", Menlo, Consolas, monospace; }
+
+  /* ───────── Cover ───────── */
+  .cover {
+    width: 215.9mm; height: 278.4mm; position: relative; overflow: hidden;
+    background: var(--ink); color: #fff; page-break-after: always; break-after: page;
+  }
+  .cover .glow {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(520px 420px at 82% 18%, rgba(200,242,58,.34), transparent 70%),
+      radial-gradient(460px 380px at 12% 92%, rgba(59,111,217,.28), transparent 70%);
+  }
+  .cover .grid {
+    position: absolute; inset: 0; opacity: .13;
+    background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+    background-size: 28px 28px;
+    -webkit-mask-image: linear-gradient(160deg, #000 0%, transparent 62%);
+            mask-image: linear-gradient(160deg, #000 0%, transparent 62%);
+  }
+  .cover .inner { position: absolute; left: 22mm; right: 22mm; top: 34mm; bottom: 22mm; display: flex; flex-direction: column; }
+  .cover .brand { display: flex; align-items: center; gap: 10px; font-size: 9.5pt; letter-spacing: 3px; text-transform: uppercase; color: var(--lime); font-weight: 700; }
+  .cover .brand i { width: 26px; height: 3px; background: var(--lime); display: block; }
+  .cover h1 { font-size: 46pt; line-height: 1.02; margin: 56mm 0 6mm; font-weight: 800; letter-spacing: -1.2px; }
+  .cover h1 em { font-style: normal; color: var(--lime); }
+  .cover .sub { font-size: 14pt; line-height: 1.45; color: #c9d0d8; max-width: 135mm; font-weight: 400; }
+  .cover .chips { display: flex; gap: 8px; margin-top: 12mm; flex-wrap: wrap; }
+  .cover .chip { border: 1px solid rgba(255,255,255,.28); border-radius: 30px; padding: 5px 13px; font-size: 8.8pt; color: #e6ebf0; }
+  .cover .meta { margin-top: auto; border-top: 1px solid rgba(255,255,255,.2); padding-top: 5mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; font-size: 9pt; color: #aab3bd; }
+  .cover .meta b { display: block; color: #fff; font-weight: 600; font-size: 9.6pt; margin-top: 1px; }
+
+  /* ───────── Pages & type ───────── */
+  section.page { break-before: page; page-break-before: always; }
+  .kicker { font-family: "SF Mono", Menlo, monospace; font-size: 8.4pt; letter-spacing: 1.6px; text-transform: uppercase; color: var(--lime-ink); font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 24pt; line-height: 1.1; margin: 0 0 8px; font-weight: 800; letter-spacing: -.5px; }
+  h3 { font-size: 12.4pt; margin: 18px 0 6px; font-weight: 700; }
+  p { margin: 0 0 9px; }
+  .lead { font-size: 12.2pt; color: var(--ink-2); line-height: 1.5; margin-bottom: 14px; max-width: 165mm; }
+  .mark { background: linear-gradient(transparent 58%, var(--lime) 58%); padding: 0 1px; font-weight: 700; }
+  .muted { color: var(--muted); }
+  .small { font-size: 8.8pt; }
+  .tag { display: inline-block; font-size: 7.8pt; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; vertical-align: 1px; }
+  .tag.ex { background: var(--c-amber-bg); color: #8a5e00; }
+  .tag.ok { background: var(--c-green-bg); color: #1f6b3a; }
+  .tag.open { background: var(--c-coral-bg); color: #a3321a; }
+  .tag.new { background: var(--lime); color: var(--ink); }
+
+  .callout { background: var(--lime-soft); border-left: 4px solid var(--lime-ink); border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 12px 0; font-size: 10pt; }
+  .callout b.t { display: block; font-size: 8.4pt; letter-spacing: 1.2px; text-transform: uppercase; color: var(--lime-ink); margin-bottom: 2px; }
+  .callout.warn { background: var(--c-amber-bg); border-left-color: var(--c-amber); }
+  .callout.warn b.t { color: #8a5e00; }
+  .callout.risk { background: var(--c-coral-bg); border-left-color: var(--c-coral); }
+  .callout.risk b.t { color: #a3321a; }
+
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 16px; }
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .avoid { break-inside: avoid; page-break-inside: avoid; }
+  figure { margin: 10px 0 6px; }
+  figcaption { font-size: 8.6pt; color: var(--muted); margin-top: 4px; }
+  svg text { font-family: "Avenir Next", -apple-system, "Helvetica Neue", Arial, sans-serif; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 9.2pt; }
+  th { text-align: left; font-size: 8pt; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 6px 8px; border-bottom: 2px solid var(--ink); }
+  td { padding: 7px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tr { break-inside: avoid; }
+  td.k { font-weight: 700; white-space: nowrap; }
+
+  table.tight td { padding: 4.5px 8px; font-size: 8.9pt; line-height: 1.4; }
+  table.tight th { padding: 5px 8px; }
+  ul.clean { list-style: none; padding: 0; margin: 0 0 8px; }
+  ul.clean li { position: relative; padding-left: 20px; margin-bottom: 6px; }
+  ul.clean li::before { content: ""; position: absolute; left: 0; top: .55em; width: 9px; height: 9px; border-radius: 3px; background: var(--lime); border: 1.5px solid var(--lime-ink); }
+
+  .step { display: grid; grid-template-columns: 34px 1fr; gap: 10px; margin-bottom: 9px; }
+  .step .n { width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--lime); font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 11pt; }
+
+  /* status chips: colour + icon shape + words */
+  .chip-s { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 20px; font-size: 8.6pt; font-weight: 700; }
+  .chip-s::before { content: ""; width: 8px; height: 8px; background: currentColor; }
+  .chip-s.wait { background: var(--c-amber-bg); color: #8a5e00; } .chip-s.wait::before { border-radius: 50%; }
+  .chip-s.go   { background: var(--c-blue-bg);  color: #2a50a8; } .chip-s.go::before { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .chip-s.done { background: var(--c-green-bg); color: #1f6b3a; } .chip-s.done::before { border-radius: 2px; }
+  .chip-s.off  { background: #e9ebe6; color: #4a525c; } .chip-s.off::before { border-radius: 2px; }
+  .chip-s.attn { background: var(--c-coral-bg); color: #a3321a; } .chip-s.attn::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+
+  /* mock-up screens */
+  .screen { background: #fff; border: 1px solid #cfd5c8; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 18px rgba(14,18,23,.08); }
+  .screen .bar { background: var(--ink); color: #cdd4dc; font-size: 8pt; padding: 6px 12px; display: flex; gap: 6px; align-items: center; }
+  .screen .bar span.dot { width: 7px; height: 7px; border-radius: 50%; background: #55606c; display: inline-block; }
+  .screen .bar b { margin-left: 8px; color: #fff; font-weight: 600; letter-spacing: .3px; }
+  .screen .body { padding: 14px; }
+  .tile { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 9px 11px; }
+  .tile .l { font-size: 7.8pt; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); font-weight: 700; }
+  .tile .v { font-size: 17pt; font-weight: 800; letter-spacing: -.4px; line-height: 1.15; }
+  .tile .s { font-size: 8pt; color: var(--muted); }
+  .btn { display: inline-block; background: var(--ink); color: var(--lime); font-weight: 700; font-size: 8.8pt; padding: 6px 14px; border-radius: 8px; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .why { background: var(--lime-soft); border: 1px dashed var(--lime-ink); border-radius: 8px; padding: 8px 10px; font-size: 8.8pt; }
+  .meter { height: 10px; border-radius: 6px; background: var(--rule); overflow: hidden; display: flex; }
+  .meter i { display: block; height: 100%; }
+
+  .phase { display: grid; grid-template-columns: 38px 1fr auto; gap: 12px; align-items: start; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; margin-bottom: 8px; break-inside: avoid; }
+  .phase .num { width: 34px; height: 34px; border-radius: 10px; background: var(--ink); color: var(--lime); font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .phase h4 { margin: 0 0 1px; font-size: 10.6pt; }
+  .phase p { margin: 0; font-size: 9.2pt; color: var(--ink-2); }
+
+  .safe { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); break-inside: avoid; }
+  .safe .ic { width: 38px; height: 38px; border-radius: 11px; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+  .safe h4 { margin: 0 0 2px; font-size: 10.6pt; }
+  .safe p { margin: 0; font-size: 9.4pt; color: var(--ink-2); }
+</style>
+</head>
+<body>
+
+<!-- ═════════════════════════ COVER ═════════════════════════ -->
+<div class="cover">
+  <div class="glow"></div><div class="grid"></div>
+  <div class="inner">
+    <div class="brand"><i></i>Payments &amp; Operations Plan</div>
+    <h1>Paying operators for <em>2027</em> bookings</h1>
+    <div class="sub">A plain-language plan for the new Operator Payments module — how NAT passes on the money it holds, accurately, every time, in a way anyone on the team can follow.</div>
+    <div class="chips">
+      <span class="chip">Money NAT holds → operator's bank</span>
+      <span class="chip">Every number explainable</span>
+      <span class="chip">Preview before real money</span>
+    </div>
+    <div class="meta">
+      <div>Prepared by<b>Devat Karetha<br>Solutions Lead</b></div>
+      <div>Date<b>October 6, 2026 · updated</b></div>
+      <div>Status<b>All decisions made · ready to build</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════ 1. SUMMARY ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">01 — The short version</div>
+  <h2>What this plan is about</h2>
+  <p class="lead">From 2027, when a guest pays by card, the whole amount stays in NAT's Stripe balance. The tour operator is not paid automatically any more. <span class="mark">Today, nothing sends operators that money yet.</span> This plan builds the part that does.</p>
+
+  <div class="cols2">
+    <div class="card">
+      <div class="kicker">The problem</div>
+      <p style="margin:0">Auto Payout only knows how to pay out money that already sits in the operator's own Stripe account. 2027 money never gets there, so Auto Payout deliberately skips it. Without a new module, 2027 operators would never be paid.</p>
+    </div>
+    <div class="card">
+      <div class="kicker">The answer</div>
+      <p style="margin:0">A new module, <b>Operator Payments</b>. It finds every 2027 payment that is ready, works out exactly what each operator is owed, lets an admin approve it, moves the money to the operator's Stripe account, then sends it to their bank.</p>
+    </div>
+  </div>
+
+  <h3>What makes it trustworthy</h3>
+  <ul class="clean">
+    <li><b>Each payment is counted once.</b> The system itself refuses to pay the same payment twice.</li>
+    <li><b>One calculation, same as today.</b> It gives the same answer as Auto Payout for the same bookings — we test this on purpose.</li>
+    <li><b>Refunds and disputes are handled automatically</b> — before or after the operator is paid.</li>
+    <li><b>Preview mode first.</b> We run it for several cycles without moving any real money and compare the results.</li>
+    <li><b>NAT keeps only its own fee.</b> All ticket cost goes to the operator — no safety deposit and no minimum balance is held back.</li>
+    <li><b>Built for non-technical staff:</b> plain words, a "Why this amount?" explanation on every line, and clear next steps.</li>
+  </ul>
+
+  <div class="callout"><b class="t">Already decided</b>
+    Two bank deposits in version 1 · pay by tour date <i>or</i> purchase date, chosen per operator · NAT keeps only its fee — the operator is owed <i>payment − NAT fee</i>, for every booking including partner bookings · refunds after payment are deducted from the operator's next payment · disputes handled only when lost, only for operators with the Dispute Reversal setting · one Stripe account per operator, with the code ready for package-level accounts later · <b>Stripe test (sandbox) mode only until you say go-live.</b>
+  </div>
+  <div class="callout"><b class="t">Nothing left to decide</b>
+    The safety hold and safety balance are dropped, and the operator's own Stripe account is the payee for every tenant. The next step is your go-ahead for Phase 1.
+  </div>
+</section>
+
+<!-- ═════════════════════════ 2. WHAT CHANGES ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">02 — What changes in 2027</div>
+  <h2>Where the money goes</h2>
+  <p class="lead">Until the end of 2026 Stripe splits every card payment the moment it happens. In 2027 it doesn't — so something has to carry the money onward.</p>
+
+  <figure class="avoid">
+  <svg viewBox="0 0 680 292" width="100%" role="img" aria-label="Money flow in 2026 versus 2027">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#0e1217"/></marker>
+      <marker id="arL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#4d6b00"/></marker>
+    </defs>
+    <!-- 2026 -->
+    <text x="0" y="16" font-size="10" font-weight="700" fill="#5b6470" letter-spacing="1.5">2026 — TODAY</text>
+    <rect x="0" y="28" width="104" height="58" rx="10" fill="#fff" stroke="#dde1d6"/><text x="52" y="53" text-anchor="middle" font-size="11" font-weight="700">Guest pays</text><text x="52" y="69" text-anchor="middle" font-size="9.5" fill="#5b6470">by card</text>
+    <line x1="106" y1="57" x2="150" y2="57" stroke="#0e1217" stroke-width="1.8" marker-end="url(#ar)"/>
+    <rect x="152" y="28" width="132" height="58" rx="10" fill="#fff" stroke="#dde1d6"/><text x="218" y="53" text-anchor="middle" font-size="11" font-weight="700">Stripe splits it</text><text x="218" y="69" text-anchor="middle" font-size="9.5" fill="#5b6470">instantly, automatically</text>
+    <line x1="286" y1="46" x2="330" y2="40" stroke="#0e1217" stroke-width="1.8" marker-end="url(#ar)"/>
+    <line x1="286" y1="70" x2="330" y2="78" stroke="#0e1217" stroke-width="1.8" marker-end="url(#ar)"/>
+    <rect x="332" y="20" width="168" height="38" rx="9" fill="#e5f3ea" stroke="#2f8f4e"/><text x="416" y="43" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1f6b3a">Operator's Stripe account</text>
+    <rect x="332" y="64" width="168" height="30" rx="9" fill="#e4ecfb" stroke="#3b6fd9"/><text x="416" y="83" text-anchor="middle" font-size="10.5" font-weight="700" fill="#2a50a8">NAT keeps its fee</text>
+    <line x1="502" y1="39" x2="548" y2="50" stroke="#0e1217" stroke-width="1.8" marker-end="url(#ar)"/>
+    <text x="522" y="30" text-anchor="middle" font-size="8.5" fill="#5b6470">Auto Payout</text>
+    <rect x="550" y="28" width="130" height="44" rx="10" fill="#fff" stroke="#dde1d6"/><text x="615" y="55" text-anchor="middle" font-size="11" font-weight="700">Operator's bank</text>
+
+    <line x1="0" y1="124" x2="680" y2="124" stroke="#dde1d6" stroke-dasharray="3 4"/>
+
+    <!-- 2027 -->
+    <text x="0" y="150" font-size="10" font-weight="700" fill="#4d6b00" letter-spacing="1.5">2027 — WITH OPERATOR PAYMENTS</text>
+    <rect x="0" y="162" width="104" height="58" rx="10" fill="#fff" stroke="#dde1d6"/><text x="52" y="187" text-anchor="middle" font-size="11" font-weight="700">Guest pays</text><text x="52" y="203" text-anchor="middle" font-size="9.5" fill="#5b6470">by card</text>
+    <line x1="106" y1="191" x2="150" y2="191" stroke="#0e1217" stroke-width="1.8" marker-end="url(#ar)"/>
+    <rect x="152" y="162" width="150" height="58" rx="10" fill="#e4ecfb" stroke="#3b6fd9"/><text x="227" y="187" text-anchor="middle" font-size="11" font-weight="700" fill="#2a50a8">NAT's Stripe balance</text><text x="227" y="203" text-anchor="middle" font-size="9.5" fill="#2a50a8">everything stays here</text>
+    <line x1="304" y1="191" x2="346" y2="191" stroke="#0e1217" stroke-width="1.8" marker-end="url(#ar)"/>
+    <rect x="348" y="152" width="200" height="78" rx="12" fill="#eef9c4" stroke="#4d6b00" stroke-width="2"/>
+    <rect x="356" y="143" width="44" height="17" rx="8" fill="#c8f23a"/><text x="378" y="155" text-anchor="middle" font-size="8.5" font-weight="800">NEW</text>
+    <text x="448" y="180" text-anchor="middle" font-size="12" font-weight="800">Operator Payments</text>
+    <text x="448" y="197" text-anchor="middle" font-size="9.2" fill="#2a313a">1. moves the operator's share to</text>
+    <text x="448" y="210" text-anchor="middle" font-size="9.2" fill="#2a313a">their Stripe account</text>
+    <text x="448" y="223" text-anchor="middle" font-size="9.2" fill="#2a313a">2. sends it to their bank</text>
+    <line x1="550" y1="191" x2="590" y2="191" stroke="#4d6b00" stroke-width="2" marker-end="url(#arL)"/>
+    <rect x="592" y="168" width="88" height="46" rx="10" fill="#fff" stroke="#dde1d6"/><text x="636" y="188" text-anchor="middle" font-size="11" font-weight="700">Operator's</text><text x="636" y="203" text-anchor="middle" font-size="11" font-weight="700">bank</text>
+
+    <text x="0" y="262" font-size="9.5" fill="#5b6470">NAT's own fee is simply left in NAT's balance — it is never sent to the operator.</text>
+    <text x="0" y="278" font-size="9.5" fill="#5b6470">Auto Payout keeps working exactly as it does today for 2026 bookings. It is not changed to carry 2027 money.</text>
+  </svg>
+  <figcaption>Fig. 1 — The 2027 flow adds one new step between NAT's balance and the operator's bank.</figcaption>
+  </figure>
+
+  <h3>Why not just extend Auto Payout?</h3>
+  <p>Auto Payout pays from the operator's <i>own</i> Stripe balance, and it tracks "paid / not paid" for a whole booking. 2027 money needs an extra step first (moving it into that balance), and it is safer to keep the tried-and-tested 2026 payout untouched. So the new module sits beside it, <b>reuses its rules</b> (schedule, waiting days, minimum and maximum amounts, notification emails, approval) and <b>follows its calculation</b> — but keeps its own records.</p>
+  <div class="callout"><b class="t">In plain words</b> Operators will see two deposits at first: the usual Auto Payout, and a separate one labelled for 2027 bookings. They can be merged into one later, once everything has proven itself.</div>
+</section>
+
+<!-- ═════════════════════════ 3. HOW A RUN WORKS ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">03 — How a payment run works</div>
+  <h2>From "ready" to "in the bank"</h2>
+  <p class="lead">Each time the schedule comes round, the module prepares a <b>payment run</b> for the operator. Nothing real happens until an admin approves it.</p>
+
+  <figure class="avoid">
+  <svg viewBox="0 0 680 190" width="100%" role="img" aria-label="Life of a payment run">
+    <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#0e1217"/></marker></defs>
+    <g font-size="10.5" font-weight="700" text-anchor="middle">
+      <circle cx="52" cy="46" r="24" fill="#0e1217"/><text x="52" y="52" fill="#c8f23a" font-size="15" font-weight="800">1</text>
+      <circle cx="195" cy="46" r="24" fill="#0e1217"/><text x="195" y="52" fill="#c8f23a" font-size="15" font-weight="800">2</text>
+      <circle cx="338" cy="46" r="24" fill="#0e1217"/><text x="338" y="52" fill="#c8f23a" font-size="15" font-weight="800">3</text>
+      <circle cx="481" cy="46" r="24" fill="#0e1217"/><text x="481" y="52" fill="#c8f23a" font-size="15" font-weight="800">4</text>
+      <circle cx="624" cy="46" r="24" fill="#2f8f4e"/><text x="624" y="53" fill="#fff" font-size="16" font-weight="800">✓</text>
+    </g>
+    <g stroke="#0e1217" stroke-width="1.8" marker-end="url(#a2)">
+      <line x1="78" y1="46" x2="166" y2="46"/><line x1="221" y1="46" x2="309" y2="46"/><line x1="364" y1="46" x2="452" y2="46"/><line x1="507" y1="46" x2="595" y2="46"/>
+    </g>
+    <g font-size="10.5" text-anchor="middle" font-weight="700">
+      <text x="52" y="90">Collect</text><text x="195" y="90">Review &amp; approve</text><text x="338" y="90">Move the money</text><text x="481" y="90">Send to bank</text><text x="624" y="90">Done</text>
+    </g>
+    <g font-size="9" text-anchor="middle" fill="#5b6470">
+      <text x="52" y="105">Finds payments that</text><text x="52" y="117">are ready, works out</text><text x="52" y="129">what is owed</text>
+      <text x="195" y="105">An admin checks the</text><text x="195" y="117">run and approves</text><text x="195" y="129">(always, in version 1)</text>
+      <text x="338" y="105">Operator's share goes</text><text x="338" y="117">to their Stripe account</text>
+      <text x="481" y="105">Stripe pays the</text><text x="481" y="117">operator's bank</text>
+      <text x="624" y="105">Status updates by</text><text x="624" y="117">itself; email sent</text>
+    </g>
+    <rect x="195" y="146" width="150" height="30" rx="15" fill="#fdf1d4"/><text x="270" y="165" text-anchor="middle" font-size="9.6" font-weight="700" fill="#8a5e00">● Waiting for funds — retries by itself</text>
+    <rect x="365" y="146" width="165" height="30" rx="15" fill="#fbe6e0"/><text x="447" y="165" text-anchor="middle" font-size="9.6" font-weight="700" fill="#a3321a">▲ Needs attention — admin is alerted</text>
+  </svg>
+  <figcaption>Fig. 2 — A payment run in five steps, plus the two "pause" states. The words in the figure are the words staff will see on screen.</figcaption>
+  </figure>
+
+  <h3>What the screen will call each stage</h3>
+  <table class="avoid">
+    <tr><th style="width:150px">Status</th><th>What it means</th><th style="width:180px">What the admin does</th></tr>
+    <tr><td><span class="chip-s wait">Waiting for approval</span></td><td>The run is prepared and checked. No money has moved.</td><td>Review, then approve or reject.</td></tr>
+    <tr><td><span class="chip-s go">Paying</span></td><td>Approved. Money is being moved and sent to the bank.</td><td>Nothing — it runs by itself.</td></tr>
+    <tr><td><span class="chip-s wait">Waiting for funds</span></td><td>The money isn't available in NAT's Stripe balance yet (recent card payments take a few days to clear).</td><td>Nothing. It retries automatically.</td></tr>
+    <tr><td><span class="chip-s attn">Needs attention</span></td><td>Something couldn't be completed, e.g. the operator has no bank account on file.</td><td>Follow the plain-language hint shown.</td></tr>
+    <tr><td><span class="chip-s done">Paid</span></td><td>Stripe confirmed the bank payment.</td><td>Nothing.</td></tr>
+  </table>
+
+  <h3>If something goes wrong halfway</h3>
+  <p>Moving the money and sending it to the bank are <b>two separate steps, each remembered separately</b>. If the first works and the second fails, the money simply waits safely in the operator's Stripe account and only the bank step is retried. <span class="mark">The money is never moved twice.</span></p>
+  <div class="callout warn"><b class="t">To be proven, not assumed</b> How quickly moved money becomes available for the bank payout depends on Stripe. We will measure it in Stripe's test mode before any real operator is paid; if it isn't instant, the run simply waits and retries.</div>
+</section>
+
+<!-- ═════════════════════════ 4. WHEN PAID ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">04 — When does an operator get paid?</div>
+  <h2>Two ways to decide the date</h2>
+  <p class="lead">Each operator gets one setting: pay by <b>tour date</b> or by <b>purchase date</b>, plus a number of days to wait.</p>
+
+  <div class="cols2">
+    <div class="card"><div class="kicker">Tour date + days</div><p style="margin:0">A payment becomes ready a few days <i>after the tour happens</i>. This is how Auto Payout works today. Safest for refunds, slower for the operator.</p></div>
+    <div class="card"><div class="kicker">Purchase date + days</div><p style="margin:0">A payment becomes ready a few days <i>after the guest paid</i>, even if the tour is months away. Faster for the operator. If the guest is refunded later, it is <b>deducted from the operator's next payment</b> (agreed).</p></div>
+  </div>
+
+  <figure class="avoid" style="margin-top:16px">
+  <svg viewBox="0 0 680 230" width="100%" role="img" aria-label="Timeline comparing the two payment-date options">
+    <!-- axis: Oct 5 2026 = x 60 ; 5.33 px/day ; Jan 18 2027 = day 105 -> x 620 -->
+    <line x1="60" y1="170" x2="640" y2="170" stroke="#0e1217" stroke-width="1.5"/>
+    <g font-size="9.5" fill="#5b6470" text-anchor="middle">
+      <line x1="60" y1="165" x2="60" y2="175" stroke="#0e1217"/><text x="72" y="190" text-anchor="end">Oct 5, 2026</text><text x="72" y="203" text-anchor="end" font-weight="700" fill="#0e1217">Guest books &amp; pays</text>
+      <line x1="97" y1="165" x2="97" y2="175" stroke="#0e1217"/><text x="104" y="190" text-anchor="start">Oct 12</text>
+      <line x1="604" y1="165" x2="604" y2="175" stroke="#0e1217"/><text x="596" y="190">Jan 15, 2027</text><text x="596" y="203" font-weight="700" fill="#0e1217">Tour takes place</text>
+      <line x1="620" y1="165" x2="620" y2="175" stroke="#0e1217"/><text x="640" y="217" fill="#0e1217" font-weight="700" text-anchor="end">Jan 18</text>
+    </g>
+    <!-- lane A tour date -->
+    <text x="60" y="30" font-size="10.5" font-weight="700">Pay by tour date  (+3 days)</text>
+    <rect x="60" y="38" width="560" height="22" rx="6" fill="#e8a317"/>
+    <text x="70" y="53" font-size="9.8" font-weight="700" fill="#0e1217">NAT holds the money while the tour is still ahead</text>
+    <circle cx="620" cy="49" r="8" fill="#2f8f4e" stroke="#f7f8f3" stroke-width="2"/>
+    <text x="606" y="78" text-anchor="end" font-size="9.6" font-weight="700" fill="#1f6b3a">Ready to pay: Jan 18, 2027</text>
+    <!-- lane B purchase date -->
+    <text x="60" y="108" font-size="10.5" font-weight="700">Pay by purchase date  (+7 days)</text>
+    <rect x="60" y="116" width="37" height="22" rx="6" fill="#e8a317"/>
+    <circle cx="97" cy="127" r="8" fill="#2f8f4e" stroke="#f7f8f3" stroke-width="2"/>
+    <text x="112" y="131" font-size="9.6" font-weight="700" fill="#1f6b3a">Ready to pay: Oct 12, 2026</text>
+    <text x="360" y="131" font-size="9.2" fill="#5b6470">…a refund after this date is deducted from the next payment</text>
+    <line x1="97" y1="141" x2="97" y2="165" stroke="#2f8f4e" stroke-dasharray="2 3"/>
+    <line x1="620" y1="63" x2="620" y2="165" stroke="#2f8f4e" stroke-dasharray="2 3"/>
+  </svg>
+  <figcaption>Fig. 3 — <span class="tag ex">Example</span> The dates and day counts are illustrations to explain the two options; each operator's real values are set by NAT.</figcaption>
+  </figure>
+
+  <h3>Shared rules for both options</h3>
+  <ul class="clean">
+    <li>The schedule (daily, weekly, monthly), minimum amount, maximum amount, start date and notification emails come from the operator's existing <b>Auto Payout rule</b> — nothing new to set up there.</li>
+    <li>Only card payments are included. Cash, invoiced and tip payments are not.</li>
+    <li>Payments that would need a refund-sized deduction larger than the next payment simply wait: the run is skipped and the amount carries forward until it is covered.</li>
+    <li>If an operator's date setting is changed, it applies to payments not yet paid. Payments already paid are never re-opened.</li>
+  </ul>
+</section>
+
+<!-- ═════════════════════════ 5. HOW AMOUNT WORKED OUT ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">05 — How the amount is worked out</div>
+  <h2>One rule, applied to every payment</h2>
+  <p class="lead">For each card payment: <span class="mark">operator is owed what the guest paid minus NAT's fee.</span> For each refund: the operator gives back what they would have received for it. Add them all up — that is the payment.</p>
+
+  <div class="cols2">
+    <figure class="avoid">
+    <svg viewBox="0 -18 340 310" width="100%" role="img" aria-label="Worked example: payment, fee and refund">
+      <text x="0" y="-4" font-size="10.5" font-weight="700">A booking with a refund</text>
+      <line x1="10" y1="230" x2="335" y2="230" stroke="#0e1217" stroke-width="1.3"/>
+      <!-- scale 2px per $ ; baseline 230 -->
+      <rect x="20"  y="30"   width="56" height="200"   rx="4" fill="#2f8f4e"/>
+      <rect x="96"  y="30"   width="56" height="6.4"   rx="2" fill="#d9482b"/>
+      <rect x="172" y="36.4" width="56" height="48.4"  rx="4" fill="#d9482b"/>
+      <rect x="248" y="84.8" width="56" height="145.2" rx="4" fill="#2f8f4e" stroke="#0e1217" stroke-width="2"/>
+      <g stroke="#9aa3ad" stroke-dasharray="3 3" stroke-width="1"><line x1="76" y1="30" x2="96" y2="30"/><line x1="152" y1="36.4" x2="172" y2="36.4"/><line x1="228" y1="84.8" x2="248" y2="84.8"/></g>
+      <g font-size="11" font-weight="800" text-anchor="middle">
+        <text x="48" y="24">$100.00</text><text x="124" y="24" fill="#a3321a">−$3.20</text><text x="200" y="30" fill="#a3321a" dy="-1">−$24.20</text><text x="276" y="78">$72.60</text>
+      </g>
+      <g font-size="9" text-anchor="middle" fill="#2a313a" font-weight="600">
+        <text x="48" y="246">Guest</text><text x="48" y="258">paid</text>
+        <text x="124" y="246">NAT's</text><text x="124" y="258">fee</text>
+        <text x="200" y="246">Refund,</text><text x="200" y="258">net of fee</text>
+        <text x="276" y="246" font-weight="800">Operator</text><text x="276" y="258" font-weight="800">is owed</text>
+      </g>
+      <text x="0" y="280" font-size="8.4" fill="#5b6470">Refund $25.00 minus $0.80 of fee returned = $24.20</text>
+    </svg>
+    <figcaption>Fig. 4 — The worked example documented for today's Auto Payout. The new module must give the same $72.60.</figcaption>
+    </figure>
+
+    <figure class="avoid">
+    <svg viewBox="0 -18 340 310" width="100%" role="img" aria-label="Worked example: lost dispute">
+      <text x="0" y="-4" font-size="10.5" font-weight="700">A payment, then a lost dispute</text>
+      <line x1="10" y1="230" x2="335" y2="230" stroke="#0e1217" stroke-width="1.3"/>
+      <!-- scale 1.2 px per $ -->
+      <rect x="20"  y="36.8" width="56" height="193.2" rx="4" fill="#3b6fd9"/>
+      <rect x="96"  y="36.8" width="56" height="17.3"  rx="3" fill="#d9482b"/>
+      <rect x="172" y="54.1" width="56" height="175.9" rx="4" fill="#2f8f4e"/>
+      <rect x="248" y="54.1" width="56" height="175.9" rx="4" fill="#fff" stroke="#d9482b" stroke-width="2" stroke-dasharray="5 3"/>
+      <g stroke="#9aa3ad" stroke-dasharray="3 3" stroke-width="1"><line x1="76" y1="36.8" x2="96" y2="36.8"/><line x1="152" y1="54.1" x2="172" y2="54.1"/></g>
+      <g font-size="11" font-weight="800" text-anchor="middle">
+        <text x="48" y="30">$161.00</text><text x="124" y="30" fill="#a3321a">−$14.40</text><text x="200" y="48">$146.60</text><text x="276" y="48" fill="#a3321a">−$146.60</text>
+      </g>
+      <g font-size="9" text-anchor="middle" fill="#2a313a" font-weight="600">
+        <text x="48" y="246">Guest</text><text x="48" y="258">paid</text>
+        <text x="124" y="246">NAT's</text><text x="124" y="258">fee</text>
+        <text x="200" y="246" font-weight="800">Operator</text><text x="200" y="258" font-weight="800">is owed</text>
+        <text x="276" y="246">Dispute lost:</text><text x="276" y="258">deducted</text>
+      </g>
+      <text x="0" y="280" font-size="8.4" fill="#5b6470">NAT absorbs the $14.40 fee, exactly as it does today</text>
+    </svg>
+    <figcaption>Fig. 5 — The dispute example from today's dispute code: the operator is deducted only what they received.</figcaption>
+    </figure>
+  </div>
+
+  <h3>The rules behind the numbers</h3>
+  <ul class="clean">
+    <li><b>Cents, not decimals.</b> All maths is done in whole cents, so a rounding error can't creep in.</li>
+    <li><b>One calculation, in one place.</b> Today's Auto Payout repeats its formula in three places, which is where mistakes hide. The new module has a single calculator that everything else uses.</li>
+    <li><b>Each payment on its own line.</b> Every payment and every refund is its own record. A refund after payment becomes a deduction on the next run, with no special "adjustment detection" needed.</li>
+    <li><b>Booked, then cancelled with no refund?</b> The operator keeps the money — same as Auto Payout today.</li>
+  </ul>
+</section>
+
+<!-- ═════════════════════════ 6. SITUATIONS ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">06 — Every situation, in plain words</div>
+  <h2>"What happens if…?"</h2>
+  <p class="lead">Each row below becomes an automated test, so the behaviour is checked every time the code changes.</p>
+  <table class="tight">
+    <tr><th style="width:210px">Situation</th><th>What happens</th></tr>
+    <tr><td class="k">Normal booking paid by card</td><td>Becomes ready on the release date and is included in the next approved run.</td></tr>
+    <tr><td class="k">Guest paid only part</td><td>Follows the same "include partial payments" choice Auto Payout uses today.</td></tr>
+    <tr><td class="k">Extra people, add-ons, discounts, custom charges, switched package</td><td>Every payment is its own line, counted once. They can be paid in different runs without confusion.</td></tr>
+    <tr><td class="k">Refund <u>before</u> the operator is paid</td><td>The payment and the refund cancel out. If nothing is left, no money moves for that booking.</td></tr>
+    <tr><td class="k">Refund <u>after</u> the operator is paid</td><td>Deducted from the operator's next payment.</td></tr>
+    <tr><td class="k">Deduction bigger than the next payment</td><td>No payment that time. The balance carries forward until it is covered.</td></tr>
+    <tr><td class="k">Cancelled, "don't refund"</td><td>The operator keeps the money, as today.</td></tr>
+    <tr><td class="k">Dispute lost</td><td>For operators with the Dispute Reversal setting: operator's share is deducted, NAT absorbs the fee. Disputes that are won or still open change nothing.</td></tr>
+    <tr><td class="k">Booking split or moved</td><td>Each booking's total stays correct; no double counting.</td></tr>
+    <tr><td class="k">Two currencies (USD, CAD)</td><td>Handled completely separately, each against its own balance.</td></tr>
+    <tr><td class="k">Operator has no bank account / Stripe account not ready</td><td>The run shows <span class="chip-s attn">Needs attention</span> with a plain hint; nothing is lost.</td></tr>
+    <tr><td class="k">Money not yet available in NAT's balance</td><td>The run shows <span class="chip-s wait">Waiting for funds</span> and retries. Never half-paid, never failed.</td></tr>
+    <tr><td class="k">Tips and partner bookings</td><td>Tips are not part of this module — unchanged. A partner booking is paid like any other: the operator is owed payment − NAT fee (Section 10).</td></tr>
+  </table>
+</section>
+
+<!-- ═════════════════════════ 7. KEEPING MONEY SAFE ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">07 — How NAT stays protected</div>
+  <h2>NAT keeps only its fee</h2>
+  <p class="lead">Every dollar of ticket cost goes to the operator. <span class="mark">No safety deposit is held back and no minimum balance is kept aside</span> — NAT's balance keeps only NAT's own fee.</p>
+
+  <figure class="avoid">
+  <svg viewBox="0 0 680 128" width="100%" role="img" aria-label="Split of a 100 dollar payment">
+    <text x="0" y="14" font-size="10.5" font-weight="700">A $100.00 card payment</text>
+    <rect x="0" y="34" width="637" height="42" rx="6" fill="#2f8f4e"/>
+    <rect x="639" y="34" width="21" height="42" rx="6" fill="#3b6fd9"/>
+    <text x="318" y="60" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">Goes to the operator  $96.80</text>
+    <text x="660" y="26" text-anchor="end" font-size="9.6" font-weight="800" fill="#2a50a8">NAT keeps its fee  $3.20</text>
+    <line x1="649" y1="29" x2="649" y2="34" stroke="#2a50a8" stroke-width="1.4"/>
+    <text x="0" y="94" font-size="9" fill="#5b6470">$0</text><text x="660" y="94" text-anchor="end" font-size="9" fill="#5b6470">$100.00</text>
+    <text x="0" y="114" font-size="9.4" fill="#2a313a" font-weight="600">Nothing is held back from the operator's share.</text>
+  </svg>
+  <figcaption>Fig. 6 — The payment and fee from the worked example in Section 5.</figcaption>
+  </figure>
+
+  <h3>Four protections that don't hold anyone's money</h3>
+  <div class="safe"><div class="ic"><span style="color:#c8f23a;font-weight:800">1</span></div>
+    <div><h4>Later refunds come off the next payment</h4><p>If a guest is refunded after the operator was paid, that amount is deducted from the operator's next payment. If it is bigger than the next payment, it carries forward until it is covered.</p></div></div>
+  <div class="safe"><div class="ic"><span style="color:#c8f23a;font-weight:800">2</span></div>
+    <div><h4>Lost disputes are deducted the same way</h4><p>For operators with the Dispute Reversal setting. NAT absorbs its own fee, exactly as it does today. Disputes that are won or still open change nothing.</p></div></div>
+  <div class="safe"><div class="ic"><span style="color:#c8f23a;font-weight:800">3</span></div>
+    <div><h4>Money moves only when it is really available</h4><p>Recent card payments take a few days to clear in Stripe. Until then the run shows <span class="chip-s wait">Waiting for funds</span> and retries by itself. Nothing is ever half-paid. <i>(To be confirmed in Stripe test mode.)</i></p></div></div>
+  <div class="safe" style="border-bottom:none"><div class="ic"><span style="color:#c8f23a;font-weight:800">4</span></div>
+    <div><h4>A daily check compares what NAT holds with what NAT owes</h4><p>If NAT's balance would not cover what it owes operators, an alert goes out. It only warns — it never holds money back.</p></div></div>
+
+  <div class="callout warn"><b class="t">The trade-off you chose</b> With no safety hold, a refund or lost dispute that arrives <i>after</i> an operator was paid is covered by NAT first and recovered from that operator's next payment. If an operator stops taking bookings, there may be nothing left to recover from. A safety hold could be added later without redesigning anything.</div>
+</section>
+
+<!-- ═════════════════════════ 8. WHAT ADMINS SEE ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">08 — What staff will see</div>
+  <h2>Designed so anyone can follow it</h2>
+  <p class="lead">The module is only useful if finance and support staff can read it without help. These are the design rules we will build to.</p>
+
+  <div class="cols3" style="margin-bottom:12px">
+    <div class="card"><b>Plain words</b><p class="small muted" style="margin:3px 0 0">No "ledger", "transfer" or "idempotency" on screen. See the glossary below.</p></div>
+    <div class="card"><b>"Why this amount?"</b><p class="small muted" style="margin:3px 0 0">One click on any figure shows the exact payments and refunds behind it.</p></div>
+    <div class="card"><b>Safe by default</b><p class="small muted" style="margin:3px 0 0">Preview first. Buttons say what happens: "Approve and pay $X to Operator".</p></div>
+  </div>
+
+  <div class="cols2">
+    <div class="screen avoid">
+      <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>2027 Operator Payments · Overview</b></div>
+      <div class="body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="tile"><div class="l">NAT holds for operators</div><div class="v">$219.20</div><div class="s">2 example bookings ($72.60 + $146.60)</div></div>
+          <div class="tile"><div class="l">Ready to pay now</div><div class="v">$72.60</div><div class="s">1 run waiting for approval</div></div>
+          <div class="tile"><div class="l">NAT keeps (its fees)</div><div class="v">$17.60</div><div class="s">$3.20 + $14.40 from the examples</div></div>
+          <div class="tile"><div class="l">NAT balance covers what it owes?</div><div class="v" style="font-size:12pt;padding-top:4px"><span class="chip-s done">Yes</span></div><div class="s" style="margin-top:6px">Checked every day</div></div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px"><span class="btn">Review 2 runs</span><span class="btn ghost">See money NAT holds</span></div>
+      </div>
+    </div>
+    <div class="screen avoid">
+      <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>Payment run · Booking #… · Why this amount?</b></div>
+      <div class="body">
+        <table style="font-size:8.8pt">
+          <tr><td>Guest paid</td><td style="text-align:right">$100.00</td></tr>
+          <tr><td>NAT fee</td><td style="text-align:right;color:#a3321a">−$3.20</td></tr>
+          <tr><td>Refund of $25.00, less $0.80 fee returned</td><td style="text-align:right;color:#a3321a">−$24.20</td></tr>
+          <tr><td><b>Operator is owed</b></td><td style="text-align:right"><b>$72.60</b></td></tr>
+        </table>
+        <div class="why" style="margin-top:8px"><b>In plain words:</b> the guest paid $100 and later got $25 back. NAT keeps its $3.20 fee, and the part of the refund that wasn't fee comes off what the operator receives.</div>
+        <div style="margin-top:9px;display:flex;gap:8px"><span class="btn">Approve and pay $72.60</span><span class="btn ghost">Reject</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:5px"><span class="tag ex">Mock-up</span> Layout only. Both screens use the two worked examples from Section 5 ($72.60 and $146.60); the coverage indicator is schematic.</p>
+
+</section>
+
+<section class="page">
+  <div class="kicker">08 — What staff will see (continued)</div>
+  <h2>Words, messages and emails</h2>
+  <p style="margin:0 0 4px;color:#2a313a">When something needs attention, the message says what happened and what to do — never a code.</p>
+
+  <h3 style="margin-top:10px">Glossary — the words we will use</h3>
+  <table class="avoid tight">
+    <tr><th style="width:190px">Technical term</th><th style="width:210px">What staff will see</th><th>Meaning</th></tr>
+    <tr><td>Batch / settlement</td><td class="k">Payment run</td><td>One group of payments paid to one operator together.</td></tr>
+    <tr><td>Transfer</td><td class="k">Move to operator's Stripe account</td><td>First half of paying: money leaves NAT's balance.</td></tr>
+    <tr><td>Payout</td><td class="k">Send to bank</td><td>Second half: Stripe pays the operator's bank.</td></tr>
+    <tr><td>Adjustment / clawback</td><td class="k">Deduction from next payment</td><td>Money taken back after a late refund or lost dispute.</td></tr>
+    <tr><td>Ledger</td><td class="k">Payment record</td><td>The list proving each payment was paid once.</td></tr>
+  </table>
+
+  <h3 style="margin-top:12px">Messages written for people, not for developers</h3>
+  <table class="avoid tight">
+    <tr><th style="width:230px">Instead of…</th><th>Staff will read…</th></tr>
+    <tr><td class="mono" style="font-size:8.2pt">balance_insufficient</td><td>The money for this payment isn't available in NAT's Stripe balance yet. We'll try again automatically — nothing for you to do.</td></tr>
+    <tr><td class="mono" style="font-size:8.2pt">No bank account found for account acct_…</td><td>This operator hasn't added a bank account in Stripe yet. Ask them to add one and the run will continue by itself.</td></tr>
+    <tr><td class="mono" style="font-size:8.2pt">Payout amount exceeds maximum ceiling</td><td>This run is above the maximum you set for this operator. Review it, or raise the limit and approve again.</td></tr>
+    <tr><td class="mono" style="font-size:8.2pt">Payout failed</td><td>The bank sent this payment back. The money is safe in the operator's Stripe account — check their bank details and we'll retry.</td></tr>
+  </table>
+
+  <h3 style="margin-top:12px">The email an operator receives <span class="tag ex">Mock-up</span></h3>
+  <div class="screen avoid" style="max-width:150mm;margin-bottom:4px">
+    <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>Email · to the operator</b></div>
+    <div class="body" style="font-size:9.2pt">
+      <p style="margin:0 0 6px"><b>Subject: Your payment of $72.60 for 2027 bookings is on its way</b></p>
+      <p style="margin:0 0 6px">Hello — a guest paid $100.00 for your tour and later received a $25.00 refund. After NAT's $3.20 fee, <b>you are being paid $72.60</b>. It should reach your bank in a few business days.</p>
+      <p style="margin:0" class="muted">Questions? Open the payment in your dashboard and choose “Why this amount?”. <i>(Wording shows the tone; amounts come from the Section 5 example.)</i></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════ 9. SAFEGUARDS ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">09 — How we make sure the numbers are never wrong</div>
+  <h2>Seven safeguards</h2>
+  <p class="lead">Getting money wrong costs trust, so the design assumes mistakes will be attempted — and blocks them.</p>
+
+  <div class="safe"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f23a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+    <div><h4>Each payment is paid once — enforced by the database</h4><p>Every payment and refund gets one record that can exist only once. Even a software bug can't make the system pay the same payment twice.</p></div></div>
+  <div class="safe"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f23a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+    <div><h4>The same answer as Auto Payout</h4><p>A standing test feeds identical bookings to today's Auto Payout calculation and the new one and requires the result to match to the cent. A difference fails the build.</p></div></div>
+  <div class="safe"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f23a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></div>
+    <div><h4>Preview mode before real money</h4><p>For several cycles the module calculates and stores runs without touching Stripe. We compare them against an independent recalculation from Stripe's own payment and refund records.</p></div></div>
+  <div class="safe"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f23a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div>
+    <div><h4>A person approves every run (version 1)</h4><p>Nothing moves without an admin's approval, a maximum amount per run can be set, and every action is recorded with who and when.</p></div></div>
+  <div class="safe"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f23a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0114-5l2 2M20 12a8 8 0 01-14 5l-2-2M20 4v5h-5M4 20v-5h5"/></svg></div>
+    <div><h4>Safe to retry, never moves twice</h4><p>Every Stripe action carries a unique key, and each step is remembered. A crash or timeout can be retried without any risk of a duplicate. A recovery tool finds any Stripe action that wasn't recorded.</p></div></div>
+  <div class="safe"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f23a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+    <div><h4>A daily check: "What NAT holds vs. what NAT owes"</h4><p>Every day the module confirms that every 2027 payment is accounted for exactly once, that each booking's total is right, and that Stripe's records match NAT's. It also shows whether NAT's balance covers what it owes operators, and alerts if not.</p></div></div>
+<div class="safe" style="border-bottom:none"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f23a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3"/></svg></div>
+    <div><h4>Test money first — production is not touched</h4><p>Until you say go-live, only Stripe test (sandbox) keys are used. The module refuses to run with a live Stripe key unless a super admin has deliberately unlocked Live.</p></div></div>
+</section>
+
+<!-- ═════════════════════════ 10. PARTNER ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">10 — Partner bookings</div>
+  <h2>Paid the same way as any booking</h2>
+  <p class="lead">Partner (3-way) bookings split a payment between the operator and a partner. Another developer, Ketan, is changing this for 2027 on the branch <span class="mono" style="font-size:9pt">feature-partner-commision-simplification</span>.</p>
+
+  <div class="cols2">
+    <div class="card"><div class="kicker">What that branch does</div>
+      <ul class="clean" style="margin:0">
+        <li>From 2027-01-01, for every operator, the partner's share is <b>no longer sent through Stripe</b>.</li>
+        <li>It is only <b>recorded</b> in the payouts table, with an empty transfer id.</li>
+      </ul>
+    </div>
+    <div class="card"><div class="kicker">What it means for Operator Payments</div>
+      <ul class="clean" style="margin:0">
+        <li>The operator is owed <b>payment − NAT fee</b> — nothing else is taken off.</li>
+        <li>This module <b>does not deduct or pay</b> the partner's share.</li>
+      </ul>
+    </div>
+  </div>
+
+  <figure class="avoid" style="margin-top:14px">
+  <svg viewBox="0 0 680 96" width="100%" role="img" aria-label="Partner booking owed amount">
+    <rect x="0" y="12" width="150" height="46" rx="8" fill="#fff" stroke="#dde1d6"/><text x="75" y="40" text-anchor="middle" font-size="11" font-weight="700">Payment</text>
+    <text x="172" y="40" text-anchor="middle" font-size="18" font-weight="800">−</text>
+    <rect x="194" y="12" width="150" height="46" rx="8" fill="#e4ecfb" stroke="#3b6fd9"/><text x="269" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#2a50a8">NAT fee</text>
+    <text x="366" y="40" text-anchor="middle" font-size="18" font-weight="800">=</text>
+    <rect x="388" y="12" width="292" height="46" rx="8" fill="#eef9c4" stroke="#4d6b00" stroke-width="2"/><text x="534" y="40" text-anchor="middle" font-size="12" font-weight="800">Operator is owed</text>
+    <text x="0" y="84" font-size="9.2" fill="#5b6470">The same rule for every booking, including partner bookings. Nothing else is subtracted.</text>
+  </svg>
+  </figure>
+
+  <div class="callout"><b class="t">Decided</b> For a partner booking the operator is owed <i>payment − NAT fee</i>, with nothing else deducted. Operator Payments does not pay the partner.</div>
+  <div class="callout warn"><b class="t">Worth knowing</b> Because this module does not pay partners, the partner's share — recorded by Ketan's branch — has to be settled separately, outside Operator Payments. Ketan's deletion of <span class="mono" style="font-size:8.6pt">app/Services/UnitTest/UnitTest.php</span> (364 lines) has been confirmed as intended.</div>
+</section>
+
+<!-- ═════════════════════════ 11. SWITCHES ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">11 — Settings and switches</div>
+  <h2>Who controls what</h2>
+  <p class="lead">Wherever possible we reuse settings admins already know. Only a handful of new ones are added, each with a safe default.</p>
+
+  <table class="avoid tight">
+    <tr><th style="width:170px">Setting</th><th style="width:105px">Where</th><th>What it does</th><th style="width:105px">Default</th></tr>
+    <tr><td class="k">Operator Payments mode</td><td>Central settings</td><td><span class="chip-s off" style="margin-right:3px">Off</span> <span class="chip-s wait" style="margin-right:3px">Preview</span> <span class="chip-s done">Live</span> — a single master switch for the whole platform.</td><td>Off</td></tr>
+    <tr><td class="k">Stripe keys</td><td>Server settings (super admin)</td><td>Test (sandbox) keys only until go-live. The module refuses live keys unless a super admin has unlocked Live.</td><td>Test only</td></tr>
+    <tr><td class="k">Pay by tour date or purchase date, and days</td><td>Per operator</td><td>When a payment becomes ready.</td><td>Tour date, same days as Auto Payout</td></tr>
+    <tr><td class="k">Schedule, minimum, maximum, start date, emails</td><td>Existing Auto Payout rule</td><td>Reused as is — nothing new to configure.</td><td>As already set</td></tr>
+    <tr><td class="k">Dispute Reversal</td><td>Existing per-operator setting</td><td>Decides whether a lost dispute is deducted from the operator.</td><td>As already set</td></tr>
+    <tr><td class="k">2027 payout setting (existing)</td><td>Per operator, database only</td><td>Decides whether an operator's 2027 charges are held by NAT. <b>Stays protected.</b></td><td>Off</td></tr>
+  </table>
+
+  <h3>Making the master switch safe to click</h3>
+  <ul class="clean">
+    <li>Only a NAT super-admin permission can change it.</li>
+    <li><b>Live</b> needs a type-to-confirm step and is refused unless the most recent preview passed its checks.</li>
+    <li>Until you say go-live, only Stripe <b>test keys</b> are used. On production, Live stays locked until a super admin unlocks it, and production Stripe is not touched before then.</li>
+    <li>Every change is recorded automatically — who, when, old value, new value.</li>
+    <li>Going back to <b>Off</b> or <b>Preview</b> is always allowed and takes effect immediately.</li>
+  </ul>
+  <div class="callout"><b class="t">Important order of events</b> The existing per-operator 2027 payout setting must <b>not</b> be switched on for any operator until Operator Payments is live. Otherwise money would sit with NAT with nothing to pay it out.</div>
+</section>
+
+<!-- ═════════════════════════ 12. PLAN + DECISIONS ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">12 — The build plan</div>
+  <h2>Seven phases, safest first</h2>
+  <p class="lead">Each phase can be tested on its own. Only Stripe test money moves — and only from Phase 3. Nothing touches production until you say go-live.</p>
+
+  <div class="phase"><div class="num">0</div><div><h4>Decisions &amp; data checks</h4><p>Decisions are made and a read-only survey of the development database is done (Section 13). Production is not touched.</p></div><span class="tag ok">Done</span></div>
+  <div class="phase"><div class="num">1</div><div><h4>The calculator and payment records</h4><p>One calculation, the "paid once" records, the matching test against Auto Payout, and a preview command. No Stripe involved.</p></div></div>
+  <div class="phase"><div class="num">2</div><div><h4>Payment runs and approval screens</h4><p>Runs, approve/reject, the "Why this amount?" view, exports, plain-language statuses.</p></div></div>
+  <div class="phase"><div class="num">3</div><div><h4>Moving money and sending to the bank</h4><p>The two Stripe steps, retries, the available-funds check, webhooks, emails, activity log.</p></div></div>
+  <div class="phase"><div class="num">4</div><div><h4>Corrections and disputes</h4><p>Manual corrections and lost-dispute deductions, including carrying forward a deduction that is bigger than the next payment.</p></div></div>
+  <div class="phase"><div class="num">5</div><div><h4>Daily check and overview dashboard</h4><p>"What NAT holds vs. what NAT owes", alerts, the overview screen.</p></div></div>
+  <div class="phase"><div class="num">6</div><div><h4>Pilot</h4><p>Full run on the test operator in Stripe test (sandbox) mode. Going live on production is a separate step that only you decide.</p></div></div>
+
+  <div class="callout"><b class="t">Fixed on October 6 — card-statement name</b> For Canadian operators, 2027 card payments showed NAT's own name (<span class="mono" style="font-size:8.6pt">TOURS* ASWTA</span>) instead of the operator's. The payment gateway now sends the operator's name as the full statement line (<span class="mono" style="font-size:8.6pt">ASWTA</span>). Checked in Stripe test mode for online card payments and the card reader; Payment Links were already correct. One limit: a name shorter than 5 characters can't be used as a full line.</div>
+
+</section>
+
+<section class="page">
+  <div class="kicker">13 — What the data says (Phase 0)</div>
+  <h2>What the survey found</h2>
+  <p class="lead">A read-only survey of all 13 tenants in the <b>development</b> database. Nothing was changed. Production is not touched.</p>
+
+  <table class="tight avoid">
+    <tr><th style="width:170px">Check</th><th>Result</th><th style="width:150px">Effect on the plan</th></tr>
+    <tr><td class="k">Packages with their own Stripe account</td><td><b>gcw:</b> all 14 packages use one account that differs from the operator-level account. <b>ddmta:</b> 5 packages, 2 different accounts, 1 differs. The other 11 tenants match or have none.</td><td>The operator-level account for every tenant in version 1; the lookup is built so package accounts are a small later change.</td></tr>
+    <tr><td class="k">Platform-held transactions</td><td>51 already exist — all on <b>kens</b>, where the 2027 payout setting is already on for testing.</td><td>Real test data for Phase 1.</td></tr>
+    <tr><td class="k">Partner bookings</td><td>No package is flagged as a partner package today; 7 partner payment rows exist on kens.</td><td>Paid like any booking.</td></tr>
+    <tr><td class="k">Lost disputes</td><td>None recorded in the last 52 weeks. Dispute Reversal is on for 9 of 13 tenants.</td><td>Deduction path is widely enabled.</td></tr>
+    <tr><td class="k">Currencies</td><td>Every tenant reports USD — including <b>aswta</b>, which we have treated as Canadian.</td><td>Currency is read from live data, never assumed.</td></tr>
+    <tr><td class="k">Auto Payout in use</td><td>Switched on for one tenant (kens), with no enabled rule.</td><td>Little live history to compare.</td></tr>
+  </table>
+
+  <h3>What this changes</h3>
+  <ul class="clean">
+    <li><b>One Stripe account per operator, with room to grow.</b> Every payment looks up its account through one small component. Today it always answers "the operator's account"; supporting package accounts later means changing only that component.</li>
+    <li><b>Phase 1 can be tested on real data.</b> The 51 platform-held transactions on kens let us run the calculator and the Auto Payout comparison before any Stripe work.</li>
+  </ul>
+  <div class="callout"><b class="t">Decided</b> The operator-level Stripe account is the payee for <b>every</b> tenant. gcw and ddmta are mentioned only because they were the two tenants whose packages use a different account today; the rule is the same for everyone.</div>
+  <div class="callout"><b class="t">How we test</b> Stripe <b>test (sandbox)</b> mode only. Production Stripe and the production database are not touched until you say go-live, and only a super admin can access production.</div>
+</section>
+
+<section class="page">
+  <div class="kicker">14 — Decisions and next steps</div>
+  <h2>What is settled, and what is left</h2>
+  <p class="lead">Everything is decided. The only thing needed now is your go-ahead to start building.</p>
+  <div class="cols2">
+    <div class="card"><span class="tag ok">Decided</span>
+      <ul class="clean" style="margin-top:8px;font-size:9pt">
+        <li>Two deposits in version 1.</li>
+        <li>Pay by tour date <i>or</i> purchase date, per operator.</li>
+        <li>Refund after payment → deducted from the next payment.</li>
+        <li>NAT keeps only its fee: no safety hold, no safety balance.</li>
+        <li>Operator is owed payment − NAT fee — partner bookings too.</li>
+        <li>Lost disputes only, via the existing setting.</li>
+        <li>The operator-level Stripe account is the payee for every tenant; code ready for package accounts later.</li>
+        <li>Master switch changeable in the app, with guard-rails.</li>
+        <li>Stripe test (sandbox) mode only until go-live.</li>
+      </ul>
+    </div>
+    <div class="card"><span class="tag ok">Confirmed on October 6</span>
+      <ul class="clean" style="margin-top:8px;font-size:9pt">
+        <li><b>No safety hold and no safety balance.</b> Both are dropped; no customer money is held back.</li>
+        <li><b>Operator-level Stripe account</b> is the payee for every tenant.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Next steps</h3>
+  <div class="step"><div class="n">1</div><div><b>You give the go-ahead</b> to start Phase 1.</div></div>
+  <div class="step"><div class="n">2</div><div><b>Phase 1 starts:</b> the calculator, the "paid once" records, and the test that compares it with Auto Payout — with no Stripe involved.</div></div>
+  <div class="step"><div class="n">3</div><div><b>Stripe test (sandbox) testing</b> begins in Phase 3, on the test operator only. Production is not touched.</div></div>
+  <div class="callout"><b class="t">Not verified yet</b> This plan is based on reading the code. Stripe's behaviour (how fast moved money becomes available, what happens to a reversal after a bank payout) will be confirmed in Stripe's test (sandbox) mode during Phase 3.</div>
+</section>
+
+<!-- ═════════════════════════ APPENDIX ═════════════════════════ -->
+<section class="page">
+  <div class="kicker">Appendix — for developers</div>
+  <h2>Technical notes</h2>
+  <p class="muted">Skip this page if you are not building it. Everything above is the product; this is how it is anchored in the code.</p>
+
+  <h3>New records</h3>
+  <table class="avoid tight">
+    <tr><th style="width:190px">Table</th><th>Purpose</th></tr>
+    <tr><td class="k mono" style="font-size:8.6pt">settlement_batches</td><td>One payment run per operator and Stripe account; status, totals, period, Stripe transfer and payout ids, retry state.</td></tr>
+    <tr><td class="k mono" style="font-size:8.6pt">settlement_items</td><td>The payment record: one row per transaction, <b>UNIQUE(transaction_id)</b>; signed amount in cents; <i>owed-to</i> account; kind (payment, refund, adjustment, dispute).</td></tr>
+    <tr><td class="k mono" style="font-size:8.6pt">settlement_adjustments</td><td>Manual corrections and lost-dispute deductions (credit/debit, pending/applied/voided).</td></tr>
+    <tr><td class="k mono" style="font-size:8.6pt">settlement_batch_logs</td><td>Audit trail of every action; not cascade-deleted.</td></tr>
+  </table>
+  <p class="small muted">Naming avoids <span class="mono">payouts</span> (partner ledger) and <span class="mono">transfers</span> (used on the shelved deferred-transfer branch).</p>
+
+  <h3 style="margin-top:12px">Key design points</h3>
+  <ul class="clean small" style="font-size:8.7pt;line-height:1.42">
+    <li>Per-row owed amount = ±(amount − fee_amount) in integer cents; one <span class="mono">SettlementCalculator</span>; parity test against <span class="mono">PayoutApprovalService::calculateAccountPayoutAmount</span>.</li>
+    <li>Eligibility: Completed/Refund, <span class="mono">via='Card'</span>, <span class="mono">payment_mode='platform_held'</span>, not <span class="mono">request_from='Insert'</span>, no <span class="mono">#</span> comments; release = tour datetime or <span class="mono">created_at</span> + days (per-tenant setting). No lower date bound, so no "orphaned" bookings.</li>
+    <li>Execution: global Redis lock → platform <span class="mono">Balance::retrieve</span> (available, per currency; transfer ≤ available, otherwise <i>Waiting for funds</i>) → <span class="mono">createTransfer</span> with idempotency key from batch reference → persist → bank payout (retry never re-transfers). No reserve or holdback. <b>Live-key guard:</b> refuse to run with a live Stripe key unless a super admin has unlocked Live.</li>
+    <li>Account resolution through a <span class="mono">SettlementAccountResolver</span>: returns the operator's account in version 1; package-level accounts later mean changing only this class. Batches are grouped by account so that change needs nothing else.</li>
+    <li>Disputes: hook <span class="mono">StripeWebhookController</span> lost-dispute path and manual mark-lost in <span class="mono">DisputeService::updateDisputeStatus</span>, gated by <span class="mono">DISPUTE_REVERSAL</span>, idempotent per dispute id.</li>
+  </ul>
+
+  <h3 style="margin-top:12px">Changes to existing code (small, but required)</h3>
+  <ul class="clean small" style="font-size:8.7pt;line-height:1.42">
+    <li><span class="mono">StripeWebhookController::handleStripeAutoPayout</span>: match settlement payouts first; add the <span class="mono">payment_mode</span> filter to its fallback branch (today it would create a bogus Auto Payout record and set <span class="mono">payout_made=1</span>).</li>
+    <li><span class="mono">PayoutAdjustmentService</span> (3 detect methods): skip platform-held transactions, or refunds are counted twice.</li>
+    <li><span class="mono">PayoutApprovalService::recalculatePendingPayout</span>: add the <span class="mono">payment_mode</span> filter.</li>
+    <li><span class="mono">ProcessAutoPayouts</span>: run the settlement leg inside the same tick and lock; reconcile settlement payouts.</li>
+    <li>Central <span class="mono">SettingController</span> whitelist + validation for the new keys; permission for the master switch.</li>
+  </ul>
+</section>
+
+</body>
+</html>

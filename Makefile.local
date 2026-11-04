@@ -1,0 +1,63 @@
+# Makefile for Local Docker Development
+# Usage: make -f Makefile.local <target>
+
+.PHONY: help build up down restart logs shell mysql redis migrate fresh reload-data setup-hosts
+
+help:
+	@echo "NAT Local Docker Development Commands"
+	@echo "======================================"
+	@echo "Usage: make -f Makefile.local <target>"
+	@echo ""
+	@echo "Targets:"
+	@echo "  build        - Build Docker images"
+	@echo "  up           - Start all containers"
+	@echo "  down         - Stop all containers"
+	@echo "  restart      - Restart all containers"
+	@echo "  logs         - View container logs"
+	@echo "  shell        - Open shell in app container"
+	@echo "  mysql        - Connect to MySQL"
+	@echo "  redis        - Connect to Redis CLI"
+	@echo "  migrate      - Run migrations"
+	@echo "  fresh        - Fresh install (rebuild + reload data)"
+	@echo "  reload-data  - Reload database from SQL dumps"
+	@echo "  setup-hosts  - Add domains to /etc/hosts (requires sudo)"
+	@echo ""
+
+build:
+	docker compose -f docker-compose.local.yml build
+
+up:
+	docker compose -f docker-compose.local.yml up -d
+
+down:
+	docker compose -f docker-compose.local.yml down
+
+restart:
+	docker compose -f docker-compose.local.yml restart
+
+logs:
+	docker compose -f docker-compose.local.yml logs -f
+
+shell:
+	docker compose -f docker-compose.local.yml exec app bash
+
+mysql:
+	docker compose -f docker-compose.local.yml exec mysql mysql -u nat_user -pnat_password nat_central
+
+redis:
+	docker compose -f docker-compose.local.yml exec redis redis-cli
+
+migrate:
+	docker compose -f docker-compose.local.yml exec app php artisan migrate --force
+	docker compose -f docker-compose.local.yml exec app php artisan tenants:migrate --force
+
+fresh: down
+	docker compose -f docker-compose.local.yml down -v
+	docker compose -f docker-compose.local.yml build --no-cache
+	docker compose -f docker-compose.local.yml up -d
+
+reload-data:
+	./.docker-local/reload-data.sh
+
+setup-hosts:
+	@echo "Run with sudo: sudo ./.docker-local/setup-hosts.sh"

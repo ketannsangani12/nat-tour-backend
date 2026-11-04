@@ -1,0 +1,10 @@
+{
+    local_certs
+    auto_https disable_redirects
+}
+
+*.tour-backend.local, tour-backend.local {
+    reverse_proxy app:80
+
+    tls internal
+}

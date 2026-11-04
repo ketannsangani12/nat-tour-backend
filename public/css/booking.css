@@ -1,0 +1,347 @@
+.select-tour-wrp .select2 .select2-selection__arrow {
+	display: inline-block;
+}
+select.tourists {
+	box-shadow: none;
+	width: 100px !important;
+}
+.payment-method-form-wrp .stripe-card-element {
+	background-color: white;
+	border-radius: 4px;
+	border: 1px solid #aaa;
+	padding: 4px 8px 6px 12px;
+	box-shadow: -1px -6px 5px 0px rgb(0 0 0 / 12%) inset;
+	margin-bottom: 14px;
+}
+#card-error {
+	color:red;
+	font-size: 14px;
+	margin-bottom: 14px;
+}
+.discount-code-input.diff input {
+	max-width: 170px;
+	margin-left: auto;
+	margin-right: 5px;
+}
+.discount-code-input.diff .field-icon.per-icon {
+	left: 30px;
+}
+.btn-color {
+	background-color: #2f9dd5;
+    border-color: #2f9dd5;
+    border: 2px solid;
+    border-radius: 5px;
+    height: 37px;
+    font-size: 15px;
+    padding: 5px 7px;
+}
+.cash-set{
+	color: #fff;
+	font-weight: 800
+}
+.custom-charge-delete { font-size: 18px !important; margin-left: 5px !important; }
+.custom-charge-delete:hover, .custom-charge-delete:active, .custom-charge-delete:focus { background-color: var(--fg-red) !important; color: white !important; }
+.multiple-cust {
+	padding: 5px;
+}
+.add-contact-section .form-group {
+	margin-bottom: 10px;
+}
+#add-contact-cancel {
+	margin-left: 5px;
+}
+.contact-header {
+	padding: 5px;
+}
+.contact-header span {
+	margin-left: 10px;
+}
+.delete-contact {
+	position: absolute;
+    right: 2px;
+    top: 5px;
+	color: red;
+    border: none;
+    background: none;
+}
+#booking-add-contacts-modal-body {
+	max-height: 830px;
+    overflow-y: scroll;
+	overflow-x: hidden;
+}
+.add-contact {
+	position: absolute;
+	right: 14px;
+    margin-top: -4px;
+}
+.rate-group-header {
+	padding: 10px;
+    background-color: rgba(0,0,0,.03);
+	margin-bottom: 5px;
+}
+.note-field {
+	width: 13.8rem;
+}
+.add-contact-form .col-form-label {
+	width: 100px;
+}
+.add-contact-form .field-icon-wrp, .add-contact-form textarea {
+	width: 100%;
+}
+
+#card-reader-status {
+    margin-top: 20px;
+}
+
+#card-reader-status .alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.make-payment-with-card-reader {
+    padding: 7px 30px;
+    font-size: 14px;
+    background-color: #155724;
+    color: #ffffff;
+    border-radius: 7px;
+    border-color: #155724;
+	border: 1px solid #155724;
+}
+
+.make-payment-with-card-reader svg {
+    margin-right: 5px;
+}
+
+.make-payment-with-card-reader:hover {
+    background-color: #ffffff;
+    border-color: #155724;
+    color: #155724;
+}
+
+.make-payment-with-card-reader:hover svg path {
+    fill: #155724;
+}
+
+.cancel-card-reader-payment {
+    padding: 7px 30px;
+    font-size: 14px;
+    background-color: #155724;
+    color: #ffffff;
+    border-radius: 7px;
+    border-color: #155724;
+	border: 1px solid #155724;
+}
+
+.cancel-card-reader-payment:hover {
+    background-color: #ffffff;
+    border-color: #155724;
+    color: #155724;
+}
+
+.btn-shadow {
+    box-shadow: -1px -6px 5px 0px rgba(0, 0, 0, 0.12) inset;
+}
+.custom-payment-modal .modal-content {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+.custom-payment-modal .modal-header {
+    border-bottom: none;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.custom-payment-modal .modal-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+}
+
+.custom-payment-modal .btn-close {
+    border: none;
+    font-size: 20px;
+}
+
+.custom-payment-modal .payment-box {
+    text-align: center;
+    padding: 5px;
+}
+
+.custom-payment-modal .card-detail-wrp {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.custom-payment-modal .form-group {
+    margin-top: 15px;
+}
+
+.custom-payment-modal .payment-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.custom-payment-modal .payment-btn:hover {
+    background: linear-gradient(135deg, #388E3C, #1B5E20);
+    transform: translateY(-2px);
+}
+
+.custom-payment-modal .secure-info {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-payment-modal .secure-info i {
+    margin-right: 5px;
+    color: #4CAF50;
+}
+
+.payment-link-section button {
+    font-weight: 700;
+    font-weight: 700;
+    background-color: #FF033E;
+    border-color: #FF033E;
+    color: #ffffff;
+}
+
+.payment-link-section button:hover, .payment-link-section button:active, .payment-link-section button:focus {
+    background-color: #FF5E66;
+    border-color: #FF5E66;
+    color: #ffffff;
+}
+
+.cancel-payment-link {
+    color: #ffffff;
+    background-color: var(--fg-red);
+    border-color: var(--fg-red);
+    padding: 6px 0 6px 0 !important;
+    margin-left: 3px;
+    font-weight: 600;
+    box-shadow: -1px -6px 5px 0 rgb(0 0 0 / 12%) inset, 0px -3px 5px 0 rgb(0 0 0 / 21%);
+    border-radius: 4px;
+    min-width: 90px !important;
+}
+
+.cancel-payment-link:hover, .cancel-payment-link:active, .cancel-payment-link:focus { 
+    color: #ffffff;
+    background-color: #FF5E66 !important;
+    border-color: #FF5E66;
+}
+.save-card-list {
+    padding: 0;
+}
+
+#saved-cards-container h5 {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #7c7e84;
+    letter-spacing: 0.14px;
+    margin-bottom: 8px;
+}
+
+.save-card-list input {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    margin: 0 !important;
+    transform: none !important;
+}
+
+.save-card-list label {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    color: #333;
+    letter-spacing: 0.14px;
+    width: calc(100% - 40px);
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    box-shadow: -1px -6px 5px 0px rgba(0, 0, 0, 0.12) inset;
+    position: relative;
+    padding: 7px 7px 7px 25px;
+}
+
+.save-card-list label:hover {
+    background-color: #2f9dd5;
+    color: #fff;
+}
+
+.save-card-checkmark {
+    padding-left: 1.75rem;
+}
+
+.delete-card.fas.fa-trash {
+    font-size: 1.2rem; /* Larger size for visibility */
+    color: #dc3545; /* Bootstrap danger color */
+    cursor: pointer;
+    margin-left: 10px; /* Space from label */
+    transition: color 0.2s;
+}
+
+.delete-card.fas.fa-trash:hover {
+    color: #a71d2a; /* Darker red on hover */
+}
+
+.save-card-list .checkmark {
+    position: absolute;
+    top: 6px;
+    left: 5px;
+    height: 15px;
+    width: 15px;
+    background-color: #fff;
+    border-radius: 50px;
+    box-shadow: -1px -6px 5px 0px rgba(0, 0, 0, 0.12) inset;
+    border: 1px solid #aaa;
+}
+
+.save-card-list input:checked + label .checkmark {
+    background-color: #2f9dd5;
+    border-color: #2f9dd5;
+    color: #fff;
+}
+
+.save-card-list input:checked + label {
+    background-color: #2f9dd5;
+    border-color: #2f9dd5;
+    color: #fff;
+}
+
+.save-card-list .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.save-card-list input:checked + label .checkmark:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.save-card-list label .checkmark:after {
+    top: 3px;
+    left: 3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: white;
+}

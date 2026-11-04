@@ -1,0 +1,49 @@
+# Pinned to 8.3.36+ for PHP2Shell (CVE-2026-109618, CVE-2026-109619)
+FROM php:8.3.36-cli-trixie
+LABEL maintainer="CI/CD"
+LABEL Description="Lightweight CI/CD image for running Laravel tests"
+
+WORKDIR /var/www
+
+# Install system dependencies (minimal set for tests)
+RUN apt-get update && apt-get install -y \
+    libfreetype-dev \
+    libjpeg62-turbo-dev \
+    libzip-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libicu-dev \
+    libxml2-dev \
+    zlib1g-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    default-mysql-client \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql zip mbstring intl bcmath xml \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Accept self-signed certs from MySQL 8.0 (MariaDB client default would reject them)
+RUN echo "[client]\nssl-verify-server-cert=false" > /etc/mysql/conf.d/no-verify-ssl.cnf
+
+# Raise PHP memory limit for test suite
+RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/memory.ini
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copy the OSS license scanner and composer.lock so the allowlist gate can
+# run at image-build time. The runtime bind mount overlays /var/www with the
+# host directory, so these files are only used by the build-time scan below.
+COPY composer.lock /var/www/composer.lock
+COPY scripts /var/www/scripts
+
+# Gate the CICD image on the OSS license allowlist. Reads composer.lock
+# directly (no vendor/ or composer install required). Exits non-zero on
+# violation, failing the image build and any PR CI that depends on it.
+# RUN php /var/www/scripts/oss-notices/generate_notices.php --mode scan --project-root /var/www

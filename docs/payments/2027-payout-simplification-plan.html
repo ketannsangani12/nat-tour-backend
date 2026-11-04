@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>2027 Payout Simplification Plan</title>
+<style>
+  @page { size: Letter; margin: 22mm 18mm 20mm 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt;
+    line-height: 1.5;
+    color: #1a1d23;
+    margin: 0;
+  }
+  .cover {
+    min-height: 245mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: always;
+  }
+  .revhist p { margin: 0 0 12px 0; }
+  .revhist { font-size: 9.6pt; color: #33364a; }
+  .cover .kicker {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 9.5pt;
+    color: #7a5cff;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .cover h1 {
+    font-size: 30pt;
+    line-height: 1.15;
+    margin: 0 0 10px 0;
+    color: #12131a;
+  }
+  .cover .subtitle {
+    font-size: 13pt;
+    color: #45495a;
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+  .cover-meta { font-size: 9.5pt; color: #63687a; border-top: 1px solid #d8dbe6; padding-top: 14px; max-width: 420px; }
+  .cover-meta div { margin-bottom: 4px; }
+  .cover-meta b { color: #1a1d23; }
+  .cover-tag {
+    display: inline-block; margin-top: 26px; padding: 5px 11px; border-radius: 20px;
+    background: #f1eeff; color: #6941c6; font-size: 8.7pt; font-weight: 600; width: fit-content;
+  }
+
+  h1 { font-size: 17pt; color: #12131a; border-bottom: 2.5px solid #7a5cff; padding-bottom: 6px; margin: 0 0 12px 0; page-break-after: avoid; }
+  h1.section { margin-top: 0; page-break-before: always; }
+  h2 { font-size: 13pt; color: #1f2130; margin: 20px 0 8px 0; page-break-after: avoid; }
+  h3 { font-size: 11pt; color: #2b2e40; margin: 14px 0 6px 0; page-break-after: avoid; }
+  p { margin: 6px 0; }
+  small.lede { color: #63687a; font-size: 9.3pt; }
+
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 14px 0; font-size: 9pt; page-break-inside: avoid; }
+  th, td { text-align: left; padding: 5px 7px; border: 1px solid #dfe1ea; vertical-align: top; }
+  th { background: #f4f2ff; color: #3b2e75; font-weight: 700; font-size: 8.6pt; text-transform: uppercase; letter-spacing: 0.3px; }
+  tr:nth-child(even) td { background: #fbfbfd; }
+  td code, p code, li code { background: #f0eefc; color: #5b3ec9; padding: 1px 4px; border-radius: 3px; font-size: 8.7pt; font-family: "SF Mono", Menlo, monospace; }
+  table.rollout td, table.rollout td code { overflow-wrap: anywhere; }
+  pre {
+    background: #1c1e29; color: #e6e6f0; padding: 10px 12px; border-radius: 7px; font-size: 8.4pt;
+    line-height: 1.45; overflow-x: auto; page-break-inside: avoid; font-family: "SF Mono", Menlo, monospace;
+  }
+  pre .c { color: #8b90a8; }
+
+  ul, ol { margin: 6px 0; padding-left: 20px; }
+  li { margin-bottom: 3px; }
+
+  .callout { border-radius: 8px; padding: 10px 13px; margin: 10px 0; page-break-inside: avoid; font-size: 9.3pt; }
+  .callout.rec { background: #eefaf1; border-left: 4px solid #1e9e5a; }
+  .callout.warn { background: #fff6e8; border-left: 4px solid #d68a1a; }
+  .callout.info { background: #eef3fe; border-left: 4px solid #3167e0; }
+  .callout.q { background: #f4f0ff; border-left: 4px solid #7a5cff; }
+  .callout b.tag { display: block; font-size: 8.2pt; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .callout.rec b.tag { color: #1e9e5a; }
+  .callout.warn b.tag { color: #b5760f; }
+  .callout.info b.tag { color: #3167e0; }
+  .callout.q b.tag { color: #7a5cff; }
+
+  .diagram { border: 1px solid #dfe1ea; border-radius: 8px; padding: 16px; margin: 12px 0; background: #fbfbfd; page-break-inside: avoid; }
+  .diagram .row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 6px 0; flex-wrap: wrap; }
+  .box { border: 1.5px solid #b7b9d6; border-radius: 7px; padding: 8px 12px; font-size: 8.6pt; text-align: center; background: #fff; min-width: 108px; }
+  .box.platform { border-color: #7a5cff; background: #f4f0ff; color: #4c2fae; font-weight: 700; }
+  .box.connected { border-color: #1e9e5a; background: #eefaf1; color: #12703c; font-weight: 700; }
+  .box.customer { border-color: #3167e0; background: #eef3fe; color: #1d4bb5; font-weight: 700; }
+  .arrow { font-size: 15pt; color: #7a5cff; }
+  .diagram .label { text-align: center; font-size: 8.2pt; color: #63687a; margin-top: 2px; }
+  .diagram .caption { text-align: center; font-weight: 700; font-size: 9pt; margin-bottom: 10px; color: #2b2e40; }
+
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 7.8pt; font-weight: 700; }
+  .badge.p0 { background: #ffe4e0; color: #b3261e; }
+  .badge.p1 { background: #ffedd0; color: #a05a00; }
+  .badge.p2 { background: #e2f5e9; color: #1e7a45; }
+
+  .toc { list-style: none; padding: 0; margin-top: 20px; }
+  .toc li { display: flex; justify-content: space-between; border-bottom: 1px dotted #d8dbe6; padding: 5px 0; font-size: 9.6pt; }
+  .toc li b { font-weight: 500; }
+  .toc .num { color: #7a5cff; font-weight: 700; margin-right: 8px; }
+
+  .foot { margin-top: 26px; padding-top: 10px; border-top: 1px solid #e3e5ef; font-size: 8pt; color: #9a9eb0; display:flex; justify-content:space-between; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="kicker">Payments Engineering &middot; Architecture Plan</div>
+  <h1>Payout Simplification — Platform-Held Settlement for 2027+ Bookings</h1>
+  <div class="subtitle">How card, card-reader, and payment-link charges for 2027+ tour dates settle entirely on the platform's own Stripe balance instead of an automatic destination-charge split — while the guest still sees the tour operator's own name on their statement, in every country the platform operates in.</div>
+  <div class="cover-meta">
+    <div><b>Platform:</b> NAT Tour Backend — Laravel 11, Stancl/Tenancy v3, Stripe Connect</div>
+    <div><b>Prepared for:</b> Devat Karetha</div>
+    <div><b>Prepared:</b> September 19, 2026</div>
+    <div><b>Revised:</b> October 6, 2026 — Section 8.5 correction</div>
+    <div><b>Branch:</b> <code style="background:none;color:#45495a;padding:0;">feature-stripe-2027-payout-simplification</code></div>
+    <div><b>Status:</b> Foundation, Phase A/B/C, and the statement-descriptor fix (corrected and extended to every payment route on October 6, 2026 — see Section 8.5) are shipped and tested; Auto Payout integration and full checkout-redirect verification remain open — see Section 15</div>
+  </div>
+  <div class="cover-tag">CONFIDENTIAL — INTERNAL ENGINEERING PLANNING DOCUMENT</div>
+</div>
+
+<!-- REVISION HISTORY -->
+<h1 class="section">Revision History</h1>
+<p class="lede" style="color:#63687a;font-size:9.3pt;">A running change log of every phase and revision of this project, in chronological order, cross-referenced to the real commits on this branch. See Section 7 for the structured component-by-component status and Section 8 for the statement-descriptor investigation in full narrative detail.</p>
+<div class="revhist">
+<p><b>Foundation laid (<code>5648f3c7f</code>, <code>741e319da</code>, <code>ef9c242db</code>, <code>cb45a238c</code>).</b> <code>PaymentModeResolver</code> introduced as the single place the 2027-01-01 boundary is expressed in code, gated by a per-tenant kill-switch (<code>PLATFORM_HELD_PAYOUT_ENABLED</code>, reusing the existing <code>hasSetting()</code> mechanism already used for <code>AUTO_PAYOUT</code>/<code>DISPUTE_REVERSAL</code>) and failing closed to <code>DESTINATION</code> whenever that setting is missing or off. <code>PaymentModeInference::fromStripeObject()</code> added alongside it for the handful of call sites that only have a raw Stripe object, not a local <code>Transaction</code> row, in scope. <code>buildConnectedPaymentData()</code>/<code>buildRefundParams()</code>/<code>refundPayment()</code> gained a <code>$mode</code> parameter (required, no default, on the refund side specifically — a forgotten default there would silently send <code>reverse_transfer</code> against a charge with nothing to reverse). <code>transactions.payment_mode</code> column added (enum, default <code>'destination'</code>, correctly backfilling every historical row). <code>TransactionService</code>'s payment- and refund-writing methods and <code>CancelTransactionUpdateService::run()</code> threaded with the mode from each caller's already-in-scope <code>Transaction</code> row — no new queries. This is the "persist mode once, never re-derive" principle that governs every fix in this project: a booking's settlement mode is decided once, at charge-creation time, and every later refund/cancellation/dispute reads that decision back off the row rather than re-resolving it against the booking's current tour date.</p>
+
+<p><b>Two live production refund-calculation bugs found and fixed the same week, independent of Payout Simplification's own new code but surfaced while auditing the same refund paths (<code>559d4c825</code>, <code>36f709684</code>).</b> A guest cancellation on tenant <code>kens</code> produced "Refund amount ($180.49) is greater than unrefunded amount on charge ($102.92)" — traced to <code>TicketRefundCancelService.php</code> computing its net refund as <code>$transTicketCost + $oldRefundKeepUs</code> instead of netting out the prior partial refund (<code>$transTicketCost - $ref</code>); an <code>$oldRefundKeepUs</code> figure that was never actually refunded (a pure reporting artifact from the "Full Refund minus Fees" pax-removal path in <code>TourBookingRepository.php</code>) was being added back into a real Stripe refund amount. A structurally identical bug in <code>WeatherRefundCancelService.php</code> was caught immediately after by re-deriving the same booking's numbers by hand and querying why a follow-up refund had paid $94.47 instead of the correct $86.02 — fixed by netting out both the prior refund <em>and</em> the previously-kept fee (<code>$alreadyKeptFee</code>, accumulated from the booking's own <code>RefundHistory</code> rows) from <code>$transFullAmount</code>. Both are cash-correctness bugs in refund arithmetic that predate this project; they were found only because this project required reading every refund call site closely enough to notice the amounts didn't reconcile.</p>
+
+<p><b>Phase C — Payment Link (<code>a71ba1dff</code>).</b> <code>PaymentLinkService::createPaymentLink()</code> rebuilds its Stripe Checkout Session fresh on every visit, not once at link-creation time, so mode is resolved inside the method itself at each rebuild via <code>PaymentModeResolver::resolve()</code> across the link's own booking dates, and threaded into both <code>buildConnectedPaymentData()</code> and the pre-existing <code>stripOnBehalfOfForCountry($params, $mode)</code> helper (a 4-month-old Canada hotfix, unrelated in origin to this project — see Section 8). <code>tests/Unit/Payments/PaymentLinkPlatformHeldModeTest.php</code> added.</p>
+
+<p><b>Unrelated JS bug fixed in passing (<code>70e0cfd65</code>).</b> A guest-reported <code>ReferenceError: combinedAmount is not defined</code> in the add-ons bulk-payment modal's card-reader flow (<code>tour-booking-addons.js</code>) — a variable scoped to the wrong method. Fixed by re-deriving it locally, mirroring the sibling method's already-correct pattern. No connection to settlement mode; fixed because it blocked a user-reported live flow during the same work session.</p>
+
+<p><b>payment_mode sweep on refund/cancellation writes, plus an 8-row live data correction on <code>kens</code> (<code>0252d5b3e</code>).</b> A user-reported screenshot showed a cancelled add-ons booking's refund rows stored with <code>payment_mode = 'destination'</code> despite having actually settled correctly — the real bug was that <code>CancelTransactionUpdateService::run()</code>, the single shared method behind all four cancellation-refund services (Ticket Refund, 100% Refund, Partial Refund, Don't Refund), never set <code>payment_mode</code> at all, silently inheriting the DB column's <code>'destination'</code> default regardless of what the original charge actually was. Fixed by making <code>$mode</code> a required parameter across all 29 call sites project-wide (<code>WeatherRefundCancelService.php</code> ×8, <code>TicketRefundCancelService.php</code> ×6, <code>PartialRefundCancelService.php</code> ×8, <code>DontRefundCancelService.php</code> ×6, plus one more), each supplying the real transaction's own persisted <code>payment_mode</code>. Cross-referenced against sibling <code>status='Completed'</code> rows sharing the same <code>transaction_number</code>, 8 already-wrong rows were found and corrected directly on <code>kens</code> (transaction 309201 for booking 348618, plus 7 more: 309174, 309182, 309168, 309176, 309185, 309171, 309179) — all had been written as <code>'destination'</code> when the originating charge was actually <code>'platform_held'</code>. New test: <code>tests/Unit/Bookings/CancelTransactionUpdateServiceFeeAmountTest.php</code>'s sibling coverage confirmed the mode threading; a dedicated payment_mode-specific regression accompanies the same commit.</p>
+
+<p><b>Phase B — Card Reader (<code>31cbc5498</code>).</b> Both Terminal flows wired: the web/admin path (<code>CardReaderRepository::getPaymentIntent()</code>) via a new <code>resolveModeFromInput()</code> that reads <code>metadata.dates</code> (cart) or resolves a single tour date from <code>metadata.booking_id</code>, falling back to <code>DESTINATION</code> when neither is present (an already-open browser tab mid-rollout has no way to supply the new field, and the resolver's own fail-closed contract already makes "no date available" mean "cannot be platform-held"); and the mobile-app Terminal reader (<code>TourBookingRepository::stripeCreatePaymentIntent()</code>, V1 and V3, both cart and single-booking branches). A pre-existing, independent bug was found and fixed in the same pass: <code>CardReaderRepository.php</code> hardcoded <code>'application_fee_amount' => $input['fees'] ?? 0</code> into the base payload <em>before</em> <code>buildConnectedPaymentData()</code>'s return value was spread in — meaning even with mode support added, this stray key would have survived untouched into a platform-held charge. Deleted outright rather than patched with a post-hoc <code>unset()</code>. JS payloads (<code>backend-card-reader.js</code>, <code>tour-booking-pos.js</code>) updated to send the new <code>meta.dates</code> field. New test: <code>tests/Unit/Payments/CardReaderPlatformHeldModeTest.php</code> (4 cases covering both metadata shapes and the fallback).</p>
+
+<p><b>The Canada statement-descriptor bug — found, and an earlier verification pass corrected (<code>422dc3ddf</code>).</b> See Section 8 for the full narrative. In short: an earlier verification pass had concluded <code>on_behalf_of</code> with no <code>transfer_data</code> works unconditionally, regardless of the connected account's <code>card_payments</code> capability — every prior test had either never confirmed a payment method or stalled at 3DS <code>requires_action</code> before Stripe would ever have run the actual check. A real Stripe Dashboard screenshot of a stuck test transaction with a blank statement descriptor prompted re-verification using <code>off_session: true</code> to force a real charge to completion, which surfaced Stripe's actual rejection: <code>on_behalf_of</code> alone still requires <code>card_payments</code>, even with no <code>transfer_data</code> present. <code>buildConnectedPaymentData()</code>'s <code>PLATFORM_HELD</code> branch rewritten to gate <code>on_behalf_of</code> on the same <code>connectedAccountHasCardPayments()</code> check the destination-mode branch already used, falling back to a full <code>statement_descriptor</code> override (a property of the platform's own charging account, needing no connected-account capability at all) for accounts that lack it — which today means most Canadian operators on this platform. Verified end-to-end with real completed charges against both a US tenant (<code>dixies</code>, has the capability) and the CA tenant (<code>aswta</code>, does not). <code>tests/Unit/Payments/StripePaymentGatewayModeTest.php</code> rewritten to assert against real tenant Stripe destination IDs instead of a fake account string.</p>
+
+<p><b>A second, independent near-miss found while writing this document (2026-09-19, no separate commit — corrected via migration <code>2026_09_18_000003_fix_stale_platform_held_payout_setting.php</code>).</b> The tenant <code>dixies</code> was found to already carry a <code>PLATFORM_HELD_PAYOUT_ENABLED</code> settings row with <code>value=1</code> — left over from an unrelated, already-reverted "Payout Simplification proof-of-concept" built on a prior branch that happened to reuse the exact same settings key. Because the Foundation migration only inserts its safe <code>value=0</code> default when the key does not already exist, this stale row was silently preserved instead of overwritten, meaning the kill-switch had been reading as <b>enabled</b> on <code>dixies</code> for the entire duration of this project so far. No real charge was misrouted — confirmed by <code>SELECT COUNT(*) FROM transactions WHERE payment_mode = 'platform_held'</code> returning zero on every tenant — because the actual PaymentIntent-creation call sites only started consulting <code>PaymentModeResolver</code> partway through this same work session, and no 2027-dated booking has been sold yet on any tenant. A targeted fix-up migration resets any row whose comment doesn't match this feature's own canonical text back to <code>value=0</code>, leaving alone any row that already carries this feature's own comment (i.e. a deliberate later toggle). This is the reason Phase A's lifecycle proof and Phase B/C's rollout plan (Section 9) both call for confirming the kill-switch's live value on every target tenant before enabling anything, rather than trusting the migration's default in isolation.</p>
+
+<p><b>fee_amount / application_fee_id null-vs-zero correction, scoped to fee-preserving refund types only (<code>65e5e47f4</code>).</b> The request was to ensure <code>fee_amount</code>/<code>application_fee_id</code> are stored as <code>null</code>, never <code>0</code> or an empty string, whenever a refund doesn't actually refund the platform's fee — explicitly <b>excluding</b> 100%/Full Refund, which genuinely does refund the fee and must keep its real value. Fixed at the shared-method level rather than per call site, given the caller count: <code>TransactionService::storeRefundInTransaction()</code>, <code>storeAddonsRefundInTransaction()</code>, and <code>storeCustomChargeRefundInTransaction()</code> each now compute a local "store as null unless genuinely non-zero" value before writing; <code>CancelTransactionUpdateService::run()</code> got the same normalization directly. 6 new tests added to <code>tests/Unit/Bookings/TransactionServiceTest.php</code> (zero-fee-becomes-null and real-fee-is-preserved, for all three methods) and 3 to <code>CancelTransactionUpdateServiceFeeAmountTest.php</code>.</p>
+
+<p><b>Auto Payout exclusion confirmed already correct, mechanism explained (no code change this pass).</b> Following a question about why <code>payment_mode = 'destination'</code> filters exist on three Auto Payout query sites (<code>PayoutApprovalService.php:109</code>, <code>PayoutAggregateService.php:189</code>, <code>AutoPayoutController.php:637</code>), confirmed and documented (Section 11) that these guard against a real future-correctness gap: Auto Payout sums local <code>transactions</code> rows with no inherent awareness of settlement mode, and its pre-send balance check is a live Stripe balance query on the connected account — a blunt "don't overdraw" safety net, not a source-of-truth check — that would not by itself catch a platform-held transaction being included in a payout computation once such rows exist.</p>
+
+<p><b>This document.</b> Written to formally record the architecture, the locked-in scope decisions, the statement-descriptor investigation (a genuine correction of an earlier finding, worth recording plainly rather than quietly superseding), the live incidents fixed along the way, and the items still open before this can be considered fully shipped (Section 15).</p>
+<p><b>Correction — statement-descriptor coverage (October 6, 2026; uncommitted at time of writing).</b> A later review found that the Canada fix described in Section 8 reached Payment Links only: the rewritten <code>buildConnectedPaymentData()</code> branch produces a full <code>statement_descriptor</code> only when the caller passes the operator's descriptor in, and 18 of the 19 call sites never did. On a Canadian account that left the guest statement as the platform's name plus a suffix (<code>TOURS* ASWTA</code>). Fixed once, at <code>StripePaymentGateway::createPayment()</code>, and verified in Stripe test mode. Full narrative in Section 8.5.</p>
+</div>
+
+
+<!-- TOC -->
+<h1 class="section">Contents</h1>
+<ul class="toc">
+  <li><span><span class="num">1.</span>Executive Summary</span></li>
+  <li><span><span class="num">2.</span>Current Architecture — Destination Charges</span></li>
+  <li><span><span class="num">3.</span>Scope &amp; Locked-In Decisions</span></li>
+  <li><span><span class="num">4.</span>Target Architecture — Platform-Held Settlement</span></li>
+  <li><span><span class="num">5.</span>The 2027 Gate — <code style="background:none;color:inherit;padding:0;">PaymentModeResolver</code> &amp; Kill Switch</span></li>
+  <li><span><span class="num">6.</span>New &amp; Changed Components — Foundation</span></li>
+  <li><span><span class="num">7.</span>Phase-by-Phase Wiring (Card / Card Reader / Payment Link)</span></li>
+  <li><span><span class="num">8.</span>The Canada Statement-Descriptor Investigation</span></li>
+  <li><span><span class="num">9.</span>Live Production Incidents Found Along the Way</span></li>
+  <li><span><span class="num">10.</span>The fee_amount / application_fee_id Correction</span></li>
+  <li><span><span class="num">11.</span>Auto Payout Exclusion</span></li>
+  <li><span><span class="num">12.</span>Data Model Changes</span></li>
+  <li><span><span class="num">13.</span>Testing Summary</span></li>
+  <li><span><span class="num">14.</span>Risk Register</span></li>
+  <li><span><span class="num">15.</span>Open Items — What's Pending</span></li>
+  <li><span><span class="num">16.</span>Appendix A — Key File &amp; Call-Site Reference</span></li>
+  <li><span><span class="num">17.</span>Appendix B — Stripe Connect Glossary</span></li>
+</ul>
+
+<!-- 1. EXEC SUMMARY -->
+<h1 class="section">1. Executive Summary</h1>
+<p>Today, every card, card-reader, and payment-link charge on the platform is created as a Stripe <b>destination charge</b>: the PaymentIntent carries <code>transfer_data.destination</code> and <code>application_fee_amount</code>, and Stripe automatically splits and pays the tour operator's share into their connected Stripe account the instant the charge succeeds. <b>Payout Simplification</b> changes this for any booking whose <b>tour date</b> falls on or after <b>2027-01-01</b>: the full charge instead lands on the platform's own Stripe balance, with no automatic split at all. The operator is paid later, on whatever schedule their tenant already runs, through the existing Auto Payout system — unchanged in mechanism, simply now also aware that a platform-held transaction never landed money in the operator's account in the first place.</p>
+
+<p>This is deliberately a smaller change than it might sound. A related, more ambitious idea — an instant per-booking Stripe <code>Transfer</code> to the operator, fired synchronously at charge time — was explored on a sibling branch (<code>docs/payments/stripe-2027-transfer-plan.html</code>) and shelved in favor of this project, because Payout Simplification needs none of that new machinery: no per-booking <code>Transfer</code>, no per-booking transfer-reversal-on-refund logic, no <code>transfers</code> ledger table. The only thing that changes at charge time is <i>which Stripe parameters are sent</i> — everything downstream (refunds, cancellations, disputes, and ultimately how the operator gets paid) continues to work off the same <code>transactions</code> table it always has, just reading a new <code>payment_mode</code> column to know which shape the original charge actually was.</p>
+
+<div class="callout info">
+  <b class="tag">Scope confirmation</b>
+  This round covers <b>card, card-reader (Stripe Terminal), and payment-link charges only</b>, gated purely by tour date. Guest tips are explicitly excluded from this round regardless of tour date (Section 3). Building the "pay the operator for a platform-held booking" leg of Auto Payout is also explicitly a future round — this round's job is to make sure Auto Payout does not <i>mis</i>-pay in the meantime (Section 11), not to build the new payout mechanism itself.
+</div>
+
+<div class="callout rec">
+  <b class="tag">Confirmed — clean forward cutover, gated by a kill switch</b>
+  No 2027-dated booking has been sold on any tenant yet, so there is no historical platform-held transaction to reconcile or backfill — every booking today, and every booking created before this ships fleet-wide, keeps running on the existing destination-charge model unchanged, forever. The feature is additionally gated by a per-tenant <code>PLATFORM_HELD_PAYOUT_ENABLED</code> kill switch that fails closed (Section 5), so the 2027-01-01 boundary itself is not the real rollout gate — enabling the setting, tenant by tenant, is. A real near-miss with this exact setting (Section 9) is why that distinction matters in practice, not just in theory.
+</div>
+
+<div class="callout warn">
+  <b class="tag">The finding that mattered most this round</b>
+  An earlier verification pass concluded the guest-facing statement descriptor (the tour operator's own name, never the platform's) would work correctly in every country under the new model, including Canada, without any extra logic. That conclusion was wrong, and was only caught because a real Stripe Dashboard screenshot showed a blank descriptor on a stalled test transaction. Section 8 documents the mistake, the correct mechanism, and the fix — in full, not glossed over — because it is the clearest example in this project of why "it worked in a quick test" and "it was verified against a real completed charge" are not the same claim.
+</div>
+
+<!-- 2. CURRENT ARCHITECTURE -->
+<h1 class="section">2. Current Architecture — Destination Charges</h1>
+<p>All card-based money movement funnels through <code>App\Contracts\Payments\PaymentGatewayInterface</code>, implemented by <code>App\Services\Payments\StripePaymentGateway</code>, resolved via <code>app(PaymentGatewayInterface::class)</code> throughout repositories and services. The connected-account parameters for any given charge are built by one centralized method, <code>buildConnectedPaymentData(string $destinationId, int $feeAmountCents, ?string $statementDescriptor, string $mode)</code>, which every PaymentIntent/Checkout-Session-creation call site is expected to call rather than assembling <code>transfer_data</code>/<code>application_fee_amount</code>/<code>on_behalf_of</code> by hand.</p>
+
+<p>For today's destination-charge mode (still the only mode for pre-2027 tour dates, and for every booking until a tenant's kill switch is turned on), that method returns:</p>
+<pre>$data = [
+    'application_fee_amount' =&gt; $feeAmountCents,
+    'transfer_data'          =&gt; ['destination' =&gt; $destinationId],
+];
+<span class="c">// on_behalf_of requires card_payments capability; omitted for accounts that only have transfers (e.g. Canada)</span>
+if ($this-&gt;connectedAccountHasCardPayments($destinationId)) {
+    $data['on_behalf_of'] = $destinationId;
+}
+if ($statementDescriptor !== null) {
+    $data['statement_descriptor_suffix'] = $statementDescriptor;
+}</pre>
+
+<p>Refunds against a destination charge send <code>reverse_transfer</code>/<code>refund_application_fee</code> so Stripe pulls back the corresponding slice of the automatic transfer and fee at the same time. Disputes lost against a destination charge automatically reverse the transfer as part of Stripe's own dispute-loss handling. None of this changes for any pre-2027 booking, on any tenant, regardless of whether that tenant's kill switch is on — the mode is decided per booking, at charge-creation time, not per tenant globally.</p>
+
+<!-- 3. SCOPE -->
+<h1 class="section">3. Scope &amp; Locked-In Decisions</h1>
+
+<h2>3.1 Mixed-date carts follow the later date</h2>
+<p>A single cart/PaymentIntent can bundle multiple bookings, each with its own tour date. <code>PaymentModeResolver::resolve(iterable $tourDates)</code> is conservative: if <i>any</i> date in the cart is 2027-01-01 or later, the whole charge settles as platform-held. Stripe cannot split one charge's settlement two ways, and treating an earlier-dated item as platform-held is the safer direction to be wrong in — the operator is paid slightly later via Auto Payout rather than a pre-2027 item being silently destination-charged when it shouldn't be.</p>
+
+<h2>3.2 Tips are excluded from this round entirely</h2>
+<p>Every tip-collection call site — <code>StripeUtils::getStripeAttributesForAppTapToPay()</code> and <code>getStripeAttributesForCreateTip()</code> — passes <code>mode: PaymentModeResolver::DESTINATION</code> explicitly and unconditionally, regardless of tour date. This was tightened during this round specifically so it reads as a deliberate decision in the code, not an accident of both methods happening to predate the <code>$mode</code> parameter's default. Tips stay on today's destination-charge model until a separate, later round makes an explicit decision to change that.</p>
+
+<h2>3.3 Auto Payout's own payout mechanism is not part of this round</h2>
+<p>This round makes sure a platform-held transaction is <i>excluded</i> from Auto Payout's existing sweep (Section 11) — it does not build the mechanism that will eventually pay the operator their share of a platform-held booking. That is intentionally deferred to a future round, once there is real production experience with platform-held transactions accumulating.</p>
+
+<!-- 4. TARGET ARCHITECTURE -->
+<h1 class="section">4. Target Architecture — Platform-Held Settlement</h1>
+<p>For a platform-held charge, <code>buildConnectedPaymentData()</code> omits <code>transfer_data</code> and <code>application_fee_amount</code> entirely — the full amount simply stays on the platform's Stripe balance, exactly as if the connected account didn't exist. The one thing that must survive unchanged is the guest-facing statement descriptor: the guest must see the tour operator's own name, never the platform's, on every booking regardless of settlement mode or country. Section 8 covers exactly how that requirement is met and the mistake made along the way; the resulting code is:</p>
+
+<pre>if ($mode === PaymentModeResolver::PLATFORM_HELD) {
+    $data = [];
+    if ($destinationId !== '' &amp;&amp; $this-&gt;connectedAccountHasCardPayments($destinationId)) {
+        $data['on_behalf_of'] = $destinationId;
+        if ($statementDescriptor !== null) {
+            $data['statement_descriptor_suffix'] = $statementDescriptor;
+        }
+    } elseif ($statementDescriptor !== null) {
+        $data['statement_descriptor'] = $statementDescriptor;
+    }
+    return $data;
+}</pre>
+
+<div class="diagram">
+  <div class="caption">Destination charge (today, and every pre-2027 booking) vs. platform-held (2027+, kill switch on)</div>
+  <div class="row">
+    <div class="box customer">Guest's card</div>
+    <div class="arrow">&rarr;</div>
+    <div class="box platform">Platform Stripe balance</div>
+    <div class="arrow">&rarr;</div>
+    <div class="box connected">Operator's connected account<br><span style="font-weight:400;">(automatic, at charge time)</span></div>
+  </div>
+  <div class="label">Destination charge — transfer_data + application_fee_amount</div>
+  <div class="row" style="margin-top:14px;">
+    <div class="box customer">Guest's card</div>
+    <div class="arrow">&rarr;</div>
+    <div class="box platform">Platform Stripe balance<br><span style="font-weight:400;">(stays here)</span></div>
+  </div>
+  <div class="label">Platform-held — no transfer_data. Operator paid later via Auto Payout, on their normal schedule.</div>
+</div>
+
+<p>On refund, <code>buildRefundParams(array $params, string $mode)</code> strips <code>reverse_transfer</code>/<code>refund_application_fee</code> for platform-held mode — there is nothing on the original charge for either flag to act on, and sending them would error. It only ever removes these keys; it never adds either one, so a caller's own business logic (e.g. a refund type that deliberately keeps the platform's fee) is unaffected.</p>
+
+<!-- 5. THE 2027 GATE -->
+<h1 class="section">5. The 2027 Gate — <code style="background:none;color:inherit;padding:0;border:none;">PaymentModeResolver</code> &amp; Kill Switch</h1>
+<p><code>App\Services\Payments\PaymentModeResolver</code> is the single place the 2027-01-01 boundary is expressed in code:</p>
+<pre>public const DESTINATION = 'destination';
+public const PLATFORM_HELD = 'platform_held';
+public const PLATFORM_HELD_STARTS_ON = '2027-01-01';
+public const KILL_SWITCH_SETTING_KEY = 'PLATFORM_HELD_PAYOUT_ENABLED';
+
+public function resolve(iterable $tourDates): string
+{
+    if (!hasSetting(self::KILL_SWITCH_SETTING_KEY)) {
+        return self::DESTINATION;
+    }
+    foreach ($tourDates as $tourDate) {
+        if ($this-&gt;normalizeDate($tourDate) &gt;= self::PLATFORM_HELD_STARTS_ON) {
+            return self::PLATFORM_HELD;
+        }
+    }
+    return self::DESTINATION;
+}</pre>
+
+<p>Two design choices are load-bearing and deliberate, not incidental:</p>
+<ul>
+  <li><b>Fails closed.</b> A tenant with no <code>PLATFORM_HELD_PAYOUT_ENABLED</code> row at all (an un-migrated or not-yet-opted-in tenant) gets <code>DESTINATION</code> unconditionally — the resolver does not even look at the dates. Rollout is therefore tenant-by-tenant and explicit, never automatic just because a calendar date passed.</li>
+  <li><b>Decided once, never re-derived.</b> Every call site resolves a mode at charge-creation time and writes it to <code>transactions.payment_mode</code>. Every later refund, cancellation, or dispute reads that column back rather than calling <code>PaymentModeResolver</code> again against the booking's current tour date — a booking's tour date can itself change (reschedule, switch package) after the original charge, so re-deriving later would silently disagree with what the original charge actually was. <code>PaymentModeInference::fromStripeObject()</code> exists for the few call sites that only have a raw Stripe object, not a <code>Transaction</code> row, in scope — it reads the object's own <code>transfer_data</code>/<code>transfer</code> presence as ground truth, which is a form of "read back what actually happened," not re-derivation from a date.</li>
+</ul>
+
+<div class="callout warn">
+  <b class="tag">Real near-miss with the kill switch itself</b>
+  While writing this document, tenant <code>dixies</code> was found to already carry a <code>PLATFORM_HELD_PAYOUT_ENABLED</code> row with <code>value=1</code> — left over from an unrelated, already-reverted proof-of-concept on a prior branch that happened to reuse this exact settings key. Because the Foundation migration only inserts its safe default when the key doesn't already exist, this stale <code>enabled</code> row silently survived. No real charge was misrouted (zero <code>platform_held</code> transactions exist on any tenant, and no 2027 booking has been sold), but it is a concrete demonstration of why Section 9's rollout checklist requires confirming the kill switch's live value on a tenant before treating the migration's default as sufficient. A fix-up migration (<code>2026_09_18_000003_fix_stale_platform_held_payout_setting.php</code>) resets any row whose comment doesn't match this feature's own canonical text back to <code>0</code>.
+</div>
+
+<!-- 6. FOUNDATION -->
+<h1 class="section">6. New &amp; Changed Components — Foundation</h1>
+
+<h2>6.1 <code style="background:none;color:inherit;padding:0;">PaymentModeResolver</code> / <code style="background:none;color:inherit;padding:0;">PaymentModeInference</code> <span class="badge p2">shipped</span></h2>
+<p><code>app/Services/Payments/PaymentModeResolver.php</code> and <code>PaymentModeInference.php</code>. Covered in full in Section 5. 9 unit tests in <code>tests/Unit/Payments/PaymentModeResolverTest.php</code>.</p>
+
+<h2>6.2 <code style="background:none;color:inherit;padding:0;">buildConnectedPaymentData()</code> / <code style="background:none;color:inherit;padding:0;">buildRefundParams()</code> / <code style="background:none;color:inherit;padding:0;">refundPayment()</code> <span class="badge p2">shipped</span></h2>
+<p><code>PaymentGatewayInterface</code> and <code>StripePaymentGateway</code>. Charge-creation side defaults <code>$mode</code> to <code>DESTINATION</code> (a forgotten mode reproduces today's exact behavior — a safe default). Refund side (<code>buildRefundParams(array $params, string $mode)</code>, <code>refundPayment(array $params, string $mode)</code>) makes <code>$mode</code> required with no default, so a call site that forgot to thread it through fails loudly (missing-argument error) instead of silently sending the wrong reversal flags. 8 tests in <code>tests/Unit/Payments/StripePaymentGatewayModeTest.php</code>.</p>
+
+<h2>6.3 <code style="background:none;color:inherit;padding:0;">connectedAccountHasCardPayments()</code> <span class="badge p2">shipped</span></h2>
+<p>Private method on <code>StripePaymentGateway</code>, a real Stripe API call (<code>$this-&gt;stripe-&gt;accounts-&gt;retrieve($accountId)</code>) checking <code>$account-&gt;capabilities-&gt;card_payments === 'active'</code>, statically cached per request. Used by both the destination-mode branch (pre-existing, unchanged) and the platform-held branch (new, Section 8) of <code>buildConnectedPaymentData()</code>.</p>
+
+<h2>6.4 <code style="background:none;color:inherit;padding:0;">transactions.payment_mode</code> column &amp; kill-switch setting <span class="badge p2">shipped</span></h2>
+<p>Three tenant migrations: <code>2026_09_18_000001_add_platform_held_payout_setting.php</code> (kill switch, defaults off, <code>exists()</code>-guarded insert), <code>2026_09_18_000002_add_payment_mode_to_transactions_table.php</code> (enum column, default <code>'destination'</code>), and <code>2026_09_18_000003_fix_stale_platform_held_payout_setting.php</code> (the <code>dixies</code> stale-row correction described in Section 5).</p>
+
+<h2>6.5 <code style="background:none;color:inherit;padding:0;">TransactionService</code> &amp; <code style="background:none;color:inherit;padding:0;">CancelTransactionUpdateService</code> mode threading <span class="badge p2">shipped</span></h2>
+<p>Every method in <code>TransactionService</code> that writes a <code>transactions</code> row now threads <code>payment_mode</code> from the caller's already-resolved mode or already-in-scope <code>Transaction</code>. <code>CancelTransactionUpdateService::run()</code>'s <code>$mode</code> parameter is required (no default) across all 29 call sites project-wide, for the same "fail loud, not silent" reason as the refund-side gateway methods.</p>
+
+<!-- 7. PHASES -->
+<h1 class="section">7. Phase-by-Phase Wiring (Card / Card Reader / Payment Link)</h1>
+
+<h2>7.1 Phase A — Card (online) <span class="badge p2">shipped</span></h2>
+<p><code>app/Utils/StripeUtils.php</code>'s PaymentIntent-creation methods resolve mode from the tour date(s) already in scope at each site and thread it into <code>buildConnectedPaymentData()</code>. The two tip call sites (<code>getStripeAttributesForAppTapToPay</code>, <code>getStripeAttributesForCreateTip</code>) explicitly force <code>DESTINATION</code> per the Section 3.2 decision rather than inheriting the method's own default. <code>getStripeAttributesForAppCardReader()</code> takes an explicit <code>$mode</code> parameter from its caller. The full charge &rarr; refund &rarr; partial-refund &rarr; cancellation lifecycle for a platform-held booking was proven through this phase, since the refund/dispute infrastructure (Section 6) is channel-agnostic and only needed proving once.</p>
+
+<h2>7.2 Phase B — Card Reader <span class="badge p2">shipped</span></h2>
+<p>Two structurally distinct flows, both fixed in the same pass:</p>
+<ul>
+  <li><b>Web/admin Stripe Terminal</b> (<code>CardReaderRepository::getPaymentIntent()</code>). A new private <code>resolveModeFromInput(array $input)</code> reads <code>metadata.dates</code> (cart context) or resolves a single tour date via <code>metadata.booking_id</code>, falling back to <code>DESTINATION</code> when neither is present:
+  <pre>private function resolveModeFromInput(array $input): string
+{
+    $dates = $input['metadata']['dates'] ?? null;
+    if (is_array($dates) &amp;&amp; !empty($dates)) {
+        return app(PaymentModeResolver::class)-&gt;resolve($dates);
+    }
+    $bookingId = $input['metadata']['booking_id'] ?? null;
+    if (!empty($bookingId)) {
+        $tourDate = TourBooking::with('tourSlotTime')-&gt;find($bookingId)?-&gt;tourSlotTime?-&gt;date;
+        return app(PaymentModeResolver::class)-&gt;resolveForSingleDate($tourDate);
+    }
+    return PaymentModeResolver::DESTINATION;
+}</pre>
+  A pre-existing, independent bug was fixed in the same method: a hardcoded <code>'application_fee_amount' =&gt; $input['fees'] ?? 0</code> in the base payload, written <i>before</i> <code>buildConnectedPaymentData()</code>'s return value was spread in, meant this stray key would have survived into a platform-held charge even after mode support was added. Removed outright, not patched with a trailing <code>unset()</code>.</li>
+  <li><b>Mobile-app Terminal reader</b> (<code>TourBookingRepository::stripeCreatePaymentIntent()</code>, V1 and V3, both cart and single-booking branches) — tour date was already available at each site; wired directly.</li>
+</ul>
+<p>JS payloads updated to supply the new field: <code>backend-card-reader.js</code> sends <code>meta.dates</code> derived from the cart's own package dates (or the single booking's date); <code>tour-booking-pos.js</code> sends the same from its own selected-packages list. 4 tests in <code>tests/Unit/Payments/CardReaderPlatformHeldModeTest.php</code>.</p>
+
+<h2>7.3 Phase C — Payment Link <span class="badge p2">shipped</span></h2>
+<p><code>PaymentLinkService::createPaymentLink($token)</code> rebuilds its Stripe Checkout Session fresh on every visit rather than once at link-creation time, so mode must be (and is) resolved inside the method itself at each rebuild, across the link's own booking dates, and threaded into both <code>buildConnectedPaymentData()</code> and <code>stripOnBehalfOfForCountry($params, $mode)</code> (Section 8). 2 tests in <code>tests/Unit/Payments/PaymentLinkPlatformHeldModeTest.php</code>.</p>
+
+<div class="callout info">
+  <b class="tag">Not in this phase</b>
+  <code>CustomerController::createTipPaymentLink()</code> is a guide-tip link, not a booking payment link — it stays on <code>DESTINATION</code> unconditionally per Section 3.2, though it still calls the now-mode-aware <code>stripOnBehalfOfForCountry()</code> helper, passing <code>DESTINATION</code> explicitly.
+</div>
+
+<!-- 8. CANADA INVESTIGATION -->
+<h1 class="section">8. The Canada Statement-Descriptor Investigation</h1>
+<p>The hard requirement behind this whole feature, stated by the business from the start, is that the guest must always see the tour operator's own name on their card statement — never the platform's — regardless of settlement mode or country. The mechanism for this is <code>on_behalf_of</code>: it marks the connected account as the entity the charge is "for," which is what determines whose name becomes the base of the statement descriptor. <code>statement_descriptor_suffix</code> only <i>appends</i> to whatever base was already selected by <code>on_behalf_of</code> — it cannot substitute for it.</p>
+
+<h2>8.1 The earlier, wrong conclusion</h2>
+<p>An earlier verification pass in this project tested whether a charge carrying <code>on_behalf_of</code> with no <code>transfer_data</code> at all — the exact shape platform-held mode needs — would succeed and correctly show the connected account's name, including against a Canadian test connected account (whose capabilities are <code>{"transfers": "active"}</code> only — no <code>card_payments</code>). Every test in that pass appeared to succeed. The conclusion drawn was that <code>on_behalf_of</code> works unconditionally with no <code>transfer_data</code>, regardless of <code>card_payments</code> capability, so <code>buildConnectedPaymentData()</code>'s platform-held branch could include <code>on_behalf_of</code> unconditionally whenever a destination ID exists, with no capability gate at all.</p>
+
+<div class="callout warn">
+  <b class="tag">What was actually being tested</b>
+  Every one of those earlier test PaymentIntents either never had a payment method confirmed against it, or reached <code>requires_action</code> for 3D Secure and stopped there. Stripe does not run its <code>on_behalf_of</code>/<code>card_payments</code> capability check until it actually attempts to create the underlying charge — an unconfirmed or 3DS-stalled PaymentIntent never reaches that point. The earlier pass had verified that Stripe would <i>accept the parameters at PaymentIntent-creation time</i>, not that a real charge would <i>complete</i> with them.
+</div>
+
+<h2>8.2 How the mistake was caught</h2>
+<p>The user provided a real Stripe Dashboard screenshot of a test transaction stuck in an <code>Incomplete</code> state with a blank "Statement descriptor" field, and asked for proper re-verification in the CA test environment rather than trusting the earlier result. Re-running the test with <code>off_session: true</code> and an explicit <code>confirm</code> call — forcing Stripe past 3D Secure to a real, completed (or genuinely rejected) charge — surfaced Stripe's actual error for the first time:</p>
+<pre>You cannot create a charge with the `on_behalf_of` parameter set to a
+connected account with `transfers` but without the `card_payments`
+capability enabled.</pre>
+<p>This meant the earlier conclusion was backwards for exactly the accounts most likely to need the fallback: a Canadian connected account with only <code>transfers</code> capability would have every platform-held charge rejected outright the moment a real card was charged, not merely display an imperfect descriptor.</p>
+
+<h2>8.3 The correct mechanism, verified</h2>
+<p><code>statement_descriptor</code> (the full override, as opposed to the suffix) is a property of the <b>charging account</b> — the platform's own account — not the connected account. It requires no connected-account capability at all, because Stripe never needs to check what the connected account can do; the platform is the one making the charge. <code>buildConnectedPaymentData()</code>'s platform-held branch was rewritten to gate <code>on_behalf_of</code> on <code>connectedAccountHasCardPayments()</code> (the same check the destination-mode branch already used) and fall back to a full <code>statement_descriptor</code> override — set to the tour operator's own name — when the connected account lacks the capability:</p>
+<pre>if ($destinationId !== '' &amp;&amp; $this-&gt;connectedAccountHasCardPayments($destinationId)) {
+    $data['on_behalf_of'] = $destinationId;
+    if ($statementDescriptor !== null) {
+        $data['statement_descriptor_suffix'] = $statementDescriptor;
+    }
+} elseif ($statementDescriptor !== null) {
+    $data['statement_descriptor'] = $statementDescriptor;
+}</pre>
+<p>Verified end-to-end with real, completed test charges (not just PaymentIntent creation) against both <code>dixies</code> (US, has <code>card_payments</code> — takes the <code>on_behalf_of</code> path) and <code>aswta</code> (CA, does not — takes the <code>statement_descriptor</code> fallback path), confirming the connected account's own name appears on <code>Charge::calculated_statement_descriptor</code> in both cases, never the platform's. <i>Correction (Section 8.5): those charges called Stripe directly with the descriptor supplied; the booking code paths did not supply it until October 6, 2026.</i></p>
+
+<h2>8.4 Why the pre-existing <code style="background:none;color:inherit;padding:0;">stripOnBehalfOfForCountry()</code> helper is unrelated</h2>
+<p><code>app/helpers.php</code>'s <code>stripOnBehalfOfForCountry(array $params, string $mode)</code> predates this project by about four months — traced via <code>git log --follow -p</code> to commit <code>7ba28a9</code>, "hotfix for Canada" (May 18, 2026), a real production fix for a completely different problem: Stripe rejecting cross-border <code>on_behalf_of</code> specifically when paired with <code>transfer_data</code> for a Canadian connected account. Its original test tenant, <code>mahikan</code>, no longer exists in the system; <code>aswta</code> is now the only Canadian tenant. It is called from exactly two places — <code>CustomerController.php</code>'s tip link and <code>PaymentLinkService::createPaymentLink()</code> — and only strips <code>on_behalf_of</code> when <code>$mode === PaymentModeResolver::DESTINATION</code>, which is exactly its original, unchanged behavior for every pre-2027 booking. It plays no role in the platform-held fix above; the two are separate mechanisms solving two different Stripe rejections that happen to both involve Canada.</p>
+
+<div class="callout rec">
+  <b class="tag">Net effect for Canadian operators under platform-held mode</b>
+  A Canadian tour operator's guests see the operator's own name on their statement exactly as they do today — via <code>statement_descriptor</code> instead of <code>on_behalf_of</code> + suffix, a mechanical difference invisible to the guest. No business/requirements conversation was needed once the correct mechanism was identified; it was a straightforward code fix, confirmed working against a real account. <i>Correction (Section 8.5): this held for Payment Links only until October 6, 2026.</i>
+</div>
+
+<h2>8.5 Correction (October 6, 2026): the fix reached Payment Links only</h2>
+<p>Sections 8.3 and 8.4 describe the mechanism correctly but overstate where it was applied. The rewritten branch of <code>buildConnectedPaymentData()</code> produces a full <code>statement_descriptor</code> only when the caller passes the operator's descriptor to it as an argument. Of the 19 call sites, only <code>PaymentLinkService::createPaymentLink()</code> does. The other 18 — online card, POS, card reader (web and mobile app), and the V1/V3 booking repositories — set <code>statement_descriptor_suffix</code> on their own base payload and pass no descriptor to the helper, so for a platform-held charge on an account without <code>card_payments</code> the helper returned nothing for the descriptor. This was equally true at commit <code>422dc3ddf</code>.</p>
+
+<div class="callout warn">
+  <b class="tag">Why it was missed</b>
+  <code>StripePaymentGatewayModeTest</code> calls the helper directly and hands it a descriptor (<code>'MY TOUR CO'</code>), and the "end-to-end" charges in 8.3 were created by calling Stripe directly, so neither exercised the real booking code. Reproduced on October 6, 2026 in Stripe test mode with the real call-site shape on <code>aswta</code>, sent straight to Stripe: the guest statement was <code>TOURS* ASWTA</code> — the platform's own name (the platform's static descriptor is <code>TOURS</code>).
+</div>
+
+<table>
+<tr><th>Route (Stripe test mode)</th><th>Before</th><th>Now</th></tr>
+<tr><td>Online card, Canadian operator (<code>aswta</code>, real call-site shape)</td><td><code>TOURS* ASWTA</code></td><td><code>ASWTA</code></td></tr>
+<tr><td>Card reader / Terminal, simulated reader (test name <code>ASWTA TOURS</code>)</td><td><code>TOURS* ASWTA TOURS</code></td><td><code>ASWTA TOURS</code></td></tr>
+<tr><td>Payment Link (Checkout)</td><td>already correct — descriptor stored on the PaymentIntent</td><td>unchanged</td></tr>
+<tr><td>US operator with <code>card_payments</code> (<code>dixies</code>, <code>on_behalf_of</code>)</td><td><code>DIXIESLOWE* DIXIES</code></td><td>unchanged</td></tr>
+</table>
+
+<p><b>The fix.</b> It is applied once, at the single place every card PaymentIntent is created: <code>StripePaymentGateway::createPayment()</code> now calls the new <code>PlatformChargeStatementDescriptor::normalize()</code>. That rewrites only a charge made directly on the platform account — no <code>transfer_data</code>, no <code>on_behalf_of</code>, no <code>stripe_account</code> option — moving the operator's name from <code>statement_descriptor_suffix</code> into a full <code>statement_descriptor</code>, cleaned to Stripe's rules (no <code>&lt; &gt; \ ' " *</code>, 5 to 22 characters, at least one letter). Destination charges, <code>on_behalf_of</code> charges and direct charges on a connected account are returned untouched. If both a suffix and a full descriptor are sent, Stripe uses the suffix, so the suffix is removed, not supplemented. <code>PaymentLinkService</code> is unchanged.</p>
+
+<div class="callout info">
+  <b class="tag">Limits to know about</b>
+  <b>Docs vs. behaviour.</b> Stripe's documentation says a full <code>statement_descriptor</code> is for non-card payments only; in test mode it is accepted for card charges, online and Terminal, and replaces the whole line. A sandbox test fails loudly if that changes; live mode is re-checked at go-live. <b>Short names.</b> A name under 5 characters cannot be a valid full descriptor, so the suffix is kept and the platform prefix would show; the only such account in the development database, <code>aswta</code>, is exactly 5 characters. <b>Checkout.</b> A completed hosted Checkout charge has still not been walked end-to-end, though Stripe stores the descriptor on the PaymentIntent.
+</div>
+
+<!-- 9. LIVE INCIDENTS -->
+<h1 class="section">9. Live Production Incidents Found Along the Way</h1>
+<p>None of the following are Payout Simplification bugs — all three predate this project — but all three were found only because this project required reading every refund/cancellation call site closely enough to notice something didn't reconcile. Recorded here because they were fixed in the same branch and window of work.</p>
+
+<h2>9.1 "Cannot reverse transfer on charge ... it does not have an associated transfer"</h2>
+<p>A cancellation attempt failed outright because a raw ledger-write call site had never recorded <code>payment_mode</code> at all, defaulting to <code>'destination'</code> for a charge that Stripe never actually gave a transfer to reverse. Root-caused to the same class of gap fixed comprehensively in Section 6.5 and 9.3 below — a raw <code>DB::table('transactions')</code> insert or a <code>TransactionService</code> call missing its mode.</p>
+
+<h2>9.2 "Refund amount ($180.49) is greater than unrefunded amount on charge ($102.92)" &amp; the $94.47-vs-$86.02 follow-up</h2>
+<p><code>TicketRefundCancelService.php</code>'s net-refund calculation added a "kept fee" bookkeeping figure (<code>$oldRefundKeepUs</code>, a pure reporting artifact from an unrelated pax-removal code path, never actually refunded to the guest) back into a real Stripe refund amount instead of only netting out the prior refund:</p>
+<pre><span class="c">// before</span>
+$net_amount = $transTicketCost + $oldRefundKeepUs;
+<span class="c">// after</span>
+$net_amount = $transTicketCost - $ref;</pre>
+<p>A structurally identical bug in <code>WeatherRefundCancelService.php</code> required netting out <i>both</i> the prior refund and a previously-kept fee (<code>$alreadyKeptFee</code>, summed from the booking's own <code>RefundHistory</code> rows) — an initial fix that only subtracted the prior refund still overpaid, caught by the user re-deriving the expected number by hand from the booking's real history before accepting the fix.</p>
+
+<h2>9.3 payment_mode silently defaulting to 'destination' on every cancellation refund</h2>
+<p>Covered in full in the Revision History and Section 6.5 — <code>CancelTransactionUpdateService::run()</code> never set <code>payment_mode</code> at all across any of its 29 call sites, so every cancellation refund row silently inherited the DB column's <code>'destination'</code> default. 8 already-wrong rows on <code>kens</code> were found by cross-referencing <code>status='Refund'</code> rows against sibling <code>status='Completed'</code> rows sharing the same <code>transaction_number</code>, and corrected directly in production.</p>
+
+<!-- 10. FEE_AMOUNT FIX -->
+<h1 class="section">10. The fee_amount / application_fee_id Correction</h1>
+<p>Scope, as clarified directly by the business owner mid-task after an initial broader framing was corrected: <code>fee_amount</code>/<code>application_fee_id</code> must be stored as <code>null</code> — never <code>0</code> or an empty string — whenever a refund type deliberately does <b>not</b> refund the platform's fee (Ticket Refund, Don't Refund, Partial Refund). A genuine 100%/Full Refund, which does refund the fee, must keep storing its real value, and was explicitly confirmed already correct and out of scope for this change.</p>
+
+<p>Fixed at the shared-method level rather than auditing every call site individually, given the caller count (71 across the two <code>TransactionService</code> refund methods alone) — a deliberate trade-off favoring completeness over per-site precision:</p>
+<pre><span class="c">// CancelTransactionUpdateService::run()</span>
+$feeAmountToStore = ((float) ($feeAmount ?? 0)) &gt; 0 ? $feeAmount : null;
+$applicationFeeIdToStore = ($feeAmountToStore !== null &amp;&amp; $applicationFeeId !== '') ? $applicationFeeId : null;</pre>
+<p>The same pattern (a local computed value replacing the raw input before the write) was applied inside <code>TransactionService::storeRefundInTransaction()</code>, <code>storeAddonsRefundInTransaction()</code>, and <code>storeCustomChargeRefundInTransaction()</code>. 6 new tests in <code>TransactionServiceTest.php</code> and 3 in <code>CancelTransactionUpdateServiceFeeAmountTest.php</code> cover the null-input, zero-normalized-to-null, and genuine-non-zero-fee-preserved cases for each method.</p>
+
+<!-- 11. AUTO PAYOUT -->
+<h1 class="section">11. Auto Payout Exclusion</h1>
+<p>Auto Payout pays operators via a real Stripe Connect payout drawn from their own connected-account balance. A destination charge auto-populates that balance via <code>transfer_data</code> the moment it succeeds; a platform-held charge never does — the money stays on the platform's own balance instead. <code>PayoutApprovalService::calculateAccountPayoutAmount()</code> and its siblings compute a payout amount by summing local <code>transactions</code>/<code>tour_bookings_master</code> rows, with no inherent awareness of which settlement model produced any given row.</p>
+
+<p>Three query sites carry an explicit <code>payment_mode</code> filter for exactly this reason:</p>
+<pre>-&gt;where('tra.payment_mode', PaymentModeResolver::DESTINATION)</pre>
+<table>
+<tr><th>File</th><th>Method</th></tr>
+<tr><td><code>app/Services/PayoutApprovalService.php:109</code></td><td><code>calculateAccountPayoutAmount()</code> (or equivalent computation query)</td></tr>
+<tr><td><code>app/Services/PayoutAggregateService.php:189</code></td><td>Mirrors <code>PayoutApprovalService</code>'s own filter, same reasoning</td></tr>
+<tr><td><code>app/Http/Controllers/Admin/AutoPayout/AutoPayoutController.php:637</code></td><td>Admin-facing payout preview/execution query</td></tr>
+</table>
+
+<div class="callout info">
+  <b class="tag">Why the live-balance check alone isn't sufficient</b>
+  <code>PayoutApprovalService::executeImmediatePayout()</code>/<code>executeSinglePayout()</code> also check the connected account's <b>live</b> Stripe balance (<code>Balance::retrieve(['stripe_account' =&gt; $stripeAccountId])</code>) before sending a payout, as a blunt "don't overdraw" safety net. That check is unaware of <i>where</i> the balance came from — if the account happens to hold unrelated legitimate balance (a prior destination-charge booking, a manual top-up), it would not by itself catch a platform-held transaction being incorrectly included in the computed payout amount. The <code>payment_mode</code> filter above is the actual correctness fix; the balance check is a separate, coarser safety net that remains valuable but was never a substitute for this filter.
+</div>
+
+<p>Building the mechanism that eventually <i>does</i> pay the operator their share of a platform-held booking (whatever that ends up looking like — likely a new Auto Payout leg once real production experience with platform-held transactions exists) is explicitly future work, not part of this round.</p>
+
+<!-- 12. DATA MODEL -->
+<h1 class="section">12. Data Model Changes</h1>
+<table>
+<tr><th>Table</th><th>Change</th><th>Migration</th></tr>
+<tr><td><code>transactions</code></td><td>New <code>payment_mode</code> enum column (<code>'destination'</code>/<code>'platform_held'</code>), default <code>'destination'</code>, positioned after <code>via</code></td><td><code>2026_09_18_000002_add_payment_mode_to_transactions_table.php</code></td></tr>
+<tr><td><code>settings</code> (tenant)</td><td>New <code>PLATFORM_HELD_PAYOUT_ENABLED</code> key/value row, default <code>0</code>, <code>exists()</code>-guarded insert</td><td><code>2026_09_18_000001_add_platform_held_payout_setting.php</code></td></tr>
+<tr><td><code>settings</code> (tenant, <code>dixies</code> only)</td><td>Corrects a stale <code>value=1</code> row left by an unrelated, already-reverted proof-of-concept that reused this same key</td><td><code>2026_09_18_000003_fix_stale_platform_held_payout_setting.php</code></td></tr>
+</table>
+
+<!-- 13. TESTING -->
+<h1 class="section">13. Testing Summary</h1>
+<table>
+<tr><th>Test file</th><th>Coverage</th><th>Cases</th></tr>
+<tr><td><code>tests/Unit/Payments/PaymentModeResolverTest.php</code></td><td>Kill-switch fail-closed behavior, single-date and mixed-cart boundary resolution</td><td>9</td></tr>
+<tr><td><code>tests/Unit/Payments/StripePaymentGatewayModeTest.php</code></td><td><code>buildConnectedPaymentData()</code> for both modes, against real tenant Stripe destination IDs (<code>dixies</code>/<code>aswta</code>), including the capability-fallback case</td><td>8</td></tr>
+<tr><td><code>tests/Unit/Payments/CardReaderPlatformHeldModeTest.php</code></td><td><code>metadata.dates</code>/<code>metadata.booking_id</code> resolution and the no-metadata fallback</td><td>4</td></tr>
+<tr><td><code>tests/Unit/Payments/PaymentLinkPlatformHeldModeTest.php</code></td><td>Per-rebuild mode resolution in <code>createPaymentLink()</code></td><td>2</td></tr>
+<tr><td><code>tests/Unit/Bookings/TransactionServiceTest.php</code></td><td><code>fee_amount</code>/<code>application_fee_id</code> null-vs-real normalization across 3 refund methods (plus 9 pre-existing payment-write tests, unaffected)</td><td>6 new / 15 total</td></tr>
+<tr><td><code>tests/Unit/Bookings/CancelTransactionUpdateServiceFeeAmountTest.php</code></td><td>Null input, zero-normalized-to-null, and genuine non-zero fee preservation for <code>run()</code></td><td>3</td></tr>
+<tr><td><code>tests/Unit/Payments/PlatformChargeStatementDescriptorTest.php</code></td><td>Which PaymentIntent shapes are rewritten to a full descriptor, and which (destination, <code>on_behalf_of</code>, direct charge, explicit descriptor, invalid name) are left alone — Section 8.5</td><td>12</td></tr>
+<tr><td><code>tests/Unit/Payments/PlatformHeldStatementDescriptorStripeTest.php</code></td><td>Real Stripe test-mode charge: a bare suffix shows the platform name; through the gateway only the operator's. Skipped unless the key is <code>sk_test_</code> — Section 8.5</td><td>1</td></tr>
+</table>
+<p>All new tests were verified with the standard revert-confirm-restore discipline used throughout this branch: temporarily revert the fix via <code>git stash push -- &lt;file&gt;</code>, confirm the new/updated test fails with the exact expected error, restore the fix, confirm it passes again.</p>
+
+<!-- 14. RISK REGISTER -->
+<h1 class="section">14. Risk Register</h1>
+<table class="rollout">
+<tr><th>Risk</th><th>Mitigation</th><th>Status</th></tr>
+<tr><td>A tenant's kill switch reads as enabled when it shouldn't, routing a real charge to platform-held mode prematurely</td><td>Fails closed by default; the one real instance found (<code>dixies</code>) was a stale row from an unrelated feature, now corrected by migration; rollout checklist requires confirming live value per tenant before relying on the default</td><td><span class="badge p1">mitigated, verify per tenant before enabling</span></td></tr>
+<tr><td>A call site threads a fresh <code>PaymentModeResolver</code> result at refund/cancellation time instead of reading the persisted <code>payment_mode</code></td><td>Architectural principle stated repeatedly in this document; <code>PaymentModeInference</code> exists specifically to read ground truth off a raw Stripe object rather than re-deriving from a possibly-changed tour date</td><td><span class="badge p2">designed against, spot-checked via the 29-site and 71-caller sweeps</span></td></tr>
+<tr><td>A Canadian (or any non-US) connected account's guests see the platform's name instead of the operator's under platform-held mode</td><td>Verified end-to-end with a real completed charge against a live CA test account; the earlier false-positive and its correction are documented in full in Section 8 specifically so this class of mistake is checked for, not just this instance of it. <i>Coverage corrected October 6, 2026 (Section 8.5): the fix first reached Payment Links only; it now applies at the gateway to every route.</i></td><td><span class="badge p2">verified against a real charge</span></td></tr>
+<tr><td>Auto Payout pays an operator for money that never left the platform's balance</td><td><code>payment_mode = 'destination'</code> filter on all 3 relevant query sites (Section 11)</td><td><span class="badge p2">shipped</span></td></tr>
+<tr><td>A full Checkout-Session hosted-page redirect flow (as opposed to a direct API-confirmed PaymentIntent) has not been exercised end-to-end for the platform-held + CA-fallback combination</td><td>None yet — this environment cannot drive a real hosted Stripe checkout page interactively</td><td><span class="badge p1">open, see Section 15</span></td></tr>
+</table>
+
+<!-- 15. OPEN ITEMS -->
+<h1 class="section">15. Open Items — What's Pending</h1>
+<ul>
+  <li><b>Statement-descriptor behaviour in live mode (added October 6, 2026).</b> The full-descriptor approach contradicts Stripe's documentation (card payments are documented as suffix-only) although it works in test mode for online and Terminal charges; a sandbox test guards it. Confirm with the first small real charge at go-live (Section 8.5).</li>
+  <li><b>Short operator descriptors (added October 6, 2026).</b> A statement descriptor under 5 characters cannot be sent as a full line, so a Canadian-style operator with one would still show the platform prefix. Check any new such operator before enabling the kill switch.</li>
+  <li><b>Full Checkout-Session-redirect verification.</b> All statement-descriptor verification so far used direct API PaymentIntent confirmation (with <code>off_session: true</code> to force past 3DS). Payment Link's flow is a real hosted Checkout Session redirect, which has not been separately walked end-to-end as a completed charge — worth doing before enabling the kill switch on a tenant that relies heavily on payment links.</li>
+  <li><b>Auto Payout's "pay the operator for a platform-held booking" leg.</b> Explicitly out of scope for this round (Section 3.3, Section 11) — deferred until there is real production experience with platform-held transactions to design against.</li>
+  <li><b>Legacy Phase A2 raw-card-number paths</b> (older, possibly low-traffic <code>TourBookingRepository</code> creation methods that bypass <code>StripeUtils.php</code>) have not been individually re-verified against the newer <code>payment_mode</code>/fee-normalization fixes — worth a traffic check before assuming they need the same treatment.</li>
+  <li><b>Per-tenant kill-switch rollout.</b> No tenant currently has <code>PLATFORM_HELD_PAYOUT_ENABLED</code> intentionally turned on. Before enabling it anywhere: confirm the live setting value directly (per the Section 5 near-miss), and confirm that tenant's connected account's <code>card_payments</code> capability status so the expected statement-descriptor path (suffix vs. full override) is known in advance rather than discovered on the first real charge.</li>
+</ul>
+
+<!-- 16. APPENDIX A -->
+<h1 class="section">16. Appendix A — Key File &amp; Call-Site Reference</h1>
+<table>
+<tr><th>Component</th><th>File</th></tr>
+<tr><td>Mode resolver</td><td><code>app/Services/Payments/PaymentModeResolver.php</code></td></tr>
+<tr><td>Ground-truth inference from a raw Stripe object</td><td><code>app/Services/Payments/PaymentModeInference.php</code></td></tr>
+<tr><td>Connected-payment param builder, refund param builder, capability check</td><td><code>app/Services/Payments/StripePaymentGateway.php</code></td></tr>
+<tr><td>Interface</td><td><code>app/Contracts/Payments/PaymentGatewayInterface.php</code></td></tr>
+<tr><td>Canada on_behalf_of strip helper (pre-existing, unrelated origin)</td><td><code>app/helpers.php</code> — <code>stripOnBehalfOfForCountry()</code></td></tr>
+<tr><td>Phase A — online card creation</td><td><code>app/Utils/StripeUtils.php</code></td></tr>
+<tr><td>Phase B — web/admin Terminal</td><td><code>app/Repositories/Pos/CardReaderRepository.php</code></td></tr>
+<tr><td>Phase B — mobile-app Terminal</td><td><code>app/Repositories/TourBooking/TourBookingRepository.php</code> &amp; <code>V3/TourBookingRepository.php</code> — <code>stripeCreatePaymentIntent()</code></td></tr>
+<tr><td>Phase B — JS payloads</td><td><code>public/js/user-common/backend-card-reader.js</code>, <code>public/js/user-common/tour-booking-pos.js</code></td></tr>
+<tr><td>Statement-descriptor safety net (all routes, Section 8.5)</td><td><code>app/Services/Payments/PlatformChargeStatementDescriptor.php</code>, called from <code>StripePaymentGateway::createPayment()</code></td></tr>
+<tr><td>Phase C — Payment Link</td><td><code>app/Services/Booking/PaymentLinkService.php</code> — <code>createPaymentLink()</code></td></tr>
+<tr><td>Ledger writes (payment side)</td><td><code>app/Services/Booking/TransactionService.php</code></td></tr>
+<tr><td>Ledger writes (cancellation-refund side, 29 call sites)</td><td><code>app/Services/CancelBooking/CancelTransactionUpdateService.php</code>, <code>TicketRefundCancelService.php</code>, <code>WeatherRefundCancelService.php</code>, <code>PartialRefundCancelService.php</code>, <code>DontRefundCancelService.php</code></td></tr>
+<tr><td>Auto Payout exclusion</td><td><code>app/Services/PayoutApprovalService.php</code>, <code>PayoutAggregateService.php</code>, <code>app/Http/Controllers/Admin/AutoPayout/AutoPayoutController.php</code></td></tr>
+<tr><td>Migrations</td><td><code>database/migrations/tenant/2026_09_18_000001..3_*.php</code></td></tr>
+</table>
+
+<!-- 17. APPENDIX B -->
+<h1 class="section">17. Appendix B — Stripe Connect Glossary</h1>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><b>Destination charge</b></td><td>A PaymentIntent created on the platform account with <code>transfer_data.destination</code> set; Stripe automatically splits and transfers funds to the connected account the moment the charge settles. Still the model for every pre-2027 booking, and every booking on a tenant with the kill switch off.</td></tr>
+<tr><td><b>Platform-held charge</b></td><td>This project's term (not a formal Stripe product name) for a plain platform charge with no <code>transfer_data</code>/<code>application_fee_amount</code> at all — the full amount stays on the platform's own balance until moved later by a separate mechanism (here, Auto Payout, on its normal schedule).</td></tr>
+<tr><td><b>on_behalf_of</b></td><td>Marks the connected account as the entity the charge is "for" — determines the base of the guest-facing statement descriptor and shifts some card-present liability. Requires the connected account to have <code>card_payments</code> capability active, <b>even with no <code>transfer_data</code> present</b> — the mistake corrected in Section 8.</td></tr>
+<tr><td><b>statement_descriptor_suffix</b></td><td>Appends to whatever descriptor base <code>on_behalf_of</code> already selected. Cannot substitute for <code>on_behalf_of</code> — without it, there is no operator-name base for the suffix to append to.</td></tr>
+<tr><td><b>statement_descriptor</b> (full override)</td><td>A property of the <b>charging</b> (platform) account, not the connected account — replaces the descriptor entirely, independent of <code>on_behalf_of</code> and requiring no connected-account capability at all. The fallback mechanism for accounts without <code>card_payments</code> (Section 8.3).</td></tr>
+<tr><td><b>card_payments capability</b></td><td>A connected account capability, separate from <code>transfers</code>. Most Canadian operators on this platform have only <code>transfers</code> active, not <code>card_payments</code> — the reason the Section 8 fallback exists at all.</td></tr>
+<tr><td><b>application_fee_amount</b></td><td>On a destination charge, the slice the platform keeps; the rest transfers automatically. Omitted entirely for platform-held charges — meaningless once there's no automatic split to take a slice of.</td></tr>
+<tr><td><b>reverse_transfer / refund_application_fee</b></td><td>Refund-time flags meaningful only against a destination charge. Stripped by <code>buildRefundParams()</code> for platform-held mode — sending either against a charge that never had <code>transfer_data</code> would error.</td></tr>
+</table>
+
+<div class="foot"><span>Payout Simplification Plan &middot; Devat Karetha — Solutions Lead</span><span>Prepared September 19, 2026 &middot; revised October 6, 2026 &middot; branch <code style="background:none;color:inherit;padding:0;">feature-stripe-2027-payout-simplification</code></span></div>
+
+</body>
+</html>

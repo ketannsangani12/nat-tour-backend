@@ -1,0 +1,192 @@
+#!/bin/bash
+
+# Simple wrapper for local Docker development
+# Usage: ./docker-local <command>
+
+set -e
+
+COMPOSE_FILE="docker-compose.local.yml"
+
+case "$1" in
+    up)
+        docker compose -f $COMPOSE_FILE up -d
+        echo ""
+        echo "Services started! Access at:"
+        echo "  - https://tour-backend.local:8443"
+        echo "  - https://kens.tour-backend.local:8443"
+        echo "  - https://dixies.tour-backend.local:8443"
+        echo "  - https://apm.tour-backend.local:8443"
+        echo "  - http://localhost:8888 (phpMyAdmin)"
+        echo ""
+        echo "Make sure these are in your /etc/hosts file:"
+        echo "  127.0.0.1 tour-backend.local"
+        echo "  127.0.0.1 kens.tour-backend.local"
+        echo "  127.0.0.1 dixies.tour-backend.local"
+        echo "  127.0.0.1 apm.tour-backend.local"
+        ;;
+    up-build)
+        docker compose -f $COMPOSE_FILE up --build -d
+        echo ""
+        echo "Services started! Access at:"
+        echo "  - https://tour-backend.local:8443"
+        echo "  - https://kens.tour-backend.local:8443"
+        echo "  - https://dixies.tour-backend.local:8443"   
+        ;;
+    down)
+        docker compose -f $COMPOSE_FILE down
+        ;;
+    clear-cache)
+        docker compose -f $COMPOSE_FILE exec app php artisan cache:clear 
+        docker compose -f $COMPOSE_FILE exec app php artisan route:clear
+        docker compose -f $COMPOSE_FILE exec app php artisan config:clear 
+        docker compose -f $COMPOSE_FILE exec app php artisan view:clear
+        ;;
+    restart)
+        docker compose -f $COMPOSE_FILE restart
+        ;;
+    build)
+        docker compose -f $COMPOSE_FILE build "${@:2}"
+        ;;
+    test)
+        docker compose -f $COMPOSE_FILE exec app php artisan test "${@:2}"
+        ;;
+    work)
+        docker compose -f $COMPOSE_FILE exec app php artisan queue:work "${@:2}"
+        ;;
+    schedule)
+        docker compose -f $COMPOSE_FILE exec app php artisan schedule:work "${@:2}"
+        ;;
+    queue)
+        docker compose -f $COMPOSE_FILE exec app php artisan queue:listen "${@:2}"
+        ;;
+    logs)
+        docker compose -f $COMPOSE_FILE logs -f "${@:2}"
+        ;;
+    shell|bash)
+        docker compose -f $COMPOSE_FILE exec app bash
+        ;;
+    mysql)
+        docker compose -f $COMPOSE_FILE exec mysql mysql -u nat_user -pnat_password nat_central
+        ;;
+    redis)
+        docker compose -f $COMPOSE_FILE exec redis redis-cli
+        ;;
+    migrate-all)
+        docker compose -f $COMPOSE_FILE exec app php artisan migrate --force
+        docker compose -f $COMPOSE_FILE exec app php artisan tenants:migrate --force
+        ;;
+    migrate-tenants)
+        docker compose -f $COMPOSE_FILE exec app php artisan tenants:migrate --force
+        ;;        
+    artisan)
+        docker compose -f $COMPOSE_FILE exec app php artisan "${@:2}"
+        ;;
+    composer)
+        docker compose -f $COMPOSE_FILE exec app composer "${@:2}"
+        ;;
+    npm)
+        docker compose -f $COMPOSE_FILE exec app npm "${@:2}"
+        ;;
+    refresh)
+        docker compose -f $COMPOSE_FILE down -v
+        docker compose -f $COMPOSE_FILE build --no-cache
+        docker compose -f $COMPOSE_FILE up -d
+        ;;
+    reload-data)
+        ./.docker-local/reload-data.sh
+        ;;
+    sync-table)
+        ./.docker-local/sync-table-data.sh "${@:2}"
+        ;;
+    ps|status)
+        docker compose -f $COMPOSE_FILE ps
+        ;;
+    add-tenant)
+        TENANT_NAME="$2"
+        if [ -z "$TENANT_NAME" ]; then
+            echo "Usage: ./docker-local add-tenant <tenant_name>"
+            echo ""
+            echo "Example: ./docker-local add-tenant newclient"
+            echo ""
+            echo "Prerequisites:"
+            echo "  1. Add tenant_<name>.sql.gz to .docker-local/data/"
+            echo "  2. Run this command"
+            echo "  3. Add to /etc/hosts: 127.0.0.1 <name>.tour-backend.local"
+            exit 1
+        fi
+
+        DATA_FILE=".docker-local/data/tenant_${TENANT_NAME}.sql.gz"
+        DB_NAME="tenant_${TENANT_NAME}"
+
+        echo "Adding tenant: $TENANT_NAME"
+        echo ""
+
+        # Check if data file exists
+        if [ ! -f "$DATA_FILE" ]; then
+            echo "Error: Data file not found: $DATA_FILE"
+            echo "Please add the SQL dump file first."
+            exit 1
+        fi
+
+        # Create database
+        echo "Creating database: $DB_NAME"
+        docker compose -f $COMPOSE_FILE exec -T mysql mysql -u root -proot_password -e \
+            "CREATE DATABASE IF NOT EXISTS $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+        # Import data
+        echo "Importing data from $DATA_FILE (this may take a while)..."
+        docker compose -f $COMPOSE_FILE exec -T mysql bash -c \
+            "gunzip -c /docker-entrypoint-initdb.d/data/tenant_${TENANT_NAME}.sql.gz | mysql -u root -proot_password $DB_NAME"
+
+        # Add tenant record
+        echo "Adding tenant record to nat_central..."
+        docker compose -f $COMPOSE_FILE exec -T mysql mysql -u root -proot_password nat_central -e \
+            "INSERT INTO tenants (id, created_at, updated_at) VALUES ('$TENANT_NAME', NOW(), NOW()) ON DUPLICATE KEY UPDATE id=id;"
+
+        # Add domain record
+        echo "Adding domain record..."
+        docker compose -f $COMPOSE_FILE exec -T mysql mysql -u root -proot_password nat_central -e \
+            "INSERT INTO domains (domain, tenant_id, created_at, updated_at) VALUES ('${TENANT_NAME}.tour-backend.local', '$TENANT_NAME', NOW(), NOW()) ON DUPLICATE KEY UPDATE domain=domain;"
+
+        echo ""
+        echo "Tenant '$TENANT_NAME' added successfully!"
+        echo ""
+        echo "Access at: https://${TENANT_NAME}.tour-backend.local:8443"
+        echo ""
+        echo "Don't forget to add to /etc/hosts:"
+        echo "  127.0.0.1 ${TENANT_NAME}.tour-backend.local"
+        ;;
+    *)
+        echo "NAT Local Docker Commands"
+        echo "========================="
+        echo ""
+        echo "Usage: ./docker-local <command>"
+        echo ""
+        echo "Commands:"
+        echo "  up              - Start all containers"
+        echo "  down            - Stop all containers"
+        echo "  up-build        - Start all containers with build"
+        echo "  restart         - Restart all containers"
+        echo "  build           - Build Docker images"
+        echo "  test            - Run application tests (e.g., ./docker-local test) or with options (e.g., ./docker-local test --filter=MyTest)"
+        echo "  logs            - View container logs (add service name to filter)"
+        echo "  shell           - Open bash shell in app container"
+        echo "  mysql           - Connect to MySQL CLI"
+        echo "  redis           - Connect to Redis CLI"
+        echo "  migrate-all     - Run migrations (central + tenants)"
+        echo "  migrate-tenants - Run tenant migrations only"
+        echo "  artisan         - Run artisan command (e.g., ./docker-local artisan tinker)"
+        echo "  clear-cache     - Clear Laravel caches" 
+        echo "  composer        - Run composer command"
+        echo "  npm             - Run npm command"
+        echo "  work            - Run Laravel job worker (e.g., ./docker-local job work)"
+        echo "  queue           - Run Laravel queue listener (e.g., ./docker-local queue)"
+        echo "  schedule        - Run Laravel scheduler"
+        echo "  refresh         - Full rebuild (destroys data)"
+        echo "  reload-data     - Reload databases from SQL dumps"
+        echo "  sync-table      - Sync table data from .sql.gz (e.g., ./docker-local sync-table permissions)"
+        echo "  ps              - Show container status"
+        echo "  add-tenant      - Add a new tenant e.g.(./docker-local add-tenant <tenant_name>) requires tenant_<tenant_name>.sql.gz in .docker-local/data/"
+        echo ""
+        ;;
+esac

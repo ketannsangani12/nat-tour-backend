@@ -1,0 +1,71 @@
+{
+  "description": "Permissive OSS licenses approved for Native American Tours. Any copyleft license (GPL/LGPL/AGPL/EPL/SSPL) trips the release gate and requires legal review. MPL-2.0 is weak-copyleft and allowed for linking (modifications to MPL files must be re-published). tour-backend runs server-side only and is not distributed, so LGPL/GPL deps may be exempted for documentation purposes; see manualOverrides.",
+  "allowed": [
+    "MIT",
+    "MIT-0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSD",
+    "Apache-2.0",
+    "ISC",
+    "0BSD",
+    "CC0-1.0",
+    "Unlicense",
+    "PHP-3.01",
+    "PHP-3.0",
+    "WTFPL",
+    "CC-BY-4.0",
+    "CC-BY-3.0",
+    "Zlib",
+    "MPL-2.0"
+  ],
+  "aliases": {
+    "MIT License": "MIT",
+    "MIT license": "MIT",
+    "The MIT License": "MIT",
+    "The MIT License (MIT)": "MIT",
+    "New BSD License": "BSD-3-Clause",
+    "BSD 3-Clause": "BSD-3-Clause",
+    "BSD 2-Clause": "BSD-2-Clause",
+    "Apache 2.0": "Apache-2.0",
+    "Apache-2": "Apache-2.0",
+    "Apache License 2.0": "Apache-2.0",
+    "Apache License, Version 2.0": "Apache-2.0",
+    "Apache Software License": "Apache-2.0",
+    "ISC License": "ISC",
+    "The Unlicense": "Unlicense",
+    "Zero-Clause BSD": "0BSD",
+    "Creative Commons Zero v1.0 Universal": "CC0-1.0",
+    "BSD License": "BSD-3-Clause",
+    "BSD 3-Clause License": "BSD-3-Clause",
+    "BSD 2-Clause License": "BSD-2-Clause",
+    "Modified BSD License": "BSD-3-Clause"
+  },
+  "manualOverrides": {
+    "_doc": "Manual license attestations and exemptions. Three modes: (1) 'license' only: attests to a license when metadata is missing or wrong. (2) 'exempt: true' + 'license' + 'exemptUntil' + 'reason': keeps the dep in notices but bypasses the allowlist gate. (3) 'exclude: true' + 'reason': removes the dep from notices entirely. tour-backend runs server-side only and is never distributed, so LGPL/GPL terms do not attach; exemptions below document intentionally tolerated copyleft deps.",
+    "dompdf/dompdf@*": {
+      "license": "LGPL-2.1",
+      "exempt": true,
+      "exemptUntil": "2027-04-20",
+      "reason": "dompdf is LGPL-2.1. Server-side only PDF generation; not distributed. Revisit if tour-backend is ever shipped as a binary or on-prem."
+    },
+    "milon/barcode@*": {
+      "license": "LGPL-3.0",
+      "exempt": true,
+      "exemptUntil": "2027-04-20",
+      "reason": "milon/barcode is LGPL-3.0. Server-side only barcode generation; not distributed. Revisit if tour-backend is ever shipped as a binary or on-prem."
+    },
+    "phenx/php-font-lib@*": {
+      "license": "LGPL-2.1-or-later",
+      "exempt": true,
+      "exemptUntil": "2027-04-20",
+      "reason": "Transitive dep of dompdf. LGPL-2.1-or-later. Server-side only; not distributed."
+    },
+    "phenx/php-svg-lib@*": {
+      "license": "LGPL-3.0-or-later",
+      "exempt": true,
+      "exemptUntil": "2027-04-20",
+      "reason": "Transitive dep of dompdf. LGPL-3.0-or-later. Server-side only; not distributed."
+    }
+  }
+}

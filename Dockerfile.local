@@ -1,0 +1,83 @@
+# Pinned to 8.3.36+ for PHP2Shell (CVE-2026-109618, CVE-2026-109619)
+FROM php:8.3.36-fpm-trixie
+#FROM 194836855709.dkr.ecr.us-east-1.amazonaws.com/php8.3-fpm:latest
+LABEL maintainer="Local Development"
+LABEL Description="Local development environment for multi-tenant Laravel app"
+
+# Set working directory
+WORKDIR /var/www
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libfreetype-dev \
+    libjpeg62-turbo-dev \
+    libzip-dev \
+    libjpeg-dev \
+    libmagickwand-dev \
+    libmagickcore-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    pkg-config \
+    locales \
+    zip \
+    unzip \
+    git \
+    ca-certificates \
+    curl \
+    gnupg \
+    nginx \
+    supervisor \
+    libmemcached-dev \
+    libssl-dev \
+    libicu-dev \
+    zlib1g-dev \
+    default-mysql-client \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
+    && docker-php-ext-install pdo pdo_mysql zip opcache mbstring exif pcntl intl bcmath xml \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-enable opcache
+
+# Set the locale
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
+
+# Install Imagick
+RUN curl -L -o imagick.tar.gz https://pecl.php.net/get/imagick-3.7.0.tgz && \
+    tar -xzf imagick.tar.gz && \
+    cd imagick-3.7.0 && \
+    phpize && \
+    ./configure && \
+    make && make install && \
+    docker-php-ext-enable imagick && \
+    cd .. && rm -rf imagick-3.7.0 imagick.tar.gz
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create directories
+RUN mkdir -p /var/www/bootstrap/cache /var/www/storage /var/log/php
+
+# Add user for laravel application
+RUN groupadd -g 1000 www && \
+    useradd -u 1000 -ms /bin/bash -g www www
+
+# Copy Nginx/PHP/Supervisor configs
+COPY .docker/supervisor.conf /etc/supervisord.conf
+COPY .docker/php.ini /usr/local/etc/php/conf.d/app.ini
+COPY .docker/nginx.conf /etc/nginx/sites-enabled/default
+
+# Create PHP error log
+RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
+
+EXPOSE 80
+
+CMD ["/var/www/.docker-local/run.local.sh"]
